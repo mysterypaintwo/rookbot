@@ -23,6 +23,7 @@ module.exports = async (client, message) => {
   const embed = new EmbedBuilder()
     .setColor('#FF0000') // Red for message deletion
     .setTitle('🗑️ Message Deleted')
+    .setThumbnail(message.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
     .addFields(
       { name: 'Author', value: `${message.author?.displayName || 'Unknown'} / ${message.author?.tag || 'Unknown'} (${message.author?.id || 'Unknown'})`, inline: false },
       { name: 'Channel', value: `<#${message.channel.id}> (${message.channel.id})`, inline: false },

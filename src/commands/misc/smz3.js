@@ -13,7 +13,7 @@ module.exports = {
     // Ensure the command is used in the correct channel
     if (interaction.channelId !== multiplayerSchedulingChanID) {
       return await interaction.reply({
-        content: `This command can only be used in the <#${multiplayerSchedulingChanID}> channel.`,
+        content: `This command can only be used in <#${multiplayerSchedulingChanID}>.`,
         ephemeral: true, // Makes the reply visible only to the user who invoked the command
       });
     }
