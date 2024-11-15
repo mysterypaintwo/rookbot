@@ -31,15 +31,20 @@ module.exports = {
     const sahaBot = client.users.cache.get(sahaBotUserID);
 
     if (!sahaBot) {
-      await interaction.reply("Sahasrala bot not found on this server.");
+      await interaction.reply({
+        content: 'Sahasrala bot not found on this server.',
+        ephemeral: true,
+      });
       return;
     }
 
+    await interaction.deferReply({ ephemeral: true }); // Defer reply silently
+
     try {
-      // Send "/smz3 preset: normal" to Sahasrala bot
+      // Send `/smz3 preset: normal` to Sahasrala bot
       await sahaBot.send('/smz3 preset: normal');
 
-      // Generate a random number between 0 and 10000000000 for the group name
+      // Generate random group name
       const randNum = Math.floor(Math.random() * 10000000001);
       const groupName = `zdoi${randNum}`;
 
@@ -48,11 +53,9 @@ module.exports = {
       const roundedTime = new Date(
         Math.ceil(now.getTime() / (15 * 60 * 1000)) * (15 * 60 * 1000)
       );
+      const timestamp = `<t:${Math.floor(roundedTime.getTime() / 1000)}:F>`;
 
-      // Format the timestamp for Discord
-      const timestamp = `<t:${Math.floor(roundedTime.getTime() / 1000)}:F>`; // Formatted for user's local time
-
-      // Array of cheeky footer texts
+      // Random footer text
       const footerTexts = [
         'Good luck out there, adventurer!',
         'May the RNG be ever in your favor!',
@@ -65,11 +68,10 @@ module.exports = {
         'Hoping we\'ll find Morph Ball within the first hour!',
         'Hoping we\'ll find Morph Bombs before Power Bombs!',
       ];
+      const randomFooterText =
+        footerTexts[Math.floor(Math.random() * footerTexts.length)];
 
-      // Pick a random footer text
-      const randomFooterText = footerTexts[Math.floor(Math.random() * footerTexts.length)];
-
-      // Create an embed to display all details
+      // Create the embed
       const embed = new EmbedBuilder()
         .setColor('#00FF00')
         .setTitle('SMZ3 Game Details')
@@ -99,41 +101,29 @@ module.exports = {
         .setFooter({ text: randomFooterText })
         .setTimestamp();
 
-        await interaction.deferReply({ ephemeral: true }); // Defer the reply to acknowledge the interaction
+      // Construct the content for the channel message
+      const messageContent = pingMultiplayerRole
+        ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`
+        : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`;
 
-        try {
-        // Construct the content for the channel message
-        const messageContent = pingMultiplayerRole
-            ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.` // Includes ping
-            : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`; // Excludes ping
+      // Send the embed to the channel
+      const channel = interaction.channel;
+      await channel.send({
+        content: messageContent,
+        embeds: [embed],
+      });
 
-        // Send the embed message to the channel
-        const channel = interaction.channel; // Use the channel where the command was invoked
-        await channel.send({
-            content: messageContent,
-            embeds: [embed],
-        });
-
-        // Finalize the interaction with a confirmation to the user
-        await interaction.followUp({
-            content: 'The SMZ3 game has been successfully set up and announced in the channel!',
-            ephemeral: true, // Keep it private to the user
-        });
-        } catch (error) {
-        console.error('Error handling /smz3 command:', error);
-
-        // Respond with an error message if something goes wrong
-        await interaction.followUp({
-            content: 'An error occurred while setting up the SMZ3 game. Please try again later.',
-            ephemeral: true,
-        });
-        }
-
+      // Silent conclusion (no visible follow-up)
+      await interaction.deleteReply();
     } catch (error) {
       console.error('Error handling /smz3 command:', error);
-      await interaction.reply(
-        'An error occurred while setting up the SMZ3 game. Please try again later.'
-      );
+
+      // Respond with an error message if something goes wrong
+      await interaction.followUp({
+        content:
+          'An error occurred while setting up the SMZ3 game. Please try again later.',
+        ephemeral: true,
+      });
     }
   },
 };
