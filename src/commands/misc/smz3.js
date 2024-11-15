@@ -4,7 +4,14 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
   name: 'smz3',
   description: 'Starts an SMZ3 game with all necessary details.',
-  options: [],
+  options: [
+    {
+      name: 'ping_multiplayer_role',
+      description: 'Whether or not to ping the Multiplayer Ping role.',
+      type: 5, // Boolean type
+      required: false, // Optional parameter
+    },
+  ],
 
   /**
    * @param {import('discord.js').Interaction} interaction
@@ -17,6 +24,9 @@ module.exports = {
         ephemeral: true, // Makes the reply visible only to the user who invoked the command
       });
     }
+
+    const pingMultiplayerRole =
+      interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
 
     const sahaBot = client.users.cache.get(sahaBotUserID);
 
@@ -89,15 +99,36 @@ module.exports = {
         .setFooter({ text: randomFooterText })
         .setTimestamp();
 
-      // Reply to the command with the generated embed
-      await interaction.reply({ embeds: [embed] });
-      
-      // Send the embed message
-      const channel = interaction.channel; // Use the channel where the command was invoked
-      await channel.send({
-        content: `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`, // This will ping the role
-        embeds: [embed],
-      });
+        await interaction.deferReply({ ephemeral: true }); // Defer the reply to acknowledge the interaction
+
+        try {
+        // Construct the content for the channel message
+        const messageContent = pingMultiplayerRole
+            ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.` // Includes ping
+            : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`; // Excludes ping
+
+        // Send the embed message to the channel
+        const channel = interaction.channel; // Use the channel where the command was invoked
+        await channel.send({
+            content: messageContent,
+            embeds: [embed],
+        });
+
+        // Finalize the interaction with a confirmation to the user
+        await interaction.followUp({
+            content: 'The SMZ3 game has been successfully set up and announced in the channel!',
+            ephemeral: true, // Keep it private to the user
+        });
+        } catch (error) {
+        console.error('Error handling /smz3 command:', error);
+
+        // Respond with an error message if something goes wrong
+        await interaction.followUp({
+            content: 'An error occurred while setting up the SMZ3 game. Please try again later.',
+            ephemeral: true,
+        });
+        }
+
     } catch (error) {
       console.error('Error handling /smz3 command:', error);
       await interaction.reply(
