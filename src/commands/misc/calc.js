@@ -1,48 +1,50 @@
 const { EmbedBuilder } = require('discord.js');
+const { evaluate } = require('mathjs');
 
 module.exports = {
-  /**
-   *
-   * @param {Client} client
-   * @param {Interaction} interaction
-   */
-  callback: async (client, interaction) => {
-    // Get the expression from the command arguments
-    const expression = interaction.options.get('expression').value;
-
-    // Try to evaluate the expression
-    try {
-      // Evaluate the mathematical expression
-      const result = eval(expression); // Use eval to evaluate the expression
-
-      // Create the response embed
-      const embed = new EmbedBuilder()
-        .setColor('#00FF00') // Green color for success
-        .setTitle('Calculator Result')
-        .addFields(
-          { name: 'Expression', value: expression, inline: true },
-          { name: 'Result', value: result.toString(), inline: true }
-        )
-        .setTimestamp()
-        .setFooter({ text: `Requested by ${interaction.user.tag}` });
-
-      // Send the embed as a reply to the command
-      await interaction.reply({ embeds: [embed] });
-    } catch (error) {
-      console.log(`Error calculating: ${error}`);
-      // If there is an error, inform the user
-      await interaction.reply("There was an error calculating the expression. Please make sure your input is valid.");
-    }
-  },
-
   name: 'calc',
-  description: 'Performs basic arithmetic calculations (e.g., 2+2, 3*5, etc.)',
+  description: 'Evaluates a math expression.',
   options: [
     {
       name: 'expression',
-      description: 'The arithmetic expression you want to calculate.',
-      type: 3, // Type 3 is for String input
+      description: 'The math expression to evaluate.',
+      type: 3, // String
       required: true,
     },
   ],
+
+  /**
+   * @param {import('discord.js').Interaction} interaction
+   */
+  callback: async (client, interaction) => {
+    const expression = interaction.options.getString('expression');
+
+    try {
+      // Evaluate the math expression
+      const result = evaluate(expression);
+
+      // Create and send the embed
+      const embed = new EmbedBuilder()
+        .setColor('#00FF00')
+        .setTitle('Calculator')
+        .addFields(
+          { name: 'Expression', value: `\`${expression}\``, inline: false },
+          { name: 'Result', value: `\`${result}\``, inline: false }
+        )
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [embed] });
+    } catch (error) {
+      console.error('Error evaluating expression:', error);
+
+      // Send an error embed if the math expression is invalid
+      const errorEmbed = new EmbedBuilder()
+        .setColor('#FF0000')
+        .setTitle('Error')
+        .setDescription('Invalid math expression. Please try again.')
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+    }
+  },
 };
