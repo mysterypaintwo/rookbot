@@ -1,5 +1,5 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const ms = require('ms');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -7,78 +7,44 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-
   callback: async (client, interaction) => {
-    const mentionable = interaction.options.get('target-user').value;
-    const duration = interaction.options.get('duration').value; // 1d, 1 day, 1s 5s, 5m
+    const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
+    const duration = interaction.options.get('duration').value;
 
     await interaction.deferReply();
 
-    const targetUser = await interaction.guild.members.fetch(mentionable);
-    if (!targetUser) {
-      await interaction.editReply("That user doesn't exist in this server.");
-      return;
-    }
+    // Extract user ID from mention (if it's a mention)
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
-    if (targetUser.user.bot) {
-      await interaction.editReply("I can't timeout a bot.");
-      return;
-    }
-
-    if (targetUser.id === interaction.guild.members.me.id) {
-      await interaction.editReply("nice try bozo");
-      return;
-    }
-    
-    const msDuration = ms(duration);
-    if (isNaN(msDuration)) {
-      await interaction.editReply('Please provide a valid timeout duration.');
-      return;
-    }
-
-    if (msDuration < 5000 || msDuration > 2.419e9) {
-      await interaction.editReply('Timeout duration cannot be less than 5 seconds or more than 28 days.');
-      return;
-    }
-
-    const targetUserRolePosition = targetUser.roles.highest.position; // Highest role of the target user
-    const requestUserRolePosition = interaction.member.roles.highest.position; // Highest role of the user running the cmd
-    const botRolePosition = interaction.guild.members.me.roles.highest.position; // Highest role of the bot
-
-    if (targetUserRolePosition >= requestUserRolePosition) {
-      await interaction.editReply("You can't timeout that user because they have the same/higher role than you.");
-      return;
-    }
-
-    if (targetUserRolePosition >= botRolePosition) {
-      await interaction.editReply("I can't timeout that user because they have the same/higher role than me.");
-      return;
-    }
-
-    // Timeout the user
+    // Get the user to be timed out
+    let targetUser;
     try {
-      const { default: prettyMs } = await import('pretty-ms');
+      targetUser = await client.users.fetch(targetUserId);
+    } catch (error) {
+      await interaction.editReply("User not found.");
+      return;
+    }
 
-      if (targetUser.isCommunicationDisabled()) {
-        await targetUser.timeout(msDuration, reason);
-        await interaction.editReply(`${targetUser}'s timeout has been updated to ${prettyMs(msDuration, { verbose: true })} (Reason: ${reason})`);
-        return;
-      }
+    // Attempt to timeout the user
+    try {
+      // Apply timeout to the user
+      await interaction.guild.members.timeout(targetUserId, duration * 1000, reason);
 
-      await targetUser.timeout(msDuration, reason);
-      await interaction.editReply(`${targetUser} was timed out for ${prettyMs(msDuration, { verbose: true })}. (Reason: ${reason})`);
+      // Reply in the channel to confirm
+      await interaction.editReply(`User ${targetUserId} has been timed out for ${duration} seconds (${reason})`);
 
+      // Log the action in the logs channel
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#FFCC00') // Yellow color for timeouts
+          .setColor('#800080') // Purple color for timeouts
           .setTitle('User Timed Out')
           .addFields(
-            { name: 'User Timed Out', value: `${targetUser.user.tag} (${targetUser.user.id})`, inline: true },
+            { name: 'User Timed Out', value: `${targetUserId}`, inline: true },
             { name: 'Timed Out By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
-            { name: 'Duration', value: `${duration}`, inline: true },
-            { name: 'Reason', value: reason, inline: false }
+            { name: 'Reason', value: reason, inline: false },
+            { name: 'Duration', value: `${duration} seconds`, inline: false }
           )
           .setTimestamp()
           .setFooter({ text: `Actioned by ${interaction.user.tag}` });
@@ -89,30 +55,32 @@ module.exports = {
       }
     } catch (error) {
       console.log(`There was an error when timing out: ${error}`);
+      await interaction.editReply("I couldn't timeout that user.");
     }
   },
 
   name: 'timeout',
-  description: 'Timeout a user.',
+  description: 'Times out a user for a specified duration.',
   options: [
     {
-      name: 'target-user',
-      description: 'The user you want to timeout.',
-      type: ApplicationCommandOptionType.Mentionable,
-      required: true,
-    },
-    {
-      name: 'duration',
-      description: 'Timeout duration (30m, 1h, 1 day).',
+      name: 'user-id',
+      description: 'The ID of the user you want to timeout.',
       type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: 'reason',
-      description: 'The reason for the timeout.',
+      description: 'The reason for timing out the user.',
       type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+    {
+      name: 'duration',
+      description: 'The duration of the timeout in seconds.',
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
     },
   ],
-  permissionsRequired: [PermissionFlagsBits.MuteMembers],
-  botPermissions: [PermissionFlagsBits.MuteMembers],
+  permissionsRequired: [PermissionFlagsBits.ModerateMembers],
+  botPermissions: [PermissionFlagsBits.ModerateMembers],
 };

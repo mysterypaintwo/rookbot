@@ -1,42 +1,48 @@
-const { logsChannel } = require('../../../config.json');
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
+   *
    * @param {Client} client
    * @param {Interaction} interaction
    */
   callback: async (client, interaction) => {
-    const targetUserId = interaction.options.get('user-id').value;
+    const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     await interaction.deferReply();
 
-    if (targetUser.id === interaction.guild.members.me.id) {
-        await interaction.editReply("nice try bozo");
-        return;
-    }
-    
+    // Extract user ID from mention (if it's a mention)
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
+
+    // Get the user to be unbanned
+    let targetUser;
     try {
-      await interaction.guild.bans.fetch(targetUserId);
-    } catch {
-      await interaction.editReply("That user ID is not banned.");
+      targetUser = await client.users.fetch(targetUserId);
+    } catch (error) {
+      await interaction.editReply("User not found.");
       return;
     }
 
+    // Attempt to unban the user
     try {
+      // Unban the user from the server
       await interaction.guild.bans.remove(targetUserId, reason);
-      await interaction.editReply(`User with ID ${targetUserId} has been unbanned (${reason})`);
+
+      // Reply in the channel to confirm
+      await interaction.editReply(`User ${targetUserId} has been unbanned (${reason})`);
 
       // Log the action in the logs channel
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#00FF00') // Green color for unbans
+          .setColor('#008000') // Green color for unbans
           .setTitle('User Unbanned')
           .addFields(
             { name: 'User Unbanned', value: `${targetUserId}`, inline: true },
-            { name: 'Unbanned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true }
+            { name: 'Unbanned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
+            { name: 'Reason', value: reason, inline: false }
           )
           .setTimestamp()
           .setFooter({ text: `Actioned by ${interaction.user.tag}` });
@@ -52,7 +58,7 @@ module.exports = {
   },
 
   name: 'unban',
-  description: 'Unbans a user from the server using their user ID.',
+  description: 'Unbans a user from the server.',
   options: [
     {
       name: 'user-id',
@@ -64,6 +70,7 @@ module.exports = {
       name: 'reason',
       description: 'The reason for unbanning the user.',
       type: ApplicationCommandOptionType.String,
+      required: false,
     },
   ],
   permissionsRequired: [PermissionFlagsBits.BanMembers],

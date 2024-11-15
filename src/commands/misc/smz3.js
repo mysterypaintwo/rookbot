@@ -88,8 +88,8 @@ module.exports = {
             inline: false,
           },
           {
-            name: 'Start Game Reminder',
-            value: '**Please wait on the Start Game with everyone until the game begins.**',
+            name: '__Start Game Reminder__',
+            value: 'Please wait on the Start Game with everyone until the game begins.',
             inline: false,
           },
           {

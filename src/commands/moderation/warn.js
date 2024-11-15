@@ -1,43 +1,52 @@
-const { logsChannel } = require('../../../config.json');
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
+   *
    * @param {Client} client
    * @param {Interaction} interaction
    */
   callback: async (client, interaction) => {
-    const targetUserId = interaction.options.get('target-user').value;
-    // Get the reason, or fall back to a default value if not provided
+    const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     await interaction.deferReply();
 
-    const targetUser = await interaction.guild.members.fetch(targetUserId);
+    // Extract user ID from mention (if it's a mention)
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
-    if (targetUser.id === interaction.guild.members.me.id) {
-        await interaction.editReply("nice try bozo");
-        return;
-    }
-    
-    if (!targetUser) {
-      await interaction.editReply("That user doesn't exist in this server.");
+    // Get the user to be warned
+    let targetUser;
+    try {
+      targetUser = await client.users.fetch(targetUserId);
+    } catch (error) {
+      await interaction.editReply("User not found.");
       return;
     }
 
-    // Send a DM warning to the target user
+    // Get the guild member (to fetch nickname if present)
+    const guildMember = interaction.guild.members.cache.get(targetUserId);
+
+    // Attempt to send a warning to the user
     try {
-      await targetUser.send(`⚠️ You have been warned in ${interaction.guild.name} (${reason})`);
-      await interaction.editReply(`User ${targetUser} has been warned.`);
+      // Send a DM to the user
+      await targetUser.send(`You have been warned in the ${serverName} server (${reason})`);
+
+      // Determine the name to display (use nickname if available, otherwise default to tag or username)
+      const targetUserName = guildMember?.nickname || targetUser.username;
+
+      // Reply in the channel to confirm
+      await interaction.editReply(`User ${targetUserName} (ID: ${targetUserId}) has been warned (${reason})`);
 
       // Log the action in the logs channel
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#FFA500') // Orange color for warnings
+          .setColor('#FFFF00') // Yellow color for warnings
           .setTitle('User Warned')
           .addFields(
-            { name: 'User Warned', value: `${targetUser.user.tag} (${targetUser.user.id})`, inline: true },
+            { name: 'User Warned', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Warned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
             { name: 'Reason', value: reason, inline: false }
           )
@@ -49,27 +58,27 @@ module.exports = {
         console.log("Logs channel not found.");
       }
     } catch (error) {
-      await interaction.editReply("Couldn't send a warning to that user (possibly due to their DM settings).");
-      console.log(`Failed to send warning: ${error}`);
+      console.log(`There was an error when warning: ${error}`);
+      await interaction.editReply("I couldn't warn that user.");
     }
   },
 
   name: 'warn',
-  description: 'Warns a member in the server.',
+  description: 'Warns a user in the server.',
   options: [
     {
-      name: 'target-user',
-      description: 'The user you want to warn.',
-      type: ApplicationCommandOptionType.Mentionable,
+      name: 'user-id',
+      description: 'The ID of the user you want to warn.',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: 'reason',
-      description: 'The reason for the warning.',
+      description: 'The reason for warning the user.',
       type: ApplicationCommandOptionType.String,
-      required: false, // Make sure it's optional
+      required: false,
     },
   ],
-  permissionsRequired: [PermissionFlagsBits.ManageMessages],
-  botPermissions: [PermissionFlagsBits.ManageMessages],
+  permissionsRequired: [PermissionFlagsBits.ModerateMembers],
+  botPermissions: [PermissionFlagsBits.ModerateMembers],
 };

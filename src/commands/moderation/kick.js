@@ -1,12 +1,5 @@
-const { logsChannel } = require('../../../config.json'); // Make sure this points to the correct channel ID in your config
-
-const {
-  Client,
-  Interaction,
-  ApplicationCommandOptionType,
-  PermissionFlagsBits,
-  EmbedBuilder
-} = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -15,63 +8,45 @@ module.exports = {
    * @param {Interaction} interaction
    */
   callback: async (client, interaction) => {
-    const targetUserId = interaction.options.get('target-user').value;
+    const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     await interaction.deferReply();
 
-    const targetUser = await interaction.guild.members.fetch(targetUserId);
+    // Extract user ID from mention (if it's a mention)
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
-    if (!targetUser) {
-      await interaction.editReply("That user doesn't exist in this server.");
-      return;
-    }
-
-    if (targetUser.id === interaction.guild.ownerId) {
-      await interaction.editReply(
-        "You can't kick that user because they're the server owner."
-      );
-      return;
-    }
-
-    if (targetUser.id === interaction.guild.members.me.id) {
-      await interaction.editReply("nice try bozo");
-      return;
-    }
-
-    const targetUserRolePosition = targetUser.roles.highest.position; // Highest role of the target user
-    const requestUserRolePosition = interaction.member.roles.highest.position; // Highest role of the user running the cmd
-    const botRolePosition = interaction.guild.members.me.roles.highest.position; // Highest role of the bot
-
-    if (targetUserRolePosition >= requestUserRolePosition) {
-      await interaction.editReply(
-        "You can't kick that user because they have the same/higher role than you."
-      );
-      return;
-    }
-
-    if (targetUserRolePosition >= botRolePosition) {
-      await interaction.editReply(
-        "I can't kick that user because they have the same/higher role than me."
-      );
-      return;
-    }
-
-    // Kick the targetUser
+    // Get the user to be kicked
+    let targetUser;
     try {
-      await targetUser.kick({ reason });
-      await interaction.editReply(
-        `User ${targetUser} was kicked (${reason})`
-      );
+      targetUser = await client.users.fetch(targetUserId);
+    } catch (error) {
+      await interaction.editReply("User not found.");
+      return;
+    }
+
+    // Get the guild member (to fetch nickname if present)
+    const guildMember = interaction.guild.members.cache.get(targetUserId);
+
+    // Attempt to kick the user
+    try {
+      // Kick the user from the server
+      await interaction.guild.members.kick(targetUserId, { reason });
+
+      // Determine the name to display (use nickname if available, otherwise default to tag or username)
+      const targetUserName = guildMember?.nickname || targetUser.username;
+
+      // Reply in the channel to confirm
+      await interaction.editReply(`User ${targetUserName} (ID: ${targetUserId}) has been kicked (${reason})`);
 
       // Log the action in the logs channel
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#FF0000') // Red color for kicks
+          .setColor('#FFA500') // Orange color for kicks
           .setTitle('User Kicked')
           .addFields(
-            { name: 'User Kicked', value: `${targetUser.user.tag} (${targetUser.user.id})`, inline: true },
+            { name: 'User Kicked', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Kicked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
             { name: 'Reason', value: reason, inline: false }
           )
@@ -84,22 +59,24 @@ module.exports = {
       }
     } catch (error) {
       console.log(`There was an error when kicking: ${error}`);
+      await interaction.editReply("I couldn't kick that user.");
     }
   },
 
   name: 'kick',
-  description: 'Kicks a member from this server.',
+  description: 'Kicks a user from the server.',
   options: [
     {
-      name: 'target-user',
-      description: 'The user you want to kick.',
-      type: ApplicationCommandOptionType.Mentionable,
+      name: 'user-id',
+      description: 'The ID of the user you want to kick.',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: 'reason',
-      description: 'The reason you want to kick.',
+      description: 'The reason for kicking the user.',
       type: ApplicationCommandOptionType.String,
+      required: false,
     },
   ],
   permissionsRequired: [PermissionFlagsBits.KickMembers],
