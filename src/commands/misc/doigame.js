@@ -1,4 +1,4 @@
-const { downloadsChannel, supportPost } = require('../../../config.json');
+const { downloadsChannel, supportPost, serverGameName } = require('../../../config.json');
 const {
   Client,
   Interaction,
@@ -18,11 +18,11 @@ module.exports = {
       // Create an embed message
       const embed = new EmbedBuilder()
         .setColor('#00FF00') // Green color for positive action
-        .setTitle('Download *The Legend of Zelda - Dungeons of Infinity*')
-        .setDescription('You can download The Legend of Zelda - Dungeons of Infinity in the channel below!')
+        .setTitle(`Download ${serverGameName}`)
+        .setDescription(`You can download ${serverGameName} below!`)
         .addFields(
-          { name: 'Download Link', value: `[Click here to go to the downloads channel](${downloadsChannel})`, inline: false },
-          { name: 'Need Help?', value: `If you need any help with troubleshooting, please refer to [our Support Thread](${supportPost}).`, inline: false }
+          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${downloadsChannel})`, inline: false },
+          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${supportPost}).`, inline: false }
         )
         .setTimestamp()
         .setFooter({ text: `Requested by ${interaction.user.tag}` });
@@ -36,7 +36,7 @@ module.exports = {
   },
 
   name: 'doigame',
-  description: 'Sends a message with download info for *The Legend of Zelda - Dungeons of Infinity*.',
+  description: `Sends a message with download info for *${serverGameName}*.`,
   permissionsRequired: [],
   botPermissions: [],
 };
