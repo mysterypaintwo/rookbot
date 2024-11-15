@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel } = require('../../../config.json');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -9,10 +9,11 @@ module.exports = {
    */
   callback: async (client, interaction) => {
     const targetUserInput = interaction.options.get('user-id').value;
+    const timeoutDuration = interaction.options.get('duration').value; // Duration in seconds
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
-    const duration = interaction.options.get('duration').value;
 
-    await interaction.deferReply();
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -22,29 +23,37 @@ module.exports = {
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      await interaction.editReply("User not found.");
+      await interaction.editReply({ content: "User not found.", ephemeral: true });
       return;
     }
 
-    // Attempt to timeout the user
+    // Get the guild member (to fetch nickname if present)
+    const guildMember = interaction.guild.members.cache.get(targetUserId);
+
     try {
-      // Apply timeout to the user
-      await interaction.guild.members.timeout(targetUserId, duration * 1000, reason);
+      // Convert the timeout duration from seconds to milliseconds
+      const timeoutDurationMilliseconds = timeoutDuration * 1000;
 
-      // Reply in the channel to confirm
-      await interaction.editReply(`User ${targetUserId} has been timed out for ${duration} seconds (${reason})`);
+      // Set the timeout (mute and prevent interactions)
+      await guildMember.timeout(timeoutDurationMilliseconds, reason);
 
-      // Log the action in the logs channel
+      // Determine the name to display (use nickname if available, otherwise default to tag or username)
+      const targetUserName = guildMember?.nickname || targetUser.username;
+
+      // Reply publicly in the channel to confirm the timeout
+      interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **timed out** for ${timeoutDuration} seconds. (${reason})`);
+
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#800080') // Purple color for timeouts
-          .setTitle('User Timed Out')
+          .setColor('#FF8800') // Orange color for timeout
+          .setTitle('⏰User Timeout')
           .addFields(
-            { name: 'User Timed Out', value: `${targetUserId}`, inline: true },
-            { name: 'Timed Out By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
-            { name: 'Reason', value: reason, inline: false },
-            { name: 'Duration', value: `${duration} seconds`, inline: false }
+            { name: 'User', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
+            { name: 'Timeout Duration', value: `${timeoutDuration} seconds`, inline: true },
+            { name: 'Timeout By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
+            { name: 'Reason', value: reason, inline: false }
           )
           .setTimestamp()
           .setFooter({ text: `Actioned by ${interaction.user.tag}` });
@@ -53,9 +62,12 @@ module.exports = {
       } else {
         console.log("Logs channel not found.");
       }
+
+      // Delete the deferred private reply to avoid it being left pending
+      await interaction.deleteReply();
     } catch (error) {
-      console.log(`There was an error when timing out: ${error}`);
-      await interaction.editReply("I couldn't timeout that user.");
+      console.log(`There was an error when timing out the user: ${error}`);
+      await interaction.editReply({ content: "I couldn't timeout that user.", ephemeral: true }); // Private error message
     }
   },
 
@@ -69,16 +81,16 @@ module.exports = {
       required: true,
     },
     {
-      name: 'reason',
-      description: 'The reason for timing out the user.',
-      type: ApplicationCommandOptionType.String,
-      required: false,
-    },
-    {
       name: 'duration',
       description: 'The duration of the timeout in seconds.',
       type: ApplicationCommandOptionType.Integer,
       required: true,
+    },
+    {
+      name: 'reason',
+      description: 'The reason for the timeout.',
+      type: ApplicationCommandOptionType.String,
+      required: false,
     },
   ],
   permissionsRequired: [PermissionFlagsBits.ModerateMembers],

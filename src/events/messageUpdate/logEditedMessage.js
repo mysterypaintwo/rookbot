@@ -10,18 +10,15 @@ const path = require('path');
  * @param {import('discord.js').Message} newMessage
  */
 module.exports = async (client, oldMessage, newMessage) => {
-  // Ensure the message was sent in a guild and is not from a bot
-  if (!oldMessage.guild || oldMessage.author?.bot) return;
+  // Ignore messages from bots or if content hasn't changed
+  if (oldMessage.author?.bot || oldMessage.content === newMessage.content) return;
 
-  // Handle cases where content is missing
-  const oldContent = oldMessage.content || '*(Content unavailable)*';
-  const newContent = newMessage.content || '*(Content unavailable)*';
-
-  // Skip if the content hasn't changed
-  if (oldContent === newContent) return;
+  // Ensure the message was from a server
+  const guild = oldMessage.guild;
+  if (!guild) return;
 
   // Fetch the log channel using its ID
-  const logChannelObject = oldMessage.guild.channels.cache.get(logsChannel);
+  const logChannelObject = guild.channels.cache.get(logsChannel);
 
   // Prepare the log embed
   const embed = new EmbedBuilder()
@@ -31,8 +28,8 @@ module.exports = async (client, oldMessage, newMessage) => {
     .addFields(
       { name: 'Author', value: `${oldMessage.author?.username || 'Unknown'} / ${oldMessage.author?.tag || 'Unknown'} (${oldMessage.author?.id || 'Unknown'})`, inline: false },
       { name: 'Channel', value: `<#${oldMessage.channel.id}> (${oldMessage.channel.id})`, inline: false },
-      { name: 'Old Content', value: oldContent, inline: false },
-      { name: 'New Content', value: newContent, inline: false }
+      { name: 'Old Content', value: oldMessage.content || '*(No content)*', inline: false },
+      { name: 'New Content', value: newMessage.content || '*(No content)*', inline: false }
     )
     .setTimestamp()
     .setFooter({ text: `Message ID: ${oldMessage.id}` });
@@ -53,8 +50,8 @@ module.exports = async (client, oldMessage, newMessage) => {
     `[${new Date().toISOString()}]`,
     `Author: ${oldMessage.author?.tag || 'Unknown'} (${oldMessage.author?.id || 'Unknown'})`,
     `Channel: ${oldMessage.channel.name} (${oldMessage.channel.id})`,
-    `Old Content: ${oldContent}`,
-    `New Content: ${newContent}`,
+    `Old Content: ${oldMessage.content || '(No content)'}`,
+    `New Content: ${newMessage.content || '(No content)'}`,
     `Message ID: ${oldMessage.id}`,
   ].join('\n') + '\n\n';
 

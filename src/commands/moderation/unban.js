@@ -11,36 +11,30 @@ module.exports = {
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
-    await interaction.deferReply();
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
-    // Get the user to be unbanned
-    let targetUser;
     try {
-      targetUser = await client.users.fetch(targetUserId);
-    } catch (error) {
-      await interaction.editReply("User not found.");
-      return;
-    }
-
-    // Attempt to unban the user
-    try {
-      // Unban the user from the server
+      // Unban the user
       await interaction.guild.bans.remove(targetUserId, reason);
 
-      // Reply in the channel to confirm
-      await interaction.editReply(`User ${targetUserId} has been unbanned (${reason})`);
+      // Get the user object for the unbanned user
+      const targetUser = await client.users.fetch(targetUserId);
 
-      // Log the action in the logs channel
+      // Reply publicly in the channel to confirm the unban
+      interaction.channel.send(`User **${targetUser.tag}** (ID: ${targetUserId}) has been **unbanned**. (${reason})`);
+
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#008000') // Green color for unbans
-          .setTitle('User Unbanned')
+          .setColor('#00FF00') // Green color for unban
+          .setTitle('✅User Unbanned')
           .addFields(
-            { name: 'User Unbanned', value: `${targetUserId}`, inline: true },
+            { name: 'User Unbanned', value: `${targetUser.tag} (ID: ${targetUserId})`, inline: true },
             { name: 'Unbanned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
             { name: 'Reason', value: reason, inline: false }
           )
@@ -51,9 +45,12 @@ module.exports = {
       } else {
         console.log("Logs channel not found.");
       }
+
+      // Delete the deferred private reply to stop the "thinking" state
+      await interaction.deleteReply();
     } catch (error) {
       console.log(`There was an error when unbanning: ${error}`);
-      await interaction.editReply("I couldn't unban that user.");
+      await interaction.editReply({ content: "I couldn't unban that user.", ephemeral: true }); // Private error message
     }
   },
 

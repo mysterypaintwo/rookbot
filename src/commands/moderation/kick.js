@@ -11,7 +11,8 @@ module.exports = {
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
-    await interaction.deferReply();
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -21,30 +22,42 @@ module.exports = {
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      await interaction.editReply("User not found.");
+      await interaction.editReply({ content: "User not found.", ephemeral: true }); // Private error message
       return;
     }
 
-    // Get the guild member (to fetch nickname if present)
+    // Check if the user is in the server (guild)
     const guildMember = interaction.guild.members.cache.get(targetUserId);
+    if (!guildMember) {
+      await interaction.editReply({ content: "User is not in the server.", ephemeral: true }); // Private error message
+      return;
+    }
 
     // Attempt to kick the user
     try {
       // Kick the user from the server
       await interaction.guild.members.kick(targetUserId, { reason });
 
-      // Determine the name to display (use nickname if available, otherwise default to tag or username)
+      // Determine the name to display
       const targetUserName = guildMember?.nickname || targetUser.username;
 
-      // Reply in the channel to confirm
-      await interaction.editReply(`User ${targetUserName} (ID: ${targetUserId}) has been kicked (${reason})`);
+      // Reply publicly in the channel to confirm the kick
+      interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **kicked**. (${reason})`);
 
-      // Log the action in the logs channel
+      // Try to DM the user about the kick (private)
+      try {
+        await targetUser.send(`You have been kicked from the ${serverName} server. (${reason})`);
+      } catch (dmError) {
+        console.log(`Failed to DM user: ${dmError.message}`);
+        await interaction.followUp({ content: "I couldn't send the DM to the user. They might have DMs disabled.", ephemeral: true }); // Private follow-up
+      }
+
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#FFA500') // Orange color for kicks
-          .setTitle('User Kicked')
+          .setColor('#FF0000') // Red color for kicks
+          .setTitle('👟💥🏃‍♂️User Kicked')
           .addFields(
             { name: 'User Kicked', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Kicked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
@@ -59,7 +72,7 @@ module.exports = {
       }
     } catch (error) {
       console.log(`There was an error when kicking: ${error}`);
-      await interaction.editReply("I couldn't kick that user.");
+      await interaction.editReply({ content: "I couldn't kick that user.", ephemeral: true }); // Private error message
     }
   },
 

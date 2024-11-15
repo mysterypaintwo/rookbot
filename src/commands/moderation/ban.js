@@ -11,7 +11,8 @@ module.exports = {
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
-    await interaction.deferReply();
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -21,7 +22,7 @@ module.exports = {
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      await interaction.editReply("User not found.");
+      await interaction.editReply({ content: "User not found.", ephemeral: true }); // Private error message
       return;
     }
 
@@ -36,15 +37,23 @@ module.exports = {
       // Determine the name to display (use nickname if available, otherwise default to tag or username)
       const targetUserName = guildMember?.nickname || targetUser.username;
 
-      // Reply in the channel to confirm
-      await interaction.editReply(`User ${targetUserName} (ID: ${targetUserId}) has been banned (${reason})`);
+      // Reply publicly in the channel to confirm the ban
+      interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **banned**. (${reason})`);
 
-      // Log the action in the logs channel
+      // Try to DM the user about the ban (private)
+      try {
+        await targetUser.send(`You have been banned from the ${serverName} server. (${reason})`);
+      } catch (dmError) {
+        console.log(`Failed to DM user: ${dmError.message}`);
+        await interaction.followUp({ content: "I couldn't send the DM to the user. They might have DMs disabled.", ephemeral: true }); // Private follow-up
+      }
+
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for bans
-          .setTitle('User Banned')
+          .setTitle('🔨User Banned')
           .addFields(
             { name: 'User Banned', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Banned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
@@ -59,7 +68,7 @@ module.exports = {
       }
     } catch (error) {
       console.log(`There was an error when banning: ${error}`);
-      await interaction.editReply("I couldn't ban that user.");
+      await interaction.editReply({ content: "I couldn't ban that user.", ephemeral: true }); // Private error message
     }
   },
 

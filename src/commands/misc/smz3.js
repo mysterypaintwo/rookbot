@@ -76,8 +76,12 @@ module.exports = {
         'Hoping SM won\'t require Reverse Boss Order (RBO)!',
         'Who wants to do a hookpush vs Gannon? <:',
         'Let\'s have a beat-up party at Gannon\'s!',
-        'Hoping that Boots hovering won\'t be required this time!'
+        'Hoping that Boots hovering won\'t be required this time!',
+        'Who\'s ready for some silverless Gannon action??',
+        'please no aga1 seed im allergic',
+        'No Charge Beam vs Mother Brain? No problem 👍'
       ];
+
       const randomFooterText =
         footerTexts[Math.floor(Math.random() * footerTexts.length)];
 

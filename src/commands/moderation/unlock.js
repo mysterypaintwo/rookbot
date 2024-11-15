@@ -1,52 +1,40 @@
-const { logsChannel } = require('../../../config.json');
-const { Client, Interaction, PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
+   *
    * @param {Client} client
    * @param {Interaction} interaction
    */
   callback: async (client, interaction) => {
-    await interaction.deferReply();
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
-    // Check if the user has permission to manage channels
-    if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
-      await interaction.editReply("You don't have permission to execute this command.");
-      return;
-    }
-
-    // Get the channel provided by the user in the command options
-    const channel = interaction.options.getChannel('channel');
-
-    // Check if the channel is a text channel
-    if (!channel || channel.type !== 'GUILD_TEXT') {
-      await interaction.editReply("Please specify a valid text channel.");
-      return;
-    }
+    // Loop through all text channels and unlock them
+    const textChannels = interaction.guild.channels.cache.filter(channel => channel.isTextBased());
+    let unlockedChannels = [];
 
     try {
-      // Check if @everyone has permission to send messages in the specified channel
-      const everyonePermission = channel.permissionsFor(interaction.guild.roles.everyone);
-
-      // If @everyone does not have permission to send messages, unlock the channel
-      if (!everyonePermission.has('SEND_MESSAGES')) {
+      // Unlock each text channel
+      for (const channel of textChannels.values()) {
         await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-          SEND_MESSAGES: true, // Unlock the channel by enabling message sending
+          SEND_MESSAGES: null,  // Revert back to the default permission (allow sending messages)
         });
-
-        await interaction.editReply(`The channel ${channel.name} has been unlocked.`);
-      } else {
-        await interaction.editReply(`The channel ${channel.name} is already unlocked.`);
+        unlockedChannels.push(channel.name);
       }
 
-      // Log the action in the logs channel
+      // Reply publicly in the channel to confirm the action
+      interaction.channel.send(`All text channels have been **unlocked**.`);
+
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#00FF00') // Green color for unlocks
-          .setTitle('Channel Unlocked')
+          .setColor('#00FF00') // Green color for unlock
+          .setTitle('Server Unlocked')
           .addFields(
-            { name: 'Channel Unlocked', value: `${targetChannel.name} (${targetChannel.id})`, inline: true },
+            { name: 'Action', value: `All text channels unlocked.`, inline: false },
             { name: 'Unlocked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true }
           )
           .setTimestamp()
@@ -57,21 +45,13 @@ module.exports = {
         console.log("Logs channel not found.");
       }
     } catch (error) {
-      console.log(`Error in unlock command: ${error}`);
-      await interaction.editReply("An error occurred while trying to unlock the channel.");
+      console.log(`There was an error when unlocking the server: ${error}`);
+      await interaction.editReply({ content: "I couldn't unlock the server.", ephemeral: true }); // Private error message
     }
   },
 
   name: 'unlock',
-  description: 'Unlocks a specified channel.',
-  options: [
-    {
-      name: 'channel',
-      description: 'The channel you want to unlock.',
-      type: 7, // Channel type
-      required: true,
-    },
-  ],
+  description: 'Unlocks all text channels in the server.',
   permissionsRequired: [PermissionFlagsBits.ManageChannels],
   botPermissions: [PermissionFlagsBits.ManageChannels],
 };

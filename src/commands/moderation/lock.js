@@ -1,38 +1,36 @@
-const { logsChannel } = require('../../../config.json');
-const { Client, Interaction, PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
+   *
    * @param {Client} client
    * @param {Interaction} interaction
    */
   callback: async (client, interaction) => {
-    await interaction.deferReply();
+    const channel = interaction.options.getChannel('channel');
 
-    // Check if the user has permission to manage channels
-    if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
-      await interaction.editReply("You don't have permission to execute this command.");
-      return;
-    }
+    // Make the initial reply private
+    await interaction.deferReply({ ephemeral: true });
 
-    const channel = interaction.channel; // The channel where the command is called
-
+    // Attempt to lock the channel
     try {
-      // Lock the channel by removing the SEND_MESSAGES permission for @everyone
+      // Lock the channel by denying the SEND_MESSAGES permission for @everyone
       await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-        SEND_MESSAGES: false, // Lock the channel by denying message sending
+        SEND_MESSAGES: false,
       });
 
-      await interaction.editReply(`The channel ${channel.name} has been locked.`);
+      // Reply publicly in the channel to confirm the action
+      interaction.channel.send(`Channel **${channel.name}** has been **locked**.`);
 
-      // Log the action in the logs channel
+      // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
-          .setColor('#FF0000') // Red color for locks
+          .setColor('#FF0000') // Red color for lock
           .setTitle('Channel Locked')
           .addFields(
-            { name: 'Channel Locked', value: `${targetChannel.name} (${targetChannel.id})`, inline: true },
+            { name: 'Channel Locked', value: `${channel.name}`, inline: true },
             { name: 'Locked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true }
           )
           .setTimestamp()
@@ -43,13 +41,21 @@ module.exports = {
         console.log("Logs channel not found.");
       }
     } catch (error) {
-      console.log(`Error in lock command: ${error}`);
-      await interaction.editReply("An error occurred while trying to lock the channel.");
+      console.log(`There was an error when locking the channel: ${error}`);
+      await interaction.editReply({ content: "I couldn't lock the channel.", ephemeral: true }); // Private error message
     }
   },
 
   name: 'lock',
-  description: 'Locks the current channel.',
+  description: 'Locks a channel, preventing anyone from sending messages.',
+  options: [
+    {
+      name: 'channel',
+      description: 'The channel to lock.',
+      type: ApplicationCommandOptionType.Channel,
+      required: true,
+    },
+  ],
   permissionsRequired: [PermissionFlagsBits.ManageChannels],
   botPermissions: [PermissionFlagsBits.ManageChannels],
 };
