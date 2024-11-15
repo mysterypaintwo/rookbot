@@ -67,6 +67,16 @@ module.exports = {
         'Hoping we\'ll get a sword within the first hour!',
         'Hoping we\'ll find Morph Ball within the first hour!',
         'Hoping we\'ll find Morph Bombs before Power Bombs!',
+        'Hoping that a Progressive Suit won\'t be on pedestal!',
+        'Hoping that a Progressive Glove won\'t be at Lumberjack Cave!',
+        'Hoping that Morph Ball will be in Blind\'s Hut!',
+        'Discount bombs at King Zora! Only 500 Rupees!',
+        'Hoping Gravity Suit won\'t be at Lumberjack Cave!',
+        'Praying we won\'t have to do Suitless Maridia!',
+        'Hoping SM won\'t require Reverse Boss Order (RBO)!',
+        'Who wants to do a hookpush vs Gannon? <:',
+        'Let\'s have a beat-up party at Gannon\'s!',
+        'Hoping that Boots hovering won\'t be required this time!'
       ];
       const randomFooterText =
         footerTexts[Math.floor(Math.random() * footerTexts.length)];
