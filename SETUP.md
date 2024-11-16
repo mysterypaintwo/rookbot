@@ -1,6 +1,6 @@
 # Setting Up rookbot on Raspberry Pi 4
 
-This guide walks you through setting up and running rookbot on a Raspberry Pi 4 using Node.js, PM2, and GitHub. It assumes you're coding rookbot from your PC and pushing it to a private, collaborative GitHub repository.
+This guide walks you through setting up and running rookbot on a Raspberry Pi 4 using Node.js, PM2, and GitHub.
 
 ## Step 1: Install and Set Up Raspberry Pi OS
 
