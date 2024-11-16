@@ -63,7 +63,7 @@ module.exports = async (client, deletedMessage) => {
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `Author: ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,
-      `Channel: ${deletedMessage.channel.name}`,
+      `Channel: #${deletedMessage.channel.name}`,
       `Content: ${deletedMessage.content}`,
       `Message ID: ${deletedMessage.id}`,
     ].join('\n') + '\n\n';
