@@ -1,0 +1,167 @@
+# Setting Up Discord Bot on Raspberry Pi 4
+
+This guide walks you through setting up and running a Discord bot on a Raspberry Pi 4 using Node.js, PM2, and GitHub. It assumes you're coding the bot from your PC and pushing it to a private, collaborative GitHub repository.
+
+## Step 1: Install and Set Up Raspberry Pi OS
+
+1. **Download Raspberry Pi OS**:
+   - Visit the [Raspberry Pi OS website](https://www.raspberrypi.com/software/) and download **Raspberry Pi OS Lite** (minimal, no desktop) or Full version if you prefer a GUI.
+
+2. **Flash the OS to an SD Card**:
+   - Use **[Raspberry Pi Imager](https://www.raspberrypi.com/software/)** to flash the OS onto a microSD card. During this process:
+     - Go to **Advanced Options** (press `Ctrl+Shift+X` in the Imager) to:
+       - Enable SSH.
+       - Set the username and password.
+       - Configure Wi-Fi (if you’re not using Ethernet).
+
+3. **Insert the SD Card and Boot**:
+   - Insert the SD card into your Raspberry Pi, connect it to power, and let it boot.
+   - If using SSH, find your Pi’s IP address (check your router or use a tool like `arp -a`) and connect with:
+     ```bash
+     ssh <username>@<pi-ip-address>
+     ```
+
+
+---
+
+## Step 2: Update and Install Dependencies
+
+1. **Update the System**:
+   - Run:
+     ```bash
+     sudo apt update && sudo apt upgrade -y
+     ```
+
+2. **Install Node.js**:
+   - Add the Node.js repository:
+     ```bash
+     curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+     ```
+   - Install Node.js and npm:
+     ```bash
+     sudo apt install -y nodejs
+     ```
+
+3. **Install Git**:
+   - Run:
+     ```bash
+     sudo apt install -y git
+     ```
+
+4. **Install PM2**:
+   - PM2 is a process manager to keep your bot running:
+     ```bash
+     sudo npm install -g pm2
+     ```
+
+---
+
+## Step 3: Clone Your Repository
+
+1. **Navigate to a Working Directory**:
+   - For example, in your home folder:
+     ```bash
+     cd ~
+     ```
+
+2. **Clone Your Bot Repository**:
+   - Clone your GitHub repository:
+     ```bash
+     git clone https://github.com/mysterypaintwo/rookbot.git
+     ```
+
+3. **Navigate to the Bot’s Folder**:
+   ```bash
+   cd rookbot
+   ```
+
+4. **Install Bot Dependencies**:
+- Assuming you use a package.json file for dependencies, run:
+    ```bash
+    npm install
+    ```
+
+---
+
+## Step 4: Set Up Environment Variables
+
+1. **Create a `.env` File**:
+   - If your bot uses sensitive tokens, create a `.env` file in the project directory:
+     ```bash
+     nano .env
+     ```
+   - Add your variables (e.g.):
+     ```env
+     DISCORD_TOKEN=the_bot_token
+     ```
+   - Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+2. **Ensure Your Code Loads the `.env` File**:
+   - Use the `dotenv` library in your bot:
+     ```bash
+     npm install dotenv
+     ```
+
+---
+
+## Step 5: Run and Test the Bot
+
+1. **Run the Bot Temporarily**:
+   - Start the bot to test:
+     ```bash
+     node bot.js
+     ```
+   - Replace `bot.js` with your bot’s entry file.
+
+2. **Run the Bot Persistently with PM2**:
+   - Start the bot with PM2:
+     ```bash
+     pm2 start bot.js --name rookbot
+     ```
+   - Ensure it starts on boot:
+     ```bash
+     pm2 startup
+     pm2 save
+     ```
+
+3. **Check Bot Logs**:
+   - View logs if there’s an issue:
+     ```bash
+     pm2 logs rookbot
+     ```
+
+---
+
+## Step 6: Push Code Changes from PC to Raspberry Pi
+
+1. **Make Changes on Your PC**:
+   - Commit and push updates to the GitHub repository:
+     ```bash
+     git add .
+     git commit -m "Updated bot feature"
+     git push
+     ```
+
+2. **Pull Changes on the Raspberry Pi**:
+   - On the Raspberry Pi, navigate to your bot directory and pull updates:
+     ```bash
+     cd ~/rookbot
+     git pull
+     ```
+
+3. **Restart the Bot**:
+   - Restart the bot with PM2:
+     ```bash
+     pm2 restart rookbot
+     ```
+
+---
+
+# Step 7: Monitor and Maintain
+
+- Use `pm2 list` to monitor running processes.
+- Ensure your Raspberry Pi is in a stable environment with proper cooling and power supply for 24/7 operation.
+
+---
+
+Now you have each step in a separate markdown file. You can upload these individual files to your GitHub repository and use them as step-by-step guides.
