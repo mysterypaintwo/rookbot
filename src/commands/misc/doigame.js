@@ -1,4 +1,4 @@
-const { downloadsChannel, supportPost, serverGameName } = require('../../../config.json');
+const { downloadsChannel, supportPost, serverGameName_base64encoded } = require('../../../config.json');
 const {
   Client,
   Interaction,
@@ -6,15 +6,15 @@ const {
   EmbedBuilder
 } = require('discord.js');
 
+// Decode the base64 string
+const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+
 module.exports = {
   callback: async (client, interaction) => {
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
 
     try {
-      // Fetch the channel using the ID from the config
-      //const dlChannel = await client.channels.fetch(downloadsChannel);
-      
       // Create an embed message
       const embed = new EmbedBuilder()
         .setColor('#00FF00') // Green color for positive action
@@ -36,7 +36,7 @@ module.exports = {
   },
 
   name: 'doigame',
-  description: `Sends a message with download info for *${serverGameName}*.`,
+  description: `Sends a message with download info for *${serverGameName}*.`, // Use decoded string here
   permissionsRequired: [],
   botPermissions: [],
 };

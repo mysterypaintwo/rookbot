@@ -1,8 +1,0 @@
-{
-    // all of these // comments should be removed, and then rename config_example.json to config.json
-    "testServer": "1111", // server id goes here
-    "devs": [
-        "888",  // whitelisted user id
-        "999"   // another discord user id
-    ]
-}
