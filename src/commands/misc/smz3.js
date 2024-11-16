@@ -123,7 +123,6 @@ module.exports = {
         'Hoping we\'ll find Morph Bombs before Power Bombs!',
         'Hoping that Blind\'s pun will make us laugh today!',
         'Hoping that [MAJOR_ITEM] will be in Blind\'s Hut!',
-        'Discount bombs at King Zora! Only 500 Rupees!',
         'Praying we won\'t have to do Suitless Maridia!',
         'Hoping SM won\'t require Reverse Boss Order (RBO)!',
         'Who wants to do a hookpush vs Ganon? <:',
