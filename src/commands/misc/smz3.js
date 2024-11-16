@@ -16,79 +16,133 @@ module.exports = {
   /**
    * @param {import('discord.js').Interaction} interaction
    */
-  callback: async (client, interaction) => {
-    // Ensure the command is used in the correct channel
-    if (interaction.channelId !== multiplayerSchedulingChanID) {
-      return await interaction.reply({
-        content: `This command can only be used in <#${multiplayerSchedulingChanID}>.`,
-        ephemeral: true, // Makes the reply visible only to the user who invoked the command
-      });
-    }
+  execute: async (client, interaction) => {
+
 
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
 
     const sahaBot = client.users.cache.get(sahaBotUserID);
 
-    if (!sahaBot) {
-      await interaction.reply({
-        content: 'Sahasrala bot not found on this server.',
-        ephemeral: true,
-      });
-      return;
-    }
 
     await interaction.deferReply({ ephemeral: true }); // Defer reply silently
 
     try {
-      // Send `/smz3 preset: normal` to Sahasrala bot
-      await sahaBot.send('/smz3 preset: normal');
 
       // Generate random group name
       const randNum = Math.floor(Math.random() * 10000000001);
       const groupName = `zdoi${randNum}`;
 
-      // Get the current timestamp and round it to the nearest upcoming 15-minute interval
+      // Get the current timestamp and add 15 minutes of prep time
       const now = new Date();
-      const roundedTime = new Date(
-        Math.ceil(now.getTime() / (15 * 60 * 1000)) * (15 * 60 * 1000)
-      );
-      const timestamp = `<t:${Math.floor(roundedTime.getTime() / 1000)}:F>`;
+      const prepTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+      // Add the prep time to the current time
+      const adjustedTime = new Date(now.getTime() + prepTime);
+
+      // Format the timestamp
+      const timestamp = `<t:${Math.floor(adjustedTime.getTime() / 1000)}:F>`;
+
+      // Define the Major Items
+      const majorItems = [
+        'Morph Ball',
+        'Pegasus Boots',
+        'Fire Rod',
+        'Hookshot',
+        'Moon Pearl',
+        'Flippers',
+        'Hammer',
+        'Flute',
+        'Magic Mirror',
+        'A Progressive Bow',
+        'A Progressive Sword',
+        'A Progressive Glove',
+        'Lamp',
+        'Half-Magic',
+        'Morph Ball',
+        'Morph Bombs',
+        'Charge Beam',
+        'Speed Booster',
+        'a Progressive Suit',
+        'Hi-Jump Boots',
+        'Varia Suit',
+        'Gravity Suit',
+        'Space Jump',
+        'Plasma Beam',
+        'Screw Attack',
+        'Ice Beam'
+      ]
+
+      const uselessItems = [
+        '3 Bombs',
+        'greg',
+        'Validation Arrow',
+        '20 Rupees',
+        '1 Rupee',
+        '5 Rupees',
+        'Blue-merang',
+        'Mushroom',
+        'Shovel',
+        'Cane of Byrna',
+        'Magic Cape',
+        'Spring Ball',
+        'Spazer Beam',
+        'Grapple Beam'
+      ]
 
       // Random footer text
       const footerTexts = [
         'Good luck out there, adventurer!',
         'May the RNG be ever in your favor!',
-        'Don\'t forget to grab the Moon Pearl!',
+        'I wonder who we\'ll be microwaving today~',
+        'Don\'t forget to grab [MAJOR_ITEM]!',
         'Watch out for those pesky Lynels!',
         'Hookshot, Bombs, Boots, Go!',
-        'Hoping Fire Rod won\'t be on pedestal!',
-        'Hoping Pegasus Boots won\'t be at library!',
+        'Hoping [MAJOR_ITEM] won\'t be on Pedestal!',
+        'Hoping [MAJOR_ITEM] won\'t be at Library!',
+        'Hoping [MAJOR_ITEM] won\'t be at Lumberjack Cave!',
+        'Hoping [MAJOR_ITEM] won\'t be at Mimic Cave!',
+        'Hoping [MAJOR_ITEM] won\'t be at Graveyard Ledge!',
         'Hoping we\'ll get a sword within the first hour!',
-        'Hoping we\'ll find Morph Ball within the first hour!',
+        'Hoping we\'ll find [MAJOR_ITEM] within the first hour!',
         'Hoping we\'ll find Morph Bombs before Power Bombs!',
-        'Hoping that a Progressive Suit won\'t be on pedestal!',
-        'Hoping that a Progressive Glove won\'t be at Lumberjack Cave!',
-        'Hoping that Morph Ball will be in Blind\'s Hut!',
+        'Hoping that Blind\'s pun will make us laugh today!',
+        'Hoping that [MAJOR_ITEM] will be in Blind\'s Hut!',
         'Discount bombs at King Zora! Only 500 Rupees!',
-        'Hoping Gravity Suit won\'t be at Lumberjack Cave!',
         'Praying we won\'t have to do Suitless Maridia!',
         'Hoping SM won\'t require Reverse Boss Order (RBO)!',
-        'Who wants to do a hookpush vs Gannon? <:',
-        'Let\'s have a beat-up party at Gannon\'s!',
+        'Who wants to do a hookpush vs Ganon? <:',
+        'Let\'s have a beat-up party at Ganon\'s!',
         'Hoping that Boots hovering won\'t be required this time!',
-        'Who\'s ready for some silverless Gannon action??',
+        'Who\'s ready for some silverless Ganon action??',
         'please no aga1 seed im allergic',
         'No Charge Beam vs Mother Brain? No problem 👍',
-        'Discount 5 Rupees at King Zora! Only 500 Rupees!',
-        'Don\'t worry—There\'ll be at least one sword outside of Gannon\'s Tower!',
-        'Flute on Pedestal? No problem—just hike over the mountain!',
+        'Discount [USELESS_ITEM] at King Zora! Only 500 Rupees!',
+        'Don\'t worry—There\'ll be at least one sword outside of Ganon\'s Tower!',
+        '[MAJOR_ITEM] on Pedestal? No problem—just hike over the mountain!',
         'Why run when you can clip through instead? 😎'
       ];
 
-      const randomFooterText =
-        footerTexts[Math.floor(Math.random() * footerTexts.length)];
+      // Select a random footer text
+      var randomFooterText = footerTexts[Math.floor(Math.random() * footerTexts.length)];
 
+      // Select a random major item
+      const randomMajorItem = majorItems[Math.floor(Math.random() * majorItems.length)];
+      const randomUselessItem = uselessItems[Math.floor(Math.random() * uselessItems.length)];
+      
+      // Modify the major item if it starts with "A " and if it's not at the beginning of the sentence
+      let formattedMajorItem = randomMajorItem;
+      if (formattedMajorItem.startsWith('A ') && randomFooterText.indexOf('[MAJOR_ITEM]') > 0) {
+        // Only lowercase the first letter if '[MAJOR_ITEM]' is in the middle
+        formattedMajorItem = formattedMajorItem.charAt(0).toLowerCase() + formattedMajorItem.slice(1);
+      }
+
+      // Replace '[MAJOR_ITEM]' with the modified major item
+      randomFooterText = randomFooterText.replace('[MAJOR_ITEM]', formattedMajorItem);
+
+      // Replace '[USELESS_ITEM]' with the modified major item
+      randomFooterText = randomFooterText.replace('[USELESS_ITEM]', randomUselessItem);
+      
       // Create the embed
       const embed = new EmbedBuilder()
         .setColor('#00FF00')
