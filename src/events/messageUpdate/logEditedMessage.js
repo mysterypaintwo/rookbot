@@ -82,7 +82,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `Author: ${newMessage.author.tag} (ID: ${newMessage.author.id})`,
-      `Channel: ${newMessage.channel.name}`,
+      `Channel: #${newMessage.channel.name}`,
       `Old Content: ${oldContent}`,
       `New Content: ${newContent}`,
       `Message ID: ${newMessage.id}`,
