@@ -49,7 +49,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
      ```
 
 4. **Install PM2**:
-   - PM2 is a process manager to keep your bot running:
+   - PM2 is a process manager to keep rookbot running:
      ```bash
      sudo npm install -g pm2
      ```
@@ -86,7 +86,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 ## Step 4: Set Up Environment Variables
 
 1. **Create a `.env` File**:
-   - If your bot uses sensitive tokens, create a `.env` file in the project directory:
+   - If rookbot uses sensitive tokens, create a `.env` file in the project directory:
      ```bash
      nano .env
      ```
@@ -100,7 +100,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
    - Save and exit (Ctrl+O, Enter, Ctrl+X).
 
 2. **Ensure Your Code Loads the `.env` File**:
-   - Use the `dotenv` library in your bot:
+   - Use the `dotenv` library in rookbot:
      ```bash
      npm install dotenv
      ```
