@@ -79,7 +79,11 @@ module.exports = {
         'Hoping that Boots hovering won\'t be required this time!',
         'Who\'s ready for some silverless Gannon action??',
         'please no aga1 seed im allergic',
-        'No Charge Beam vs Mother Brain? No problem 👍'
+        'No Charge Beam vs Mother Brain? No problem 👍',
+        'Discount 5 Rupees at King Zora! Only 500 Rupees!',
+        'Don\'t worry—There\'ll be at least one sword outside of Gannon\'s Tower!',
+        'Flute on Pedestal? No problem—just hike over the mountain!',
+        'Why run when you can clip through instead? 😎'
       ];
 
       const randomFooterText =
