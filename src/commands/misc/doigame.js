@@ -10,7 +10,7 @@ const {
 const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
 
 module.exports = {
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
 

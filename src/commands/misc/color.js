@@ -15,7 +15,7 @@ module.exports = {
   /**
    * @param {import('discord.js').Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase();
 
     // Validate hex string

@@ -7,7 +7,7 @@ module.exports = {
   /**
    * @param {import('discord.js').Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Function to generate a random rainbow color in hexadecimal format
     const getRandomRainbowColor = () => {
       const hue = Math.floor(Math.random() * 360); // Random hue value (0-360)

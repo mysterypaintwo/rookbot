@@ -6,7 +6,7 @@ module.exports = {
    * @param {Client} client 
    * @param {Interaction} interaction 
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     const targetChannel = interaction.options.getChannel('channel'); // Get the target channel
     const message = interaction.options.getString('message'); // Get the message content
 

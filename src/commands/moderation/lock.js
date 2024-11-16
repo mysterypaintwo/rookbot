@@ -7,7 +7,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     const channel = interaction.options.getChannel('channel');
 
     // Make the initial reply private

@@ -6,7 +6,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Defer the reply to give the bot time to process the request
     await interaction.deferReply();
 

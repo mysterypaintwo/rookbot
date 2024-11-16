@@ -6,7 +6,7 @@ module.exports = {
     // options: Object[],
     // deleted: Boolean,
   
-    callback: async (client, interaction) => {
+    execute: async (client, interaction) => {
         await interaction.deferReply();
         const reply = await interaction.fetchReply();
 

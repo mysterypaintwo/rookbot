@@ -16,7 +16,7 @@ module.exports = {
   /**
    * @param {import('discord.js').Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     const expression = interaction.options.getString('expression');
 
     try {

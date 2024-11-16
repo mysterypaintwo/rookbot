@@ -5,7 +5,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Get the user mentioned in the command
     const targetUserId = interaction.options.get('target-user').value;
 

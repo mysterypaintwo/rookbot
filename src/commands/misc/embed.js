@@ -9,7 +9,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Acknowledge the interaction immediately without sending a reply yet
     await interaction.deferReply(); // This avoids the bot "waiting for a response"
 

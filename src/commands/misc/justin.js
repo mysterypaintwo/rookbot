@@ -9,7 +9,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Acknowledge the interaction
     await interaction.deferReply();
 

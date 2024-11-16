@@ -22,7 +22,7 @@ module.exports = {
         }
     ],
 
-    callback: async (client, interaction) => {
+    execute: async (client, interaction) => {
         const sides = interaction.options.getInteger('sides');
         const count = interaction.options.getInteger('count');
         

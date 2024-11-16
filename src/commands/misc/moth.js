@@ -7,7 +7,7 @@ module.exports = {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  callback: async (client, interaction) => {
+  execute: async (client, interaction) => {
     // Path to the local video file
     const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4');
 
