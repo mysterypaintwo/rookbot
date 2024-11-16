@@ -13,4 +13,12 @@ const client = new Client({
 
 eventHandler(client);
 
-client.login(process.env.TOKEN);
+if (process.env.NODE_ENV === 'development') {
+  // Run the development bot logic
+  console.log('Running in development mode');
+  client.login(process.env.TOKEN_DEV);
+} else {
+  // Run the main bot logic
+  console.log('Running in main mode');
+  client.login(process.env.TOKEN);
+}
