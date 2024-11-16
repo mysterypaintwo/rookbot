@@ -75,8 +75,8 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
    cd rookbot
    ```
 
-4. **Install Bot Dependencies**:
-- Assuming you use a package.json file for dependencies, run:
+4. **Install the Dependencies**:
+- Run:
     ```bash
     npm install
     ```
