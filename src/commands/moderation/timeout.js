@@ -48,7 +48,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF8800') // Orange color for timeout
-          .setTitle('⏰User Timeout')
+          .setTitle('⏰ User Timeout')
           .addFields(
             { name: 'User', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Timeout Duration', value: `${timeoutDuration} seconds`, inline: true },

@@ -32,7 +32,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#00FF00') // Green color for unban
-          .setTitle('✅User Unbanned')
+          .setTitle('✅ User Unbanned')
           .addFields(
             { name: 'User Unbanned', value: `${targetUser.tag} (ID: ${targetUserId})`, inline: true },
             { name: 'Unbanned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },

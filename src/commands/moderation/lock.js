@@ -28,7 +28,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for lock
-          .setTitle('Channel Locked')
+          .setTitle('🔒 Channel Locked')
           .addFields(
             { name: 'Channel Locked', value: `${channel.name}`, inline: true },
             { name: 'Locked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true }

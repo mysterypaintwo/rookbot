@@ -53,7 +53,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for bans
-          .setTitle('🔨User Banned')
+          .setTitle('🔨 User Banned')
           .addFields(
             { name: 'User Banned', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Banned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },

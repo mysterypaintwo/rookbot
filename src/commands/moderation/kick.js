@@ -57,7 +57,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for kicks
-          .setTitle('👟💥🏃‍♂️User Kicked')
+          .setTitle('👟💥🏃‍♂️ User Kicked')
           .addFields(
             { name: 'User Kicked', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Kicked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },

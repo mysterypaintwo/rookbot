@@ -1,57 +1,56 @@
-const { logsChannel } = require('../../../config.json'); // Import logChannel ID
-const { EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
+const { logsChannel } = require('../../../config.json'); // Import the log channel ID
 
 /**
  * Logs deleted messages from the server.
  * @param {import('discord.js').Client} client
- * @param {import('discord.js').Message} message
+ * @param {import('discord.js').Message} deletedMessage
  */
-module.exports = async (client, message) => {
-  // Ignore messages from bots
-  if (message.author?.bot) return;
+module.exports = async (client, deletedMessage) => {
+  try {
+    // If the message is partial, fetch the full message (if possible)
+    if (deletedMessage.partial) {
+      deletedMessage = await deletedMessage.fetch();
+    }
 
-  // Ensure the message was from a server
-  const guild = message.guild;
-  if (!guild) return;
+    // Skip logging system messages or messages with no content
+    if (deletedMessage.system || !deletedMessage.content) {
+      return;
+    }
 
-  // Fetch the log channel using its ID
-  const logChannelObject = guild.channels.cache.get(logsChannel);
+    // Fetch the log channel using the logsChannel ID
+    const logChannel = client.channels.cache.get(logsChannel);
 
-  // Prepare the log embed
-  const embed = new EmbedBuilder()
-    .setColor('#FF0000') // Red for message deletion
-    .setTitle('🗑️ Message Deleted')
-    .setThumbnail(message.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
-    .addFields(
-      { name: 'Author', value: `${message.author?.displayName || 'Unknown'} / ${message.author?.tag || 'Unknown'} (${message.author?.id || 'Unknown'})`, inline: false },
-      { name: 'Channel', value: `<#${message.channel.id}> (${message.channel.id})`, inline: false },
-      { name: 'Message Content', value: message.content || '*(No content)*', inline: false }
-    )
-    .setTimestamp()
-    .setFooter({ text: `Message ID: ${message.id}` });
+    if (!logChannel || !logChannel.isTextBased()) {
+      console.warn('Log channel not found or is not text-based.');
+      return;
+    }
 
-  // Send the embed to the log channel, if found and valid
-  if (logChannelObject?.isTextBased()) {
-    await logChannelObject.send({ embeds: [embed] });
-  } else {
-    console.warn(
-      'Log channel not found or not a text-based channel. Logging to console instead.'
-    );
-    console.log(embed.toJSON());
+    // Construct log message
+    const logEmbed = {
+      color: 0xff0000,
+      title: '🚮 Message Deleted',
+      description: `A message was deleted in <#${deletedMessage.channelId}>.`,
+      fields: [
+        {
+          name: 'Author',
+          value: `<@${deletedMessage.author.id}> (${deletedMessage.author.tag})`,
+          inline: false,
+        },
+        {
+          name: 'Content',
+          value: deletedMessage.content || '*No content*',
+          inline: false,
+        },
+      ],
+      footer: {
+        text: `Message ID: ${deletedMessage.id}`,
+      },
+      timestamp: new Date(),
+    };
+
+    // Send the log embed to the log channel
+    await logChannel.send({ embeds: [logEmbed] });
+  } catch (error) {
+    console.error('Error logging deleted message:', error);
   }
-
-  // Optional: Save the deleted message to a log file
-  const logFilePath = path.join(__dirname, '..', '..', 'deletedMessages.log');
-  const logEntry = [
-    `[${new Date().toISOString()}]`,
-    `Author: ${message.author?.tag || 'Unknown'} (${message.author?.id || 'Unknown'})`,
-    `Channel: ${message.channel.name} (${message.channel.id})`,
-    `Content: ${message.content || '(No content)'}`,
-    `Message ID: ${message.id}`,
-  ].join('\n') + '\n\n';
-
-  // Append the log entry to the file
-  fs.appendFileSync(logFilePath, logEntry, 'utf8');
 };

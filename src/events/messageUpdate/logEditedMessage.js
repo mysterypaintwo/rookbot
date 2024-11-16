@@ -10,51 +10,87 @@ const path = require('path');
  * @param {import('discord.js').Message} newMessage
  */
 module.exports = async (client, oldMessage, newMessage) => {
-  // Ignore messages from bots or if content hasn't changed
-  if (oldMessage.author?.bot || oldMessage.content === newMessage.content) return;
+  try {
+    // Check for invalid or undefined data
+    if (!newMessage) {
+      console.warn('MessageUpdate event received invalid data:', { oldMessage, newMessage });
+      return;
+    }
 
-  // Ensure the message was from a server
-  const guild = oldMessage.guild;
-  if (!guild) return;
+    // Ensure the message is in a guild and not from a bot
+    if (!newMessage.guild) {
+      console.warn('MessageUpdate occurred outside of a guild:', newMessage);
+      return;
+    }
+    if (newMessage.author?.bot) return;
 
-  // Fetch the log channel using its ID
-  const logChannelObject = guild.channels.cache.get(logsChannel);
+    // Fetch full messages if necessary
+    if (oldMessage.partial) {
+      try {
+        oldMessage = await oldMessage.fetch();
+      } catch (err) {
+        console.error('Failed to fetch old message:', err);
+        return;
+      }
+    }
 
-  // Prepare the log embed
-  const embed = new EmbedBuilder()
-    .setColor('#FFA500') // Orange for message updates
-    .setTitle('✏️ Message Edited')
-    .setThumbnail(oldMessage.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
-    .addFields(
-      { name: 'Author', value: `${oldMessage.author?.username || 'Unknown'} / ${oldMessage.author?.tag || 'Unknown'} (${oldMessage.author?.id || 'Unknown'})`, inline: false },
-      { name: 'Channel', value: `<#${oldMessage.channel.id}> (${oldMessage.channel.id})`, inline: false },
-      { name: 'Old Content', value: oldMessage.content || '*(No content)*', inline: false },
-      { name: 'New Content', value: newMessage.content || '*(No content)*', inline: false }
-    )
-    .setTimestamp()
-    .setFooter({ text: `Message ID: ${oldMessage.id}` });
+    if (newMessage.partial) {
+      try {
+        newMessage = await newMessage.fetch();
+      } catch (err) {
+        console.error('Failed to fetch new message:', err);
+        return;
+      }
+    }
 
-  // Send the embed to the log channel, if found and valid
-  if (logChannelObject?.isTextBased()) {
-    await logChannelObject.send({ embeds: [embed] });
-  } else {
-    console.warn(
-      'Log channel not found or not a text-based channel. Logging to console instead.'
-    );
-    console.log(embed.toJSON());
+    // Handle cases where the old or new content is unavailable
+    const oldContent = oldMessage.content ?? '*(Content unavailable)*';
+    const newContent = newMessage.content ?? '*(Content unavailable)*';
+
+    // Skip if the content hasn't changed
+    if (oldContent === newContent) {
+      console.warn('No content change detected.');
+      return;
+    }
+
+    // Fetch the log channel using its ID
+    const logChannelObject = newMessage.guild.channels.cache.get(logsChannel);
+
+    // Prepare the log embed
+    const embed = new EmbedBuilder()
+      .setColor('#FFA500') // Orange for message updates
+      .setTitle('✏️ Message Edited')
+      .setThumbnail(newMessage.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
+      .addFields(
+        { name: 'Author', value: `<@${newMessage.author.id}> (${newMessage.author.tag})`, inline: false },
+        { name: 'Channel', value: `<#${newMessage.channel.id}> (${newMessage.channel.id})`, inline: false },
+        { name: 'Old Content', value: oldContent, inline: false },
+        { name: 'New Content', value: newContent, inline: false }
+      )
+      .setTimestamp()
+      .setFooter({ text: `Message ID: ${newMessage.id}` });
+
+    // Send the embed to the log channel, if found and valid
+    if (logChannelObject?.isTextBased()) {
+      await logChannelObject.send({ embeds: [embed] });
+    } else {
+      console.warn('Log channel not found or not a text-based channel.');
+    }
+
+    // Optional: Save the edited message to a log file
+    const logFilePath = path.join(__dirname, '..', '..', 'editedMessages.log');
+    const logEntry = [
+      `[${new Date().toISOString()}]`,
+      `Author: <@${newMessage.author.id}> (${newMessage.author.tag})`,
+      `Channel: ${newMessage.channel.name} (${newMessage.channel.id})`,
+      `Old Content: ${oldContent}`,
+      `New Content: ${newContent}`,
+      `Message ID: ${newMessage.id}`,
+    ].join('\n') + '\n\n';
+
+    // Append the log entry to the file
+    fs.appendFileSync(logFilePath, logEntry, 'utf8');
+  } catch (error) {
+    console.error('Error in logEditedMessage handler:', error);
   }
-
-  // Optional: Save the edited message to a log file
-  const logFilePath = path.join(__dirname, '..', '..', 'editedMessages.log');
-  const logEntry = [
-    `[${new Date().toISOString()}]`,
-    `Author: ${oldMessage.author?.tag || 'Unknown'} (${oldMessage.author?.id || 'Unknown'})`,
-    `Channel: ${oldMessage.channel.name} (${oldMessage.channel.id})`,
-    `Old Content: ${oldMessage.content || '(No content)'}`,
-    `New Content: ${newMessage.content || '(No content)'}`,
-    `Message ID: ${oldMessage.id}`,
-  ].join('\n') + '\n\n';
-
-  // Append the log entry to the file
-  fs.appendFileSync(logFilePath, logEntry, 'utf8');
 };

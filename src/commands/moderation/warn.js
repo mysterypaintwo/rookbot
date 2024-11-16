@@ -43,7 +43,7 @@ module.exports = {
 
       // Try to DM the user about the warning (private)
       try {
-        await targetUser.send(`You have been warned in the ${serverName} server. (${reason})`);
+        await targetUser.send(`⚠️ You have been warned in the ${serverName} server. (${reason})`);
       } catch (dmError) {
         console.log(`Failed to DM user: ${dmError.message}`);
         await interaction.followUp({ content: "I couldn't send the DM to the user. They might have DMs disabled.", ephemeral: true }); // Private follow-up
@@ -54,7 +54,7 @@ module.exports = {
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF8C00') // Orange color for warnings
-          .setTitle('User Warned')
+          .setTitle('⚠️ User Warned')
           .addFields(
             { name: 'User Warned', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
             { name: 'Warned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
