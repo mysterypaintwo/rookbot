@@ -112,14 +112,13 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
 1. **Run the Bot Temporarily**:
    - Start the bot to test:
      ```bash
-     node bot.js
+     node src/index.js
      ```
-   - Replace `bot.js` with your bot’s entry file.
 
 2. **Run the Bot Persistently with PM2**:
    - Start the bot with PM2:
      ```bash
-     pm2 start bot.js --name rookbot
+     pm2 start src/index.js --name rookbot
      ```
    - Ensure it starts on boot:
      ```bash
