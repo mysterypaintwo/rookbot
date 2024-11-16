@@ -1,6 +1,6 @@
-# Setting Up Discord Bot on Raspberry Pi 4
+# Setting Up rookbot on Raspberry Pi 4
 
-This guide walks you through setting up and running a Discord bot on a Raspberry Pi 4 using Node.js, PM2, and GitHub. It assumes you're coding the bot from your PC and pushing it to a private, collaborative GitHub repository.
+This guide walks you through setting up and running rookbot on a Raspberry Pi 4 using Node.js, PM2, and GitHub.
 
 ## Step 1: Install and Set Up Raspberry Pi OS
 
@@ -12,11 +12,11 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      - Go to **Advanced Options** (press `Ctrl+Shift+X` in the Imager) to:
        - Enable SSH.
        - Set the username and password.
-       - Configure Wi-Fi (if you’re not using Ethernet).
+       - Configure Wi-Fi (if you're not using Ethernet).
 
 3. **Insert the SD Card and Boot**:
    - Insert the SD card into your Raspberry Pi, connect it to power, and let it boot.
-   - If using SSH, find your Pi’s IP address (check your router or use a tool like `arp -a`) and connect with:
+   - If using SSH, find your Pi's IP address (check your router or use a tool like `arp -a`) and connect with:
      ```bash
      ssh <username>@<pi-ip-address>
      ```
@@ -49,14 +49,14 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      ```
 
 4. **Install PM2**:
-   - PM2 is a process manager to keep your bot running:
+   - PM2 is a process manager to keep rookbot running:
      ```bash
      sudo npm install -g pm2
      ```
 
 ---
 
-## Step 3: Clone Your Repository
+## Step 3: Clone the rookbot Repository
 
 1. **Navigate to a Working Directory**:
    - For example, in your home folder:
@@ -64,19 +64,19 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      cd ~
      ```
 
-2. **Clone Your Bot Repository**:
+2. **Clone the rookbot Repository**:
    - Clone your GitHub repository:
      ```bash
      git clone https://github.com/mysterypaintwo/rookbot.git
      ```
 
-3. **Navigate to the Bot’s Folder**:
+3. **Navigate to rookbot's Folder**:
    ```bash
    cd rookbot
    ```
 
-4. **Install Bot Dependencies**:
-- Assuming you use a package.json file for dependencies, run:
+4. **Install the Dependencies**:
+- Run:
     ```bash
     npm install
     ```
@@ -86,37 +86,39 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
 ## Step 4: Set Up Environment Variables
 
 1. **Create a `.env` File**:
-   - If your bot uses sensitive tokens, create a `.env` file in the project directory:
+   - If rookbot uses sensitive tokens, create a `.env` file in the project directory:
      ```bash
      nano .env
      ```
    - Add your variables (e.g.):
      ```env
-     DISCORD_TOKEN=the_bot_token
+     TOKEN = the_bot_token
+     TEST_GUILD_ID = test_guild_id_goes_here
+     DOI_GUILD_ID = doi_guild_id_goes_here
+     CLIENT_ID = client_id_goes_here
      ```
    - Save and exit (Ctrl+O, Enter, Ctrl+X).
 
 2. **Ensure Your Code Loads the `.env` File**:
-   - Use the `dotenv` library in your bot:
+   - Use the `dotenv` library in rookbot:
      ```bash
      npm install dotenv
      ```
 
 ---
 
-## Step 5: Run and Test the Bot
+## Step 5: Run and Test rookbot
 
-1. **Run the Bot Temporarily**:
-   - Start the bot to test:
+1. **Run rookbot Temporarily**:
+   - Start rookbot to test:
      ```bash
-     node bot.js
+     node src/index.js
      ```
-   - Replace `bot.js` with your bot’s entry file.
 
-2. **Run the Bot Persistently with PM2**:
-   - Start the bot with PM2:
+2. **Run rookbot Persistently with PM2**:
+   - Start rookbot with PM2:
      ```bash
-     pm2 start bot.js --name rookbot
+     pm2 start src/index.js --name rookbot
      ```
    - Ensure it starts on boot:
      ```bash
@@ -124,8 +126,8 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      pm2 save
      ```
 
-3. **Check Bot Logs**:
-   - View logs if there’s an issue:
+3. **Check rookbot Logs**:
+   - View logs if there's an issue:
      ```bash
      pm2 logs rookbot
      ```
@@ -143,14 +145,14 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      ```
 
 2. **Pull Changes on the Raspberry Pi**:
-   - On the Raspberry Pi, navigate to your bot directory and pull updates:
+   - On the Raspberry Pi, navigate to the rookbot repo's ``root directory`` and pull updates:
      ```bash
      cd ~/rookbot
      git pull
      ```
 
-3. **Restart the Bot**:
-   - Restart the bot with PM2:
+3. **Restart rookbot**:
+   - Restart rookbot with PM2:
      ```bash
      pm2 restart rookbot
      ```
@@ -161,7 +163,3 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
 
 - Use `pm2 list` to monitor running processes.
 - Ensure your Raspberry Pi is in a stable environment with proper cooling and power supply for 24/7 operation.
-
----
-
-Now you have each step in a separate markdown file. You can upload these individual files to your GitHub repository and use them as step-by-step guides.
