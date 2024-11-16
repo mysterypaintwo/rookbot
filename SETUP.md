@@ -92,7 +92,11 @@ This guide walks you through setting up and running a Discord bot on a Raspberry
      ```
    - Add your variables (e.g.):
      ```env
-     DISCORD_TOKEN=the_bot_token
+     TOKEN = the_bot_token
+TEST_GUILD_ID = test_guild_id_goes_here
+DOI_GUILD_ID = doi_guild_id_goes_here
+CLIENT_ID = client_id_goes_here
+
      ```
    - Save and exit (Ctrl+O, Enter, Ctrl+X).
 
