@@ -62,8 +62,8 @@ module.exports = async (client, oldMessage, newMessage) => {
       .setTitle('✏️ Message Edited')
       .setThumbnail(newMessage.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
       .addFields(
-        { name: 'Author', value: `<@${newMessage.author.id}> (${newMessage.author.tag})`, inline: false },
-        { name: 'Channel', value: `<#${newMessage.channel.id}> (${newMessage.channel.id})`, inline: false },
+        { name: 'Author', value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`, inline: false },
+        { name: 'Channel', value: `<#${newMessage.channel.id}>`, inline: false },
         { name: 'Old Content', value: oldContent, inline: false },
         { name: 'New Content', value: newContent, inline: false }
       )
@@ -81,8 +81,8 @@ module.exports = async (client, oldMessage, newMessage) => {
     const logFilePath = path.join(__dirname, '..', '..', 'editedMessages.log');
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `Author: <@${newMessage.author.id}> (${newMessage.author.tag})`,
-      `Channel: ${newMessage.channel.name} (${newMessage.channel.id})`,
+      `Author: ${newMessage.author.tag} (ID: ${newMessage.author.id})`,
+      `Channel: ${newMessage.channel.name}`,
       `Old Content: ${oldContent}`,
       `New Content: ${newContent}`,
       `Message ID: ${newMessage.id}`,

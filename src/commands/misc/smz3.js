@@ -17,17 +17,32 @@ module.exports = {
    * @param {import('discord.js').Interaction} interaction
    */
   execute: async (client, interaction) => {
-
+    // Ensure the command is used in the correct channel
+    if (interaction.channelId !== multiplayerSchedulingChanID) {
+      return await interaction.reply({
+        content: `This command can only be used in <#${multiplayerSchedulingChanID}>.`,
+        ephemeral: true, // Makes the reply visible only to the user who invoked the command
+      });
+    }
 
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
 
     const sahaBot = client.users.cache.get(sahaBotUserID);
 
+    if (!sahaBot) {
+      await interaction.reply({
+        content: 'Sahasrala bot not found on this server.',
+        ephemeral: true,
+      });
+      return;
+    }
 
     await interaction.deferReply({ ephemeral: true }); // Defer reply silently
 
     try {
+      // Send `/smz3 preset: normal` to Sahasrala bot
+      await sahaBot.send('/smz3 preset: normal');
 
       // Generate random group name
       const randNum = Math.floor(Math.random() * 10000000001);
@@ -108,7 +123,6 @@ module.exports = {
         'Hoping we\'ll find Morph Bombs before Power Bombs!',
         'Hoping that Blind\'s pun will make us laugh today!',
         'Hoping that [MAJOR_ITEM] will be in Blind\'s Hut!',
-        'Discount bombs at King Zora! Only 500 Rupees!',
         'Praying we won\'t have to do Suitless Maridia!',
         'Hoping SM won\'t require Reverse Boss Order (RBO)!',
         'Who wants to do a hookpush vs Ganon? <:',
