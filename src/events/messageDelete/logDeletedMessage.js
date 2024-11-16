@@ -1,4 +1,6 @@
 const { logsChannel } = require('../../../config.json'); // Import the log channel ID
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Logs deleted messages from the server.
@@ -29,11 +31,15 @@ module.exports = async (client, deletedMessage) => {
     const logEmbed = {
       color: 0xff0000,
       title: '🚮 Message Deleted',
-      description: `A message was deleted in <#${deletedMessage.channelId}>.`,
       fields: [
         {
           name: 'Author',
-          value: `<@${deletedMessage.author.id}> (${deletedMessage.author.tag})`,
+          value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`,
+          inline: false,
+        },
+        {
+          name: 'Channel',
+          value: `<#${deletedMessage.channel.id}>`,
           inline: false,
         },
         {
@@ -50,6 +56,20 @@ module.exports = async (client, deletedMessage) => {
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
+
+    
+    // Optional: Save the deleted message to a log file
+    const logFilePath = path.join(__dirname, '..', '..', 'deletedMessages.log');
+    const logEntry = [
+      `[${new Date().toISOString()}]`,
+      `Author: ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,
+      `Channel: ${deletedMessage.channel.name}`,
+      `Content: ${deletedMessage.content}`,
+      `Message ID: ${deletedMessage.id}`,
+    ].join('\n') + '\n\n';
+
+    // Append the log entry to the file
+    fs.appendFileSync(logFilePath, logEntry, 'utf8');
   } catch (error) {
     console.error('Error logging deleted message:', error);
   }
