@@ -1,0 +1,15 @@
+{
+    "testServer": "test_server_id_here",
+    "logsChannel": "logs_channel_id_here",
+    "downloadsChannel": "https://discord.com/channels/1282788953052676177/1284570392127602729",
+    "supportPost": "https://discord.com/channels/1282788953052676177/1286048083049709589/1286048083049709589",
+    "serverName": "Dungeons of Infinity",
+    "serverGameName_base64encoded": "VGhlIExlZ2VuZCBvZiBaZWxkYSAtIER1bmdlb25zIG9mIEluZmluaXR5",
+    "sahaBotUserID": "572269659290861578",
+    "multiplayerSchedulingChanID": "1299231939290726462",
+    "devs": [
+        "dev_user_id_1_here",
+        "dev_user_id_2_here",
+        "etc..."
+    ]
+}
