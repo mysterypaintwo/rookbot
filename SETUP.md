@@ -230,10 +230,10 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 
 ---
 
-## Step 4: Clone Your Private Repository
+## Step 4: Clone the Repository
 
 1. **Clone Using SSH**:
-   - Use the SSH URL for your repository. For example:
+   - Use the SSH URL for the repository. For example:
      ```bash
      git clone git@github.com:mysterypaintwo/rookbot.git
      ```
@@ -250,3 +250,75 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 ---
 
 Now you’re ready to securely clone and work with your private GitHub repository on your Raspberry Pi!
+
+# Removing PM2 Script and Bot Files from Raspberry Pi
+
+## Step 1: Stop and Remove the PM2 Script
+
+1. **List Running PM2 Processes**:
+   - Run the following command to see all active PM2 processes:
+     ```bash
+     pm2 list
+     ```
+
+2. **Stop the Bot**:
+   - Stop the bot process by its name (e.g., `rookbot`) or ID:
+     ```bash
+     pm2 stop rookbot
+     ```
+
+3. **Delete the PM2 Script**:
+   - Remove the bot from PM2 management:
+     ```bash
+     pm2 delete rookbot
+     ```
+
+4. **Clear PM2 Saved State**:
+   - Ensure PM2 does not restart the bot after reboot:
+     ```bash
+     pm2 save
+     ```
+
+5. **Optional: Uninstall PM2**:
+   - If you no longer need PM2, uninstall it:
+     ```bash
+     sudo npm uninstall -g pm2
+     ```
+
+---
+
+## Step 2: Remove the Bot Files
+
+1. **Navigate to the Bot Directory**:
+   - Assuming the bot is stored in `~/rookbot`:
+     ```bash
+     cd ~
+     ```
+
+2. **Delete the Bot Directory**:
+   - Use the `rm` command to remove the bot files:
+     ```bash
+     rm -rf rookbot
+     ```
+   - **Warning**: Ensure you’re in the correct directory before running this command to avoid deleting unintended files.
+
+---
+
+## Step 3: Verify Removal
+
+1. **Check PM2 Processes**:
+   - Confirm no bot processes are running:
+     ```bash
+     pm2 list
+     ```
+
+2. **Check for Bot Files**:
+   - Verify the `rookbot` directory no longer exists:
+     ```bash
+     ls ~
+     ```
+
+---
+
+Your PM2 script and bot files should now be fully removed. You can proceed with a clean setup afterward!
+
