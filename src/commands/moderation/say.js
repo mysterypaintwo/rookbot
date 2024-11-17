@@ -1,10 +1,10 @@
-import { PermissionFlagsBits } from 'discord.js'
+import { PermissionFlagsBits, Client, MessageComponentInteraction } from 'discord.js'
 
 let func = {
   /**
    *
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     const targetChannel = interaction.options.getChannel('channel'); // Get the target channel

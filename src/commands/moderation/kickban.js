@@ -1,11 +1,11 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } from 'discord.js'
+import { ApplicationCommandOptionType, Client, PermissionFlagsBits, EmbedBuilder, MessageComponentInteraction } from 'discord.js'
 import * as CONFIG from '../../../config.json' with { type: "json" }
 
 let func = {
   /**
    *
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     const targetUserInput = interaction.options.get('user-id').value;

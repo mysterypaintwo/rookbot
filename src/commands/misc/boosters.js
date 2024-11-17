@@ -1,10 +1,10 @@
-import { EmbedBuilder } from 'discord.js'
+import { Client, EmbedBuilder, MessageComponentInteraction } from 'discord.js'
 
 let func = {
   /**
    *
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     // Defer the reply to give the bot time to process the request

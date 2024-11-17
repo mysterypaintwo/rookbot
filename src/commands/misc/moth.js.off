@@ -1,11 +1,11 @@
-import { Client, Interaction } from 'discord.js'
+import { Client, MessageComponentInteraction } from 'discord.js'
 import path from 'path'
 
 let func = {
   /**
    *
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     // Path to the local video file

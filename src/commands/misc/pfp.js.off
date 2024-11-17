@@ -1,9 +1,9 @@
-import { Client, Interaction, ApplicationCommandOptionType } from 'discord.js'
+import { Client, MessageComponentInteraction, ApplicationCommandOptionType } from 'discord.js'
 
 let func = {
   /**
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     // Get the user mentioned in the command

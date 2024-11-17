@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js'
+import { Client, EmbedBuilder, MessageComponentInteraction } from 'discord.js'
 
 let func = {
   name: 'embed',
@@ -7,7 +7,7 @@ let func = {
   /**
    * Sends an embed message in response to a slash command interaction.
    * @param {Client} client
-   * @param {Interaction} interaction
+   * @param {MessageComponentInteraction} interaction
    */
   execute: async (client, interaction) => {
     // Acknowledge the interaction immediately without sending a reply yet
