@@ -1,6 +1,6 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -23,7 +23,7 @@ module.exports = {
         .setTitle('Server Boost Info')
         .setDescription(`
           **Total Boosters:** ${boosts}
-          **Boost Level:** ${boostLevel} 
+          **Boost Level:** ${boostLevel}
         `)
         .setTimestamp()
         .setFooter({ text: `Requested by ${interaction.user.tag}` });
@@ -41,3 +41,5 @@ module.exports = {
   permissionsRequired: [],
   botPermissions: [],
 };
+
+export default func

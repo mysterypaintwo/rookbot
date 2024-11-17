@@ -1,6 +1,6 @@
-const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js');
+import { Client, Interaction, ApplicationCommandOptionType } from 'discord.js'
 
-module.exports = {
+let func = {
   /**
    * @param {Client} client
    * @param {Interaction} interaction
@@ -40,3 +40,5 @@ module.exports = {
     },
   ],
 };
+
+export default func

@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
+import { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } from 'discord.js'
+import * as CONFIG from '../../../config.json' with { type: "json" }
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -44,7 +44,7 @@ module.exports = {
       interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **timed out** for ${timeoutDuration} seconds. (${reason})`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(CONFIG.logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF8800') // Orange color for timeout
@@ -96,3 +96,5 @@ module.exports = {
   permissionsRequired: [PermissionFlagsBits.ModerateMembers],
   botPermissions: [PermissionFlagsBits.ModerateMembers],
 };
+
+export default func

@@ -1,7 +1,7 @@
-const { sahaBotUserID, multiplayerSchedulingChanID } = require('../../../config.json');
-const { EmbedBuilder } = require('discord.js');
+import { sahaBotUserID, multiplayerSchedulingChanID } from '../../../config.json' with { type: "json" }
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'smz3',
   description: 'Starts an SMZ3 game with all necessary details.',
   options: [
@@ -143,7 +143,7 @@ module.exports = {
       // Select a random major item
       const randomMajorItem = majorItems[Math.floor(Math.random() * majorItems.length)];
       const randomUselessItem = uselessItems[Math.floor(Math.random() * uselessItems.length)];
-      
+
       // Modify the major item if it starts with "A " and if it's not at the beginning of the sentence
       let formattedMajorItem = randomMajorItem;
       if (formattedMajorItem.startsWith('A ') && randomFooterText.indexOf('[MAJOR_ITEM]') > 0) {
@@ -156,7 +156,7 @@ module.exports = {
 
       // Replace '[USELESS_ITEM]' with the modified major item
       randomFooterText = randomFooterText.replace('[USELESS_ITEM]', randomUselessItem);
-      
+
       // Create the embed
       const embed = new EmbedBuilder()
         .setColor('#00FF00')
@@ -213,3 +213,5 @@ module.exports = {
     }
   },
 };
+
+export default func

@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
+import { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } from 'discord.js'
+import * as CONFIG from '../../../config.json' with { type: "json" }
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -24,7 +24,7 @@ module.exports = {
       interaction.channel.send(`Channel **${channel.name}** has been **locked**.`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(CONFIG.logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for lock
@@ -59,3 +59,5 @@ module.exports = {
   permissionsRequired: [PermissionFlagsBits.ManageChannels],
   botPermissions: [PermissionFlagsBits.ManageChannels],
 };
+
+export default func

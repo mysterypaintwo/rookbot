@@ -1,0 +1,17 @@
+{
+  "adminOnly": [ "Sorry, only admins can run this command. 🎖️" ],
+  "modOnly" : ["Sorry only mods can run this command. 🎖️"],
+  "noReason" : ["You cannot do this command for no reason"],
+  "botDevOnly": [ "Sorry, only bot devs can run this command. 🤖" ],
+  "cantActionBot": [
+    "Now who's the Bot? 🤡",
+    "Select someone who isn't a bot next time, dummy!"
+  ],
+  "cantActionMention": [ "You can't target a Mention!" ],
+  "cantActionOthers": [ "You can't target others!" ],
+  "cantActionSearch": [ "You can't search for a Target!" ],
+  "cantActionSelf": [ "You can't target yourself!" ],
+  "warns": {
+    "noWarns" : ["No warns in the database for this user"]
+  }
+}

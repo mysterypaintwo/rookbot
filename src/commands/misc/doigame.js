@@ -1,15 +1,10 @@
-const { downloadsChannel, supportPost, serverGameName_base64encoded } = require('../../../config.json');
-const {
-  Client,
-  Interaction,
-  ApplicationCommandOptionType,
-  EmbedBuilder
-} = require('discord.js');
+import * as CONFIG from '../../../config.json' with { type: "json" }
+import { EmbedBuilder } from'discord.js'
 
 // Decode the base64 string
-const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+const serverGameName = Buffer.from(CONFIG.default.serverGameName_base64encoded, 'base64').toString('utf-8');
 
-module.exports = {
+let func = {
   execute: async (client, interaction) => {
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
@@ -21,8 +16,8 @@ module.exports = {
         .setTitle(`Download ${serverGameName}`)
         .setDescription(`You can download ${serverGameName} below!`)
         .addFields(
-          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${downloadsChannel})`, inline: false },
-          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${supportPost}).`, inline: false }
+          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${CONFIG.downloadsChannel})`, inline: false },
+          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${CONFIG.supportPost}).`, inline: false }
         )
         .setTimestamp()
         .setFooter({ text: `Requested by ${interaction.user.tag}` });
@@ -40,3 +35,5 @@ module.exports = {
   permissionsRequired: [],
   botPermissions: [],
 };
+
+export default func

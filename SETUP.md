@@ -114,6 +114,10 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
      ```bash
      node src/index.js
      ```
+   - Call menu of commands:
+     ```bash
+     npm run-script menu
+     ```
 
 2. **Run rookbot Persistently with PM2**:
    - Start rookbot with PM2:

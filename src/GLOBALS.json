@@ -1,0 +1,12 @@
+{
+  "colors": {
+    "blue": "#00BFFF",
+    "green": "#00FF00",
+    "red": "#FF0000",
+    "warn": "#FF8C00",
+    "timeout": "#FF8800",
+    "kickban": "#FF5733",
+    "server": "#FFA500",
+    "random": "Random"
+  }
+}

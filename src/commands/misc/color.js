@@ -1,6 +1,6 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'color',
   description: 'Displays information about a hex color code.',
   options: [
@@ -51,3 +51,5 @@ module.exports = {
     await interaction.reply({ embeds: [embed] });
   },
 };
+
+export default func

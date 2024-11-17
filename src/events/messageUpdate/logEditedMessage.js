@@ -1,7 +1,7 @@
-const { logsChannel } = require('../../../config.json'); // Import logChannel ID
-const { EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
+import logsChannel from '../../../config.json' with { type: "json" }
+import { EmbedBuilder } from 'discord.js'
+import fs from 'fs'
+import path from 'path'
 
 /**
  * Logs edited messages from the server.
@@ -9,7 +9,7 @@ const path = require('path');
  * @param {import('discord.js').Message} oldMessage
  * @param {import('discord.js').Message} newMessage
  */
-module.exports = async (client, oldMessage, newMessage) => {
+let logEditedMessage = async (client, oldMessage, newMessage) => {
   try {
     // Check for invalid or undefined data
     if (!newMessage) {
@@ -54,7 +54,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     }
 
     // Fetch the log channel using its ID
-    const logChannelObject = newMessage.guild.channels.cache.get(logsChannel);
+    const logChannelObject = newMessage.guild.channels.cache.get(CONFIG.logsChannel);
 
     // Prepare the log embed
     const embed = new EmbedBuilder()
@@ -94,3 +94,5 @@ module.exports = async (client, oldMessage, newMessage) => {
     console.error('Error in logEditedMessage handler:', error);
   }
 };
+
+export default logEditedMessage

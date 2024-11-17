@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
+import { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } from 'discord.js'
+import * as CONFIG from '../../../config.json' with { type: "json" }
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -51,14 +51,14 @@ module.exports = {
 
       // Try to DM the user about the ban (and kick if applicable)
       try {
-        await targetUser.send(`You have been banned${guildMember ? ' and kicked' : ''} from the ${serverName} server. (${reason})`);
+        await targetUser.send(`You have been banned${guildMember ? ' and kicked' : ''} from the ${CONFIG.serverName} server. (${reason})`);
       } catch (dmError) {
         console.log(`Failed to DM user: ${dmError.message}`);
         await interaction.followUp({ content: "I couldn't send the DM to the user. They might have DMs disabled.", ephemeral: true }); // Private follow-up
       }
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(CONFIG.logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF5733') // Orange-red color for ban & kick
@@ -103,3 +103,5 @@ module.exports = {
   permissionsRequired: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.BanMembers],
   botPermissions: [PermissionFlagsBits.KickMembers, PermissionFlagsBits.BanMembers],
 };
+
+export default func

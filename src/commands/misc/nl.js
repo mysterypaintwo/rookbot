@@ -1,9 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'nl',
   description: 'Posts a rainbow divider line.',
-  
+
   /**
    * @param {import('discord.js').Interaction} interaction
    */
@@ -58,3 +58,5 @@ module.exports = {
     }
   },
 };
+
+export default func

@@ -1,7 +1,7 @@
-const { Client, Interaction } = require('discord.js');
-const path = require('path');
+import { Client, Interaction } from 'discord.js'
+import path from 'path'
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -12,7 +12,7 @@ module.exports = {
     const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4');
 
     await interaction.deferReply();
-    
+
     try {
 
       // Send the video to the channel the command was sent in
@@ -33,3 +33,5 @@ module.exports = {
   name: 'moth',
   description: 'Hear it from the legend himself',
 };
+
+export default func

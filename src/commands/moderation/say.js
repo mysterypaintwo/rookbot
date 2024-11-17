@@ -1,10 +1,10 @@
-const { PermissionFlagsBits } = require('discord.js');
+import { PermissionFlagsBits } from 'discord.js'
 
-module.exports = {
+let func = {
   /**
-   * 
-   * @param {Client} client 
-   * @param {Interaction} interaction 
+   *
+   * @param {Client} client
+   * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
     const targetChannel = interaction.options.getChannel('channel'); // Get the target channel
@@ -56,3 +56,5 @@ module.exports = {
   permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
   botPermissions: [PermissionFlagsBits.SendMessages], // Ensure bot can send messages
 };
+
+export default func

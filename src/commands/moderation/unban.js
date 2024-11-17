@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
+import { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } from 'discord.js'
+import * as CONFIG from '../../../config.json' with { type: "json" }
 
-module.exports = {
+let func = {
   /**
    *
    * @param {Client} client
@@ -28,7 +28,7 @@ module.exports = {
       interaction.channel.send(`User **${targetUser.tag}** (ID: ${targetUserId}) has been **unbanned**. (${reason})`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(CONFIG.logsChannel);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#00FF00') // Green color for unban
@@ -73,3 +73,5 @@ module.exports = {
   permissionsRequired: [PermissionFlagsBits.BanMembers],
   botPermissions: [PermissionFlagsBits.BanMembers],
 };
+
+export default func

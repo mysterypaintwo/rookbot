@@ -1,9 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'embed',
   description: 'Sends an embed with predefined content',
-  
+
   /**
    * Sends an embed message in response to a slash command interaction.
    * @param {Client} client
@@ -46,3 +46,5 @@ module.exports = {
     await interaction.editReply({ embeds: [embed] }); // Edit the initial deferred reply to send the embed
   },
 };
+
+export default func

@@ -1,9 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'botsrc',
   description: 'Links to the GitHub repository of rookbot.',
-  
+
   /**
    * Sends an embed message with a link to the bot\'s GitHub repository.
    * @param {Client} client
@@ -41,3 +41,5 @@ module.exports = {
     await interaction.editReply({ embeds: [embed] });
   },
 };
+
+export default func

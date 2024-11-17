@@ -1,7 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
-const { evaluate } = require('mathjs');
+import { EmbedBuilder } from 'discord.js'
+import { evaluate } from 'mathjs'
 
-module.exports = {
+let func = {
   name: 'calc',
   description: 'Evaluates a math expression.',
   options: [
@@ -48,3 +48,5 @@ module.exports = {
     }
   },
 };
+
+export default func

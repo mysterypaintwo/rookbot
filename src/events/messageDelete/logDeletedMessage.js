@@ -1,13 +1,13 @@
-const { logsChannel } = require('../../../config.json'); // Import the log channel ID
-const fs = require('fs');
-const path = require('path');
+import { logsChannel } from '../../../config.json' with { type: "json" }
+import fs from 'fs'
+import path from 'path'
 
 /**
  * Logs deleted messages from the server.
  * @param {import('discord.js').Client} client
  * @param {import('discord.js').Message} deletedMessage
  */
-module.exports = async (client, deletedMessage) => {
+let logDeletedMessages = async (client, deletedMessage) => {
   try {
     // If the message is partial, fetch the full message (if possible)
     if (deletedMessage.partial) {
@@ -20,7 +20,7 @@ module.exports = async (client, deletedMessage) => {
     }
 
     // Fetch the log channel using the logsChannel ID
-    const logChannel = client.channels.cache.get(logsChannel);
+    const logChannel = client.channels.cache.get(CONFIG.logsChannel);
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.');
@@ -57,7 +57,7 @@ module.exports = async (client, deletedMessage) => {
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
 
-    
+
     // Optional: Save the deleted message to a log file
     const logFilePath = path.join(__dirname, '..', '..', 'deletedMessages.log');
     const logEntry = [
@@ -74,3 +74,5 @@ module.exports = async (client, deletedMessage) => {
     console.error('Error logging deleted message:', error);
   }
 };
+
+export default logDeletedMessages

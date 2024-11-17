@@ -1,9 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js'
 
-module.exports = {
+let func = {
   name: 'justin',
   description: 'Displays an embed showcasing the developer\'s video games from their portfolio',
-  
+
   /**
    * Sends an embed message showcasing the developer's video games.
    * @param {Client} client
@@ -45,3 +45,5 @@ module.exports = {
     await interaction.editReply({ embeds: [embed] });
   },
 };
+
+export default func
