@@ -163,3 +163,90 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 
 - Use `pm2 list` to monitor running processes.
 - Ensure your Raspberry Pi is in a stable environment with proper cooling and power supply for 24/7 operation.
+
+---
+
+# Using SSH Keys to Clone a Private GitHub Repository on Raspberry Pi
+
+## Step 1: Generate SSH Keys on the Raspberry Pi
+
+1. **Open the Terminal**:
+   - If you are logged into your Raspberry Pi, open a terminal.
+
+2. **Generate an SSH Key Pair**:
+   - Run the following command:
+     ```bash
+     ssh-keygen -t ed25519 -C "your_email@example.com"
+     ```
+   - Replace `"your_email@example.com"` with the email associated with your GitHub account.
+   - When prompted:
+     - Press **Enter** to save the key in the default location (`/home/pi/.ssh/id_ed25519`).
+     - Optionally, enter a passphrase for added security (or press **Enter** to leave it blank).
+
+3. **View the Generated Public Key**:
+   - Display the public key:
+     ```bash
+     cat ~/.ssh/id_ed25519.pub
+     ```
+
+4. **Copy the Key**:
+   - Select and copy the entire output of the above command.
+
+---
+
+## Step 2: Add the SSH Key to Your GitHub Account
+
+1. **Log in to GitHub**:
+   - Open [GitHub](https://github.com) in your browser and log in to your account.
+
+2. **Navigate to SSH Keys**:
+   - Go to your **Profile Settings** → **SSH and GPG keys** → **New SSH Key**.
+
+3. **Add the Key**:
+   - Title the key (e.g., "Raspberry Pi").
+   - Paste the public key you copied earlier into the **Key** field.
+   - Click **Add SSH Key**.
+
+---
+
+## Step 3: Test the SSH Connection to GitHub
+
+1. **Test the Connection**:
+   - Run the following command on your Raspberry Pi:
+     ```bash
+     ssh -T git@github.com
+     ```
+   - You should see a message similar to:
+     ```
+     Hi <your-username>! You've successfully authenticated, but GitHub does not provide shell access.
+     ```
+
+2. **If You Encounter Issues**:
+   - Ensure the SSH agent is running and the key is added:
+     ```bash
+     eval "$(ssh-agent -s)"
+     ssh-add ~/.ssh/id_ed25519
+     ```
+
+---
+
+## Step 4: Clone Your Private Repository
+
+1. **Clone Using SSH**:
+   - Use the SSH URL for your repository. For example:
+     ```bash
+     git clone git@github.com:mysterypaintwo/rookbot.git
+     ```
+
+2. **Navigate to the Repository**:
+   - After cloning, move into the repository folder:
+     ```bash
+     cd rookbot
+     ```
+
+3. **Continue with Your Setup**:
+   - Install dependencies or follow further instructions specific to your bot.
+
+---
+
+Now you’re ready to securely clone and work with your private GitHub repository on your Raspberry Pi!
