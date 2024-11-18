@@ -1,5 +1,19 @@
 const { sahaBotUserID, multiplayerSchedulingChanID } = require('../../../config.json');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
+
+function isValidURLFromDomain(input, domain) {
+  try {
+      // Parse the input string as a URL
+      const url = new URL(input);
+
+      // Check if the hostname and protocol match the expected domain
+      const expectedUrl = new URL(domain);
+      return url.hostname === expectedUrl.hostname && url.protocol === expectedUrl.protocol;
+  } catch (error) {
+      // If URL constructor throws, the input is not a valid URL
+      return false;
+  }
+}
 
 module.exports = {
   name: 'smz3',
@@ -8,8 +22,14 @@ module.exports = {
     {
       name: 'ping_multiplayer_role',
       description: 'Whether or not to ping the Multiplayer Ping role.',
-      type: 5, // Boolean type
-      required: false, // Optional parameter
+      type: ApplicationCommandOptionType.Boolean,
+      required: false,
+    },
+    {
+      name: 'seed_url',
+      description: 'The URL of the seed to play',
+      type: ApplicationCommandOptionType.String,
+      required: false,
     },
   ],
 
@@ -19,7 +39,8 @@ module.exports = {
   execute: async (client, interaction) => {
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
-
+    const seedURL = interaction.options.getString('seed_url') || null;
+      
       /*
     const sahaBot = interaction.guild.members.fetch(sahaBotUserID);
 
@@ -173,9 +194,13 @@ module.exports = {
         .setTimestamp();
 
       // Construct the content for the channel message
-      const messageContent = pingMultiplayerRole
-        ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`
-        : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!\nYou can download it from SahasrahBot's post.`;
+      let messageContent = pingMultiplayerRole
+        ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`
+        : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`;
+
+      if (isValidURLFromDomain(seedURL, 'https://samus.link/seed/')) {
+        messageContent += `\nYou can download it from here: ${seedURL}`;
+      }
 
       // Send the embed to the channel
       const channel = interaction.channel;
