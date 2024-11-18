@@ -60,7 +60,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     const embed = new EmbedBuilder()
       .setColor('#FFA500') // Orange for message updates
       .setTitle('✏️ Message Edited')
-      .setThumbnail(newMessage.author?.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
+      .setThumbnail(newMessage.author.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
       .addFields(
         { name: 'Author', value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`, inline: false },
         { name: 'Channel', value: `<#${newMessage.channel.id}>`, inline: false },
