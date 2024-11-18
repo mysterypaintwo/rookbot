@@ -111,7 +111,7 @@ def prepare_discord_notif():
                         CI_SETTINGS["common"]["common"]["repo"]["username"]
                     )
                     commits.append(
-                        f"[`{commit['id'][:7]}`]({commit['url']}) {commmit_title}"
+                        f"[`{commit['id'][:7]}`]({commit['url']}) {commit_title}"
                     )
     else:
         commit = {}
