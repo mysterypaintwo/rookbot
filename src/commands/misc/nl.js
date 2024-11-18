@@ -1,9 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   name: 'nl',
   description: 'Posts a rainbow divider line.',
-  
+
   /**
    * @param {import('discord.js').Interaction} interaction
    */
@@ -37,24 +38,35 @@ module.exports = {
 
     try {
       // Create the embed with the rainbow divider line image
-      const embed = new EmbedBuilder()
-        .setColor(getRandomRainbowColor()) // Set a random rainbow color
-        .setImage('https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif');
+      let props = {
+        color: getRandomRainbowColor(),
+        image: "https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif"
+      }
+      const embed = new RookEmbed(props)
 
       // Send the embed to the channel
       const channel = interaction.channel; // Get the channel where the command was used
-      await channel.send({ embeds: [embed] });
+      await channel.send({ embeds: [ embed ] });
 
       // Optionally end the interaction without a visible message
       await interaction.deleteReply();
     } catch (error) {
       console.error('Error handling /nl command:', error);
 
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "An error occurred while posting the rainbow line. Pleas try again later."
+      }
+      const embed = new RookEmbed(props)
+
       // Respond with an error message if something goes wrong
       await interaction.followUp({
-        content: 'An error occurred while posting the rainbow line. Please try again later.',
+        embeds: [ embed ],
         ephemeral: true,
       });
     }
-  },
+  }
 };

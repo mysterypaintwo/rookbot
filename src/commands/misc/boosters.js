@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 
 module.exports = {
   /**
@@ -18,21 +18,32 @@ module.exports = {
       const boostLevel = interaction.guild.premiumTier;
 
       // Prepare a message to show the boost information
-      const embed = new EmbedBuilder()
-        .setColor('#00BFFF') // Blue color for boost info
-        .setTitle('Server Boost Info')
-        .setDescription(`
-          **Total Boosters:** ${boosts}
-          **Boost Level:** ${boostLevel}
-        `)
-        .setTimestamp()
-        .setFooter({ text: `Requested by ${interaction.user.tag}` });
+      let props = {
+        color: "#00BFFF",
+        title: {
+          text: "Server Boost Info"
+        },
+        description: [
+          `**Total Boosters:** ${boosts}`,
+          `**Boost Level:** ${boostLevel}`
+        ],
+        footer: `Requested by ${interaction.user.tag}`
+      }
+      const embed = new RookEmbed(props)
 
       // Send the embed as a reply to the command
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [ embed ] });
     } catch (error) {
       console.log(`Error fetching boost info: ${error.stack}`);
-      await interaction.editReply("There was an error fetching the server's boost information.");
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "There was an error fetching the server's boost information."
+      }
+      const embed = new RookEmbed(props)
+      await interaction.editReply({ embeds: [ embed ] });
     }
   },
 

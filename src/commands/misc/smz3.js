@@ -1,4 +1,5 @@
-const { EmbedBuilder, ApplicationCommandOptionType } = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 function isValidURLFromDomain(input, domain) {
   try {
@@ -171,10 +172,12 @@ module.exports = {
       randomFooterText = randomFooterText.replace('[USELESS_ITEM]', randomUselessItem);
 
       // Create the embed
-      const embed = new EmbedBuilder()
-        .setColor('#00FF00')
-        .setTitle('SMZ3 Game Details')
-        .addFields(
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "SMZ3 Game Details"
+        },
+        fields: [
           { name: 'Group Name', value: groupName, inline: false },
           {
             name: 'Scripts',
@@ -191,9 +194,12 @@ module.exports = {
             value: `The game will begin at ${timestamp}.`,
             inline: false,
           }
-        )
-        .setFooter({ text: randomFooterText })
-        .setTimestamp();
+        ],
+        footer: {
+          msg: randomFooterText
+        }
+      }
+      const embed = new RookEmbed(props)
 
       // Construct the content for the channel message
       let messageContent = pingMultiplayerRole
@@ -208,7 +214,7 @@ module.exports = {
       const channel = interaction.channel;
       await channel.send({
         content: messageContent,
-        embeds: [embed],
+        embeds: [ embed ]
       });
 
       // Silent conclusion (no visible follow-up)
@@ -217,11 +223,17 @@ module.exports = {
       console.error('Error handling /smz3 command:', error);
 
       // Respond with an error message if something goes wrong
+      let props = {
+        title: {
+          text: "Error"
+        },
+        description: "An error occurred while setting up the SMZ3 game. Please try again later."
+      }
+      const embed = new RookEmbed(props)
       await interaction.followUp({
-        content:
-          'An error occurred while setting up the SMZ3 game. Please try again later.',
-        ephemeral: true,
+        embeds: [ embed ],
+        ephemeral: true
       });
     }
-  },
+  }
 };

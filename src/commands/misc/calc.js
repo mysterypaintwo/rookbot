@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 const { evaluate } = require('mathjs');
 
 module.exports = {
@@ -24,27 +24,33 @@ module.exports = {
       const result = evaluate(expression);
 
       // Create and send the embed
-      const embed = new EmbedBuilder()
-        .setColor('#00FF00')
-        .setTitle('Calculator')
-        .addFields(
-          { name: 'Expression', value: `\`${expression}\``, inline: false },
-          { name: 'Result', value: `\`${result}\``, inline: false }
-        )
-        .setTimestamp();
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Calculator"
+        },
+        fields: [
+          { name: "Expression", value: `\`${expression}\``, inline: false },
+          { name: "Result",     value: `\`${result}\``,     inline: false }
+        ]
+      }
+      const embed = new RookEmbed(props)
 
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('Error evaluating expression:', error);
 
       // Send an error embed if the math expression is invalid
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Error')
-        .setDescription('Invalid math expression. Please try again.')
-        .setTimestamp();
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "Invalid math expression. Please try again."
+      }
+      const embed = new RookEmbed(props)
 
-      await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [ embed ], ephemeral: true });
     }
-  },
+  }
 };

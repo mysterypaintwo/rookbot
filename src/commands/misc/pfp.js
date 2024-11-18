@@ -1,4 +1,5 @@
 const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 
 module.exports = {
   /**
@@ -18,15 +19,17 @@ module.exports = {
     // Get the user's avatar URL
     const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 });
 
+    let props = {
+      title: {
+        text: `${targetUserName}'s Avatar`,
+        url: avatarURL
+      },
+      image: avatarURL
+    }
+    const embed = new RookEmbed(props)
+
     // Respond with the user's server nickname (or username) and profile picture
-    await interaction.reply({
-      embeds: [
-        {
-          title: `${targetUserName}'s Avatar`,
-          image: { url: avatarURL },
-        },
-      ],
-    });
+    await interaction.reply({ embeds: [ embed ] });
   },
 
   name: 'pfp',
@@ -36,7 +39,7 @@ module.exports = {
       name: 'target-user',
       description: 'The user whose profile picture you want to see.',
       type: ApplicationCommandOptionType.User,
-      required: true,
-    },
-  ],
+      required: true
+    }
+  ]
 };

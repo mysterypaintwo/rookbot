@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
@@ -21,18 +21,30 @@ module.exports = {
       const totalBots = members.filter(member => member.user.bot).size;
 
       // Create an embed to send the member count
-      const embed = new EmbedBuilder()
-        .setColor('#00FF00') // Green color for success
-        .setTitle('Total Member Count')
-        .setDescription(`There are currently ${totalMembers} registered members in this server!\n(Count includes staff and excludes our ${totalBots} bots.)`)
-        .setTimestamp()
-        .setFooter({ text: `Requested by ${interaction.user.tag}` });
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Total Member Count"
+        },
+        description: `There are currently ${totalMembers} registered members in this server!\n(Count includes staff and excludes our ${totalBots} bots.)`,
+        footer: {
+          msg: `Requested by ${interaction.user.tag}`
+        }
+      }
+      const embed = new RookEmbed(props)
 
       // Send the embed as a reply to the command
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
+      let props = {
+        title: {
+          text: "Error"
+        },
+        description: "There was an error fetching the member count."
+      }
+      const embed = new RookEmbed(props)
       console.log(`Error fetching member count: ${error.stack}`);
-      await interaction.editReply("There was an error fetching the member count.");
+      await interaction.editReply({ embeds: [ embed ] });
     }
   },
 

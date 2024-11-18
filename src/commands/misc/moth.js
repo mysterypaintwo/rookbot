@@ -1,5 +1,6 @@
 const { Client, Interaction } = require('discord.js');
 const path = require('path');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
@@ -24,9 +25,17 @@ module.exports = {
       // Optional: If you want to delete the original command message after posting the video
       await interaction.deleteReply();
     } catch (error) {
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "There as an error uploading the video."
+      }
+      const embed = new RookEmbed(props)
       console.log(`There was an error when uploading the video: ${error.stack}`);
       // If error occurs, use an ephemeral reply to privately inform the user
-      await interaction.followUp({ content: 'There was an error uploading the video.', ephemeral: true });
+      await interaction.followUp({ embeds: [ embed ], ephemeral: true });
     }
   },
 

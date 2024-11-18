@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js')
+const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 const fs = require('fs')
 
 module.exports = async (client) => {
@@ -115,10 +115,7 @@ module.exports = async (client) => {
       let guild = await client.guilds.cache.find(g => g.id === GLOBALS["testserver"]);
       let channel = await guild.channels.cache.find(c => c.id === channelID);
 
-      let embed = new EmbedBuilder()
-        .setTitle(props.title.text)
-        .setURL(props.title.url)
-        .setDescription(props.description)
+      let embed = new RookEmbed(props)
 
       if (channel) {
         channel.send({ embeds: [ embed ] })

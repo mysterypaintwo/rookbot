@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   name: 'color',
@@ -21,13 +21,16 @@ module.exports = {
     // Validate hex string
     const hexRegex = /^[0-9A-F]{6}$/;
     if (!hexRegex.test(hexInput)) {
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Error')
-        .setDescription('Invalid hex color code. Please provide a valid 6-character hexadecimal string (e.g., #FF5733 or FF5733).')
-        .setTimestamp();
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "Invalid hex color code. Please provide a valid 6-character hexadecimal string (e.g., #FF5733 or FF5733)."
+      }
+      const embed = new RookEmbed(props)
 
-      await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [ embed ], ephemeral: true });
       return;
     }
 
@@ -37,17 +40,19 @@ module.exports = {
     const b = parseInt(hexInput.substring(4, 6), 16);
 
     // Create the embed
-    const embed = new EmbedBuilder()
-      .setColor(`#${hexInput}`) // Set the embed's color
-      .setTitle('Color Information')
-      .addFields(
-        { name: 'Hex', value: `#${hexInput}`, inline: true },
+    let props = {
+      color: `${hexInput}`,
+      title: {
+        text: "Color Information"
+      },
+      fields: [
+        { name: 'Hex', value: `#${hexInput}`,       inline: true },
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
-      )
-      .setThumbnail(`https://singlecolorimage.com/get/${hexInput}/100x100`) // Displays a square of the color
-      .setTimestamp();
+      ]
+    }
+    const embed = new RookEmbed(props)
 
     // Send the embed
-    await interaction.reply({ embeds: [embed] });
-  },
+    await interaction.reply({ embeds: [ embed ] });
+  }
 };
