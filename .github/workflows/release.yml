@@ -47,4 +47,3 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_RELEASES }}
         run: |
           python ./resources/ci/common/prepare_discord_notif.py
-        if: false
