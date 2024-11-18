@@ -651,7 +651,7 @@ let command = class RookCommand extends BaseCommand {
    * @returns {Promise.<any>}
    */
   // @ts-ignore
-  async run(client, message, args, util=null, cmd) {
+  async execute(client, message, args, util=null, cmd) {
     // Load profile
     await this.getProfile()
 

@@ -4,15 +4,14 @@ import fs from 'fs'                                                   // Filesys
 import { Client, IntentsBitField } from 'discord.js'                  // Discord
 import eventHandler from './handlers/eventHandler.js'                 // Event Handler
 import BotActivityCommand from './commands/moderation/botactivity.js' // Bot Activity module
-import registerCommands from './events/ready/01registerCommands.js'   // Register Event
 import BootEvent from './events/ready/02boot.js'                      // Boot Event
 
 let intents = []
 intents.push(IntentsBitField.Flags.Guilds)
-// intents.push(IntentsBitField.Flags.GuildMembers)
+intents.push(IntentsBitField.Flags.GuildMembers)
 intents.push(IntentsBitField.Flags.GuildMessages)
 intents.push(IntentsBitField.Flags.GuildMessageReactions)
-// intents.push(IntentsBitField.Flags.MessageContent)
+intents.push(IntentsBitField.Flags.MessageContent)
 intents.push(IntentsBitField.Flags.DirectMessages)
 intents.push(IntentsBitField.Flags.DirectMessageReactions)
 
@@ -26,8 +25,6 @@ if (!DEFAULTS) {
 
 const client = new Client({ intents: intents });
 
-eventHandler(client);
-
 (async () => {
   // Create Client Object
   if (process.env.NODE_ENV === 'development') {
@@ -38,18 +35,18 @@ eventHandler(client);
     await client.login(process.env.TOKEN);
   }
 
-  // Register Commands
-  // console.log("---")
-  await registerCommands(client)
+  // Register Events
+  console.log("---")
+  await eventHandler(client);
 
   // Set Boot Event
   // console.log("---")
-  let boot = new BootEvent()
-  await boot.run({ client: client })
+  // let boot = new BootEvent()
+  // await boot.execute(client)
 
   // // Set Bot Activity Status
   // console.log("---");
   // let ba = new BotActivityCommand({ null: true })
   // // @ts-ignore
-  // await ba.run(client, null, [], null, "")
+  // await ba.execute(client, null, [], null, "")
 })();

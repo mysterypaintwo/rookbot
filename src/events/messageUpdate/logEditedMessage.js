@@ -1,13 +1,13 @@
 import logsChannel from '../../../config.json' with { type: "json" }
-import { EmbedBuilder } from 'discord.js'
+import { Client, EmbedBuilder, Message } from 'discord.js'
 import fs from 'fs'
 import path from 'path'
 
 /**
  * Logs edited messages from the server.
- * @param {import('discord.js').Client} client
- * @param {import('discord.js').Message} oldMessage
- * @param {import('discord.js').Message} newMessage
+ * @param {Client} client
+ * @param {Message} oldMessage
+ * @param {Message} newMessage
  */
 let logEditedMessage = async (client, oldMessage, newMessage) => {
   try {

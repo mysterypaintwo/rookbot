@@ -1,0 +1,15 @@
+{
+  "profile": "minnie",
+  "profiles": {
+    "minnie": {
+      "DEV": true,
+      "name": "Minnie",
+      "stripe": "#C8A0C8",
+      "footer": {
+        "image": "https://cdn.discordapp.com/avatars/263968998645956608/b4767c97e4643d5a2f98d7deca0c0d67",
+        "msg": "This bot is being Tested by Minnie"
+      },
+      "testServer": "745409743593406634"
+    }
+  }
+}

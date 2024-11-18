@@ -1,4 +1,5 @@
 import * as CONFIG from '../../../config.json' with { type: "json" }
+import * as PROFILE from '../../PROFILE.json' with { type: "json" }
 import areCommandsDifferent from '../../utils/areCommandsDifferent.js'
 import getApplicationCommands from '../../utils/getApplicationCommands.js'
 import getLocalCommands from '../../utils/getLocalCommands.js'
@@ -8,7 +9,7 @@ let registerCommands = async (client) => {
     let localCommands = await getLocalCommands();
     let applicationCommands = await getApplicationCommands(
       client,
-      CONFIG.testServer
+      PROFILE.default.profiles[PROFILE.default.profile].testServer
     );
 
     let updated = 0

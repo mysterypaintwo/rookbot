@@ -1,11 +1,12 @@
 import { logsChannel } from '../../../config.json' with { type: "json" }
+import { Client, Message } from 'discord.js'
 import fs from 'fs'
 import path from 'path'
 
 /**
  * Logs deleted messages from the server.
- * @param {import('discord.js').Client} client
- * @param {import('discord.js').Message} deletedMessage
+ * @param {Client} client
+ * @param {Message} deletedMessage
  */
 let logDeletedMessages = async (client, deletedMessage) => {
   try {

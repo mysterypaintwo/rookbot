@@ -154,7 +154,7 @@ let command = class BotActivityCommand extends AdminCommand {
       let args = baseArgs.concat([ ...added.split(" ") ])
       dummy = new BotActivityCommand()
       dummy.props.footer.msg = args.join(" | ")
-      dummy.run(client, message, args, null, "")
+      dummy.execute(client, message, args, null, "")
     }
   }
 }

@@ -1,35 +1,43 @@
-import { devs, testServer } from '../../../config.json' with { type: "json" }
+import * as CONFIG from '../../../config.json' with { type: "json" }
 import getLocalCommands from '../../utils/getLocalCommands.js'
 
 let handleCommands = async (client, interaction) => {
-  if (!interaction.isChatInputCommand()) return;
+  console.log("Executing a command")
+  if (!interaction.isChatInputCommand()) {
+    console.log("Interaction is not a Chat Input Command")
+    return
+  }
 
-  const localCommands = getLocalCommands();
+  const localCommands = await getLocalCommands();
 
   try {
-    const commandObject = localCommands.find(
-      (cmd) => cmd.name === interaction.commandName
-    );
+    console.log(`Running: ${interaction.commandName}`)
+    const commandObject = localCommands[interaction.commandName]
 
-    if (!commandObject) return;
+    if (!commandObject) {
+      console.log("Interaction referenced a non-Command Object")
+      return
+    }
 
     if (commandObject.devOnly) {
-      if (!devs.includes(interaction.member.id)) {
+      console.log("Dev-Only")
+      if (!CONFIG.default.devs.includes(interaction.member.id)) {
         interaction.reply({
           content: 'Only developers are allowed to run this command.',
           ephemeral: true,
-        });
-        return;
+        })
+        return
       }
     }
 
     if (commandObject.testOnly) {
-      if (!(interaction.guild.id === testServer)) {
+      console.log("Test-Only")
+      if (!(interaction.guild.id === CONFIG.default.testServer)) {
         interaction.reply({
           content: 'This command cannot be ran here.',
           ephemeral: true,
-        });
-        return;
+        })
+        return
       }
     }
 
@@ -39,8 +47,8 @@ let handleCommands = async (client, interaction) => {
           interaction.reply({
             content: 'Not enough permissions.',
             ephemeral: true,
-          });
-          return;
+          })
+          return
         }
       }
     }
@@ -53,15 +61,15 @@ let handleCommands = async (client, interaction) => {
           interaction.reply({
             content: "I don't have enough permissions.",
             ephemeral: true,
-          });
-          return;
+          })
+          return
         }
       }
     }
 
     await commandObject.execute(client, interaction);
   } catch (error) {
-    console.log(`There was an error running this command: ${error}`);
+    console.log(`There was an error running this command: ${error.stack}`)
   }
 };
 

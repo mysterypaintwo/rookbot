@@ -11,7 +11,7 @@ let command = class PingCommand extends RookCommand {
     }
     let props = {
       title: { text: "Pong!" },
-      image: "https://thumbs.gfycat.com/VariableNervousAfricancivet-small.gif"
+      image: "https://i.pinimg.com/originals/c8/8c/2f/c88c2fa6b66b89717ddeaafaf8c4d264.gif"
     }
     super(
       {...comprops},
@@ -20,7 +20,7 @@ let command = class PingCommand extends RookCommand {
   }
 
   async test(client, message, args) {
-    this.run(client, message, args, null, "")
+    this.execute(client, message, args, null, "")
   }
 }
 

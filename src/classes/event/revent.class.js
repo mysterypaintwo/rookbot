@@ -51,7 +51,7 @@ let event = class RookEvent extends BaseEvent {
     return channel
   }
 
-  async run(handler, ...args) {
+  async execute(handler, ...args) {
     return
   }
 }

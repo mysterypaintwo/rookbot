@@ -10,7 +10,7 @@ let event = class BootEvent extends RookEvent {
     super('ready')
   }
 
-  async run(handler) {
+  async execute(client) {
     let GLOBALS = null
     const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
     try {
@@ -50,18 +50,22 @@ let event = class BootEvent extends RookEvent {
     let DEV = GLOBALS.DEV
 
     let props = {}
+    let user = client?.user
 
     let output = [
-      "---",
-      `${handler.client.user.username} v${PACKAGE.version} is Online!`
+      "---"
     ]
+    output.push(
+      (user ? user.username : "") +
+      ` v${PACKAGE.version} is Online!`
+    )
     if (DEV) {
       let profileName = `${GLOBALS.name}-<${BRANCH}>`
       output.push(
         `!!! DEV MODE (${profileName}) ENABLED !!!`
       )
     } else {
-      let profileName = `${handler.client.user.username}-<${BRANCH}>`
+      let profileName = (user ? user.username : "") + `-<${BRANCH}>`
       output.push(
         `\*\*\* PRODUCTION MODE (${profileName}) ENABLED \*\*\*`
       )
@@ -81,50 +85,55 @@ let event = class BootEvent extends RookEvent {
       .replace(/\*/g, "🟩")
       .replace(/!/g, "🟧")
       .replace(`<${BRANCH}>`,`\`${BRANCH}\``),
-      output[4].replace(
+      user ? output[4].replace(
         "Bot",
-        `<@${handler.client.user.id}>`
-      )
+        `<@${user.id}>`
+      ) : output[4]
     ].join("\n")
 
     console.log(output.join("\n"))
 
     let embed = null
-    for (let [ guildID, guildData ] of handler.client.guilds.cache) {
-      let clientMember = await guildData.members.fetch(handler.client.user.id)
+    if (client?.guilds) {
+      for (let [ guildID, guildData ] of client.guilds.cache) {
+        let clientMember = null
+        if(user) {
+          clientMember = await guildData.members.fetch(user.id)
+        }
 
-      if (clientMember) {
-        let nick = clientMember?.nickname || clientMember.user.username
-        let prefix = handler.client?.options?.defaultPrefix ||
-          handler.client?.options?.prefix ||
-          handler.client?.prefix ||
-          "/ "
-        if (!(nick.includes(`[${prefix.trim()}] `))) {
-          let regexp = /^[\[\(\{]([\S]+)[\}\)\]] /
-          if (nick.match(regexp)) {
-            nick = nick.replace(regexp,`[${prefix.trim()}] `)
-          } else {
-            nick = `[${prefix.trim()}] ${nick}`
+        if (clientMember) {
+          let nick = clientMember?.nickname || clientMember.user.username
+          let prefix = client?.options?.defaultPrefix ||
+            client?.options?.prefix ||
+            client?.prefix ||
+            "/ "
+          if (!(nick.includes(`[${prefix.trim()}] `))) {
+            let regexp = /^[\[\(\{]([\S]+)[\}\)\]] /
+            if (nick.match(regexp)) {
+              nick = nick.replace(regexp,`[${prefix.trim()}] `)
+            } else {
+              nick = `[${prefix.trim()}] ${nick}`
+            }
+          }
+          if (nick != (clientMember?.nickname || clientMember.user.username)) {
+            clientMember.setNickname(nick)
           }
         }
-        if (nick != (clientMember?.nickname || clientMember.user.username)) {
-          clientMember.setNickname(nick)
-        }
-      }
-      let dummyMsg = { "guild": guildData }
-      const channel = await this.getChannel(dummyMsg, "bot-console")
-      if (channel) {
-        dummyMsg.channel = channel
-        embed = new RookEmbed(props)
-        let rCommand = new RookCommand({ name: "botready"}, { channel: channel })
+        let dummyMsg = { "guild": guildData }
+        const channel = await this.getChannel(dummyMsg, "bot-console")
+        if (channel) {
+          dummyMsg.channel = channel
+          embed = new RookEmbed(props)
+          let rCommand = new RookCommand({ name: "botready"}, { channel: channel })
 
-        if (
-          (!(DEV)) ||
-          guildID == "185220229931073538" || // Trident Esports PRIVATE
-          guildID == "745409743593406634" || // TridentBot
-          false
-        ) {
-          let message = rCommand.send(dummyMsg, embed)
+          if (
+            (!(DEV)) ||
+            guildID == "185220229931073538" || // Trident Esports PRIVATE
+            guildID == "745409743593406634" || // TridentBot
+            false
+          ) {
+            let message = rCommand.send(dummyMsg, embed)
+          }
         }
       }
     }

@@ -5,7 +5,7 @@
  * @public
  */
 let command = class BaseCommand {
-  constructor(comprops, props) {
+  constructor(comprops) {
     if (comprops["name"]) {
       this.name = comprops["name"]
     }
