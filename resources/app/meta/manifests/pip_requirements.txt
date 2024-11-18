@@ -2,3 +2,4 @@ wheel
 pyjson5
 pytz
 pyyaml
+requests
