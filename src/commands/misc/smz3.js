@@ -13,7 +13,6 @@ function isValidURLFromDomain(input, domain) {
       return false;
   }
 }
-const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: 'smz3',
