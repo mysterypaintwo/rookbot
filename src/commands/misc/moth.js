@@ -12,7 +12,7 @@ module.exports = {
     const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4');
 
     await interaction.deferReply();
-    
+
     try {
 
       // Send the video to the channel the command was sent in
@@ -24,7 +24,7 @@ module.exports = {
       // Optional: If you want to delete the original command message after posting the video
       await interaction.deleteReply();
     } catch (error) {
-      console.log(`There was an error when uploading the video: ${error}`);
+      console.log(`There was an error when uploading the video: ${error.stack}`);
       // If error occurs, use an ephemeral reply to privately inform the user
       await interaction.followUp({ content: 'There was an error uploading the video.', ephemeral: true });
     }

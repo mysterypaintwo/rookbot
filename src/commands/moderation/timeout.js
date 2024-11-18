@@ -1,5 +1,4 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -8,6 +7,8 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const timeoutDuration = interaction.options.get('duration').value; // Duration in seconds
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
@@ -44,7 +45,7 @@ module.exports = {
       interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **timed out** for ${timeoutDuration} seconds. (${reason})`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF8800') // Orange color for timeout
@@ -66,7 +67,7 @@ module.exports = {
       // Delete the deferred private reply to avoid it being left pending
       await interaction.deleteReply();
     } catch (error) {
-      console.log(`There was an error when timing out the user: ${error}`);
+      console.log(`There was an error when timing out the user: ${error.stack}`);
       await interaction.editReply({ content: "I couldn't timeout that user.", ephemeral: true }); // Private error message
     }
   },

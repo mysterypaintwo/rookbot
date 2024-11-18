@@ -114,6 +114,10 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
      ```bash
      node src/index.js
      ```
+   - Call menu of commands:
+     ```bash
+     npm run-script menu
+     ```
 
 2. **Run rookbot Persistently with PM2**:
    - Start rookbot with PM2:
@@ -321,4 +325,3 @@ Now you’re ready to securely clone and work with your private GitHub repositor
 ---
 
 Your PM2 script and bot files should now be fully removed. You can proceed with a clean setup afterward!
-

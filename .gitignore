@@ -1,6 +1,8 @@
 # App
 ## Config
 config.json
+## Profile
+PROFILE.json
 
 # Python
 __pycache__

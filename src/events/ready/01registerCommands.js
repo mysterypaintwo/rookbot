@@ -1,15 +1,26 @@
-const { testServer } = require('../../../config.json');
 const areCommandsDifferent = require('../../utils/areCommandsDifferent');
 const getApplicationCommands = require('../../utils/getApplicationCommands');
 const getLocalCommands = require('../../utils/getLocalCommands');
 
 module.exports = async (client) => {
   try {
+    const PROFILE = require('../../PROFILE.json');
+    const guildIDs = require('../../dbs/guilds.json');
+    const testGuildID = PROFILE["profiles"][PROFILE["profile"]]["testserver"];
+    let testGuilds = [];
+    for (let [guildID, guildName] of Object.entries(guildIDs)) {
+      if (guildName.includes("Test")) {
+        testGuilds.push(guildID);
+      }
+    }
+
     const localCommands = getLocalCommands();
-    const applicationCommands = await getApplicationCommands(
-      client,
-      testServer
-    );
+    let applicationCommands = null;
+    if (testGuilds.includes(testGuildID)) {
+      applicationCommands = await getApplicationCommands(client, testGuildID);
+    } else {
+      applicationCommands = await getApplicationCommands(client);
+    }
 
     for (const localCommand of localCommands) {
       const { name, description, options } = localCommand;
@@ -51,6 +62,6 @@ module.exports = async (client) => {
       }
     }
   } catch (error) {
-    console.log(`There was an error: ${error}`);
+    console.log(`There was an error: ${error.stack}`);
   }
 };

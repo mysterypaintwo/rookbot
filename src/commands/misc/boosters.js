@@ -23,7 +23,7 @@ module.exports = {
         .setTitle('Server Boost Info')
         .setDescription(`
           **Total Boosters:** ${boosts}
-          **Boost Level:** ${boostLevel} 
+          **Boost Level:** ${boostLevel}
         `)
         .setTimestamp()
         .setFooter({ text: `Requested by ${interaction.user.tag}` });
@@ -31,7 +31,7 @@ module.exports = {
       // Send the embed as a reply to the command
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
-      console.log(`Error fetching boost info: ${error}`);
+      console.log(`Error fetching boost info: ${error.stack}`);
       await interaction.editReply("There was an error fetching the server's boost information.");
     }
   },

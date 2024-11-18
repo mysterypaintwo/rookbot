@@ -1,16 +1,14 @@
-const { downloadsChannel, supportPost, serverGameName_base64encoded } = require('../../../config.json');
-const {
-  Client,
-  Interaction,
-  ApplicationCommandOptionType,
-  EmbedBuilder
-} = require('discord.js');
+const { serverGameName_base64encoded } = require('../../../config.json');
+const { EmbedBuilder } = require('discord.js');
 
 // Decode the base64 string
 const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
 
 module.exports = {
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const guildMeta = require(`../../dbs/${guildID}/meta.json`);
+
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
 
@@ -21,8 +19,8 @@ module.exports = {
         .setTitle(`Download ${serverGameName}`)
         .setDescription(`You can download ${serverGameName} below!`)
         .addFields(
-          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${downloadsChannel})`, inline: false },
-          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${supportPost}).`, inline: false }
+          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${guildMeta['downloads']})`, inline: false },
+          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${guildMeta['supportpost']}).`, inline: false }
         )
         .setTimestamp()
         .setFooter({ text: `Requested by ${interaction.user.tag}` });
@@ -30,7 +28,7 @@ module.exports = {
       // Reply to the command with the embed
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
-      console.log(`Error posting download information: ${error}`);
+      console.log(`Error posting download information: ${error.stack}`);
       await interaction.editReply("There was an error posting the download information.");
     }
   },

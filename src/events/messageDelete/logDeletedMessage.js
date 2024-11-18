@@ -1,12 +1,11 @@
-const { logsChannel } = require('../../../config.json'); // Import the log channel ID
-const { EmbedBuilder } = require('discord.js');
+const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
 /**
  * Logs deleted messages from the server.
- * @param {import('discord.js').Client} client
- * @param {import('discord.js').Message} deletedMessage
+ * @param {Client} client
+ * @param {Message} deletedMessage
  */
 module.exports = async (client, deletedMessage) => {
   try {
@@ -21,7 +20,9 @@ module.exports = async (client, deletedMessage) => {
     }
 
     // Fetch the log channel using the logsChannel ID
-    const logChannel = client.channels.cache.get(logsChannel);
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
+    const logChannel = client.channels.cache.get(guildChannels["logging"]);
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.');

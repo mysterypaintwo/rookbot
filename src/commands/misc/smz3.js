@@ -1,4 +1,3 @@
-const { sahaBotUserID, multiplayerSchedulingChanID } = require('../../../config.json');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -17,15 +16,18 @@ module.exports = {
    * @param {import('discord.js').Interaction} interaction
    */
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const userIDs = require("../../dbs/userids.json");
+
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
 
       /*
-    const sahaBot = interaction.guild.members.fetch(sahaBotUserID);
+    const sahaBot = interaction.guild.members.fetch(userIDs['sahabot']);
 
     if (!sahaBot) {
       await interaction.reply({
-        content: `Sahasrala bot not found on this server. <@${sahaBotUserID}>`,
+        content: `Sahasrala bot not found on this server. <@${userIDs['sahabot']}>`,
         ephemeral: true,
       });
       return;
@@ -133,7 +135,7 @@ module.exports = {
       // Select a random major item
       const randomMajorItem = majorItems[Math.floor(Math.random() * majorItems.length)];
       const randomUselessItem = uselessItems[Math.floor(Math.random() * uselessItems.length)];
-      
+
       // Modify the major item if it starts with "A " and if it's not at the beginning of the sentence
       let formattedMajorItem = randomMajorItem;
       if (formattedMajorItem.startsWith('A ') && randomFooterText.indexOf('[MAJOR_ITEM]') > 0) {
@@ -146,7 +148,7 @@ module.exports = {
 
       // Replace '[USELESS_ITEM]' with the modified major item
       randomFooterText = randomFooterText.replace('[USELESS_ITEM]', randomUselessItem);
-      
+
       // Create the embed
       const embed = new EmbedBuilder()
         .setColor('#00FF00')
