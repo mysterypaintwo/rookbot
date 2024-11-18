@@ -28,7 +28,7 @@ module.exports = {
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
 
-    const sahaBot = client.users.cache.get(sahaBotUserID);
+    const sahaBot = interaction.guild.members.cache.get(sahaBotUserID);
 
     if (!sahaBot) {
       await interaction.reply({
