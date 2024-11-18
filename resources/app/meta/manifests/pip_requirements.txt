@@ -1,3 +1,4 @@
 wheel
 pyjson5
+pytz
 pyyaml
