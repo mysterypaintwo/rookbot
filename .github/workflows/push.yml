@@ -1,0 +1,62 @@
+# workflow name
+name: Continuous Integration
+
+# fire on
+on: [push, pull_request]
+
+#########
+# actions
+#########
+# actions/checkout@v4.2.2
+
+#########
+# runners
+# https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
+#########
+# ubuntu-latest
+
+jobs:
+  # Test
+  test:
+    name: 🧮
+    runs-on: ${{ matrix.os-name }}
+    continue-on-error: True
+
+    strategy:
+      matrix:
+        os-name: [ ubuntu-latest ]
+        python-version: [ "3.12" ]
+    steps:
+      # checkout commit
+      - name: ✔️Checkout commit
+        uses: actions/checkout@v4.2.2
+      # install python
+      - name: 💿Install Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      # python version
+      - name: 🐍Python Version
+        shell: bash
+        run: |
+          python --version
+      # install
+      - name: 💿Call Install
+        uses: ./.github/actions/install
+        with:
+          calling-job: test
+          os-name: ${{ matrix.os-name }}
+          python-version: ${{ matrix.python-version }}
+      # Analyze used GitHub Actions
+      - name: Analyze used GitHub Actions
+        shell: bash
+        run: |
+          python ./resources/ci/common/list_actions.py
+
+      # Send Discord Notification to Updates
+      - name: Build Discord Notification Payload
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_UPDATES }}
+        run: |
+          python ./resources/ci/common/prepare_discord_notif.py
+        if: contains(github.ref, 'main') || contains(github.ref, 'stable')

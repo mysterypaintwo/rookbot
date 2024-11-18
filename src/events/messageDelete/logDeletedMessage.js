@@ -28,36 +28,21 @@ let logDeletedMessages = async (client, deletedMessage) => {
       return;
     }
 
-    // Construct log message
-    const logEmbed = {
-      color: 0xff0000,
-      title: '🚮 Message Deleted',
-      fields: [
-        {
-          name: 'Author',
-          value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`,
-          inline: false,
-        },
-        {
-          name: 'Channel',
-          value: `<#${deletedMessage.channel.id}>`,
-          inline: false,
-        },
-        {
-          name: 'Content',
-          value: deletedMessage.content || '*No content*',
-          inline: false,
-        },
-      ],
-      footer: {
-        text: `Message ID: ${deletedMessage.id}`,
-      },
-      timestamp: new Date(),
-    };
+    // Prepare the log embed
+    const logEmbed = new EmbedBuilder()
+      .setColor('#FF0000') // Orange for message updates
+      .setTitle('🚮 Message Deleted')
+      .setThumbnail(deletedMessage.author.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
+      .addFields(
+        { name: 'Author', value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`, inline: false },
+        { name: 'Channel', value: `<#${deletedMessage.channel.id}>`, inline: false },
+        { name: 'Content', value: deletedMessage.content || '*No content*', inline: false }
+      )
+      .setTimestamp()
+      .setFooter({ text: `Message ID: ${deletedMessage.id}` });
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
-
 
     // Optional: Save the deleted message to a log file
     const logFilePath = path.join(__dirname, '..', '..', 'deletedMessages.log');
