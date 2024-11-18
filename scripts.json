@@ -1,0 +1,42 @@
+{
+  "scripts": {
+    "audit": [
+      "✏️node ./src/res/ci/common/run-audit.js",
+      "📊Version",
+      "💊Audit/Better-NPM-Audit",
+      "🐭Install - Dry run",
+      "🐭Update - Dry run",
+      "⏰Outdated"
+    ],
+    "local-install": [
+      "✏️node ./src/res/ci/common/run-install.js",
+      "📊Version",
+      "⏰Outdated",
+      "🔨Get N",
+      "🔨Get NPM",
+      "🔨Install",
+      "⏰Outdated"
+    ],
+    "menu": [
+      "Show this menu"
+    ],
+    "run": [
+      "✏️node ./run.js",
+      "📊Version",
+      "💊Audit/Better-NPM-Audit",
+      "⏰Outdated",
+      "♖Main"
+    ],
+    "update": [
+      "✏️node ./src/res/ci/common/run-update.js",
+      "📊Version",
+      "⏰Outdated",
+      "🔨Update",
+      "⏰Outdated"
+    ],
+    "ver": [
+      "✏️node ./src/res/ci/common/ver.js",
+      "📊Version"
+    ]
+  }
+}

@@ -1,5 +1,4 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -8,6 +7,8 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const channel = interaction.options.getChannel('channel');
 
     // Make the initial reply private
@@ -24,7 +25,7 @@ module.exports = {
       interaction.channel.send(`Channel **${channel.name}** has been **locked**.`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF0000') // Red color for lock
@@ -41,7 +42,7 @@ module.exports = {
         console.log("Logs channel not found.");
       }
     } catch (error) {
-      console.log(`There was an error when locking the channel: ${error}`);
+      console.log(`There was an error when locking the channel: ${error.stack}`);
       await interaction.editReply({ content: "I couldn't lock the channel.", ephemeral: true }); // Private error message
     }
   },

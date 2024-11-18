@@ -1,0 +1,13 @@
+{
+  "botdev": [
+    "minnie",
+    "castle",
+    "shallow"
+  ],
+  "bot": [
+    "rook",
+    "rook-dev",
+    "rookbot-test",
+    "sahabot"
+  ]
+}

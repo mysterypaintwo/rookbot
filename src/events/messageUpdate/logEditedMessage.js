@@ -1,13 +1,12 @@
-const { logsChannel } = require('../../../config.json'); // Import logChannel ID
-const { EmbedBuilder } = require('discord.js');
+const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
 /**
  * Logs edited messages from the server.
- * @param {import('discord.js').Client} client
- * @param {import('discord.js').Message} oldMessage
- * @param {import('discord.js').Message} newMessage
+ * @param {Client} client
+ * @param {Message} oldMessage
+ * @param {Message} newMessage
  */
 module.exports = async (client, oldMessage, newMessage) => {
   try {
@@ -54,7 +53,9 @@ module.exports = async (client, oldMessage, newMessage) => {
     }
 
     // Fetch the log channel using its ID
-    const logChannelObject = newMessage.guild.channels.cache.get(logsChannel);
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
+    const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"]);
 
     // Prepare the log embed
     const embed = new EmbedBuilder()

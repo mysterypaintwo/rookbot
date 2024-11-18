@@ -1,0 +1,8 @@
+{
+  "stripe": "#FFFFFF",
+  "footer": {
+    "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true",
+    "msg": "This bot was created by Castle and his Fortifiers"
+  },
+  "thumbnail": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true"
+}

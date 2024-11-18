@@ -31,7 +31,7 @@ module.exports = {
       // Send the embed as a reply to the command
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
-      console.log(`Error fetching member count: ${error}`);
+      console.log(`Error fetching member count: ${error.stack}`);
       await interaction.editReply("There was an error fetching the member count.");
     }
   },

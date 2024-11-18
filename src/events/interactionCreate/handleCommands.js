@@ -1,8 +1,11 @@
-const { devs, testServer } = require('../../../config.json');
 const getLocalCommands = require('../../utils/getLocalCommands');
 
 module.exports = async (client, interaction) => {
   if (!interaction.isChatInputCommand()) return;
+
+  const roles = require('../../dbs/roles.json');
+  const userIDs = require('../../dbs/userids.json');
+  const guildIDs = require('../../dbs/guilds.json');
 
   const localCommands = getLocalCommands();
 
@@ -14,7 +17,16 @@ module.exports = async (client, interaction) => {
     if (!commandObject) return;
 
     if (commandObject.devOnly) {
-      if (!devs.includes(interaction.member.id)) {
+      let roleName = "botdev";
+      let roleUserNames = roles[roleName];
+      let roleUserIDs = [];
+      for (let [userName, userID] of Object.entries(userIDs)) {
+        if (roleUserNames.includes(userName)) {
+          roleUserIDs.push(userID);
+        }
+      }
+      console.log(roleName,roleUserNames,roleUserIDs);
+      if (!roleUserIDs.includes(interaction.member.id)) {
         interaction.reply({
           content: 'Only developers are allowed to run this command.',
           ephemeral: true,
@@ -24,7 +36,13 @@ module.exports = async (client, interaction) => {
     }
 
     if (commandObject.testOnly) {
-      if (!(interaction.guild.id === testServer)) {
+      let testGuilds = [];
+      for (let [guildID, guildName] of Object.entries(guildIDs)) {
+        if (guildName.includes("Test")) {
+          testGuilds.push(guildID);
+        }
+      }
+      if (!(testGuilds.includes(interaction.guild.id))) {
         interaction.reply({
           content: 'This command cannot be ran here.',
           ephemeral: true,
@@ -61,6 +79,6 @@ module.exports = async (client, interaction) => {
 
     await commandObject.execute(client, interaction);
   } catch (error) {
-    console.log(`There was an error running this command: ${error}`);
+    console.log(`There was an error running this command: ${error.stack}`);
   }
 };

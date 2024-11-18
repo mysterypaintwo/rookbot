@@ -1,5 +1,4 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -8,6 +7,8 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
@@ -51,14 +52,14 @@ module.exports = {
 
       // Try to DM the user about the ban (and kick if applicable)
       try {
-        await targetUser.send(`You have been banned${guildMember ? ' and kicked' : ''} from the ${serverName} server. (${reason})`);
+        await targetUser.send(`You have been banned${guildMember ? ' and kicked' : ''} from the ${interaction.guild.name} server. (${reason})`);
       } catch (dmError) {
         console.log(`Failed to DM user: ${dmError.message}`);
         await interaction.followUp({ content: "I couldn't send the DM to the user. They might have DMs disabled.", ephemeral: true }); // Private follow-up
       }
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#FF5733') // Orange-red color for ban & kick
@@ -79,7 +80,7 @@ module.exports = {
       // Delete the deferred private reply to stop the "thinking" state
       await interaction.deleteReply();
     } catch (error) {
-      console.log(`There was an error when banning the user: ${error}`);
+      console.log(`There was an error when banning the user: ${error.stack}`);
       await interaction.editReply({ content: "I couldn't ban the user.", ephemeral: true }); // Private error message
     }
   },

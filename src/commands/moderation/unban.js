@@ -1,5 +1,4 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { logsChannel, serverName } = require('../../../config.json');
 
 module.exports = {
   /**
@@ -8,6 +7,8 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
+    const guildID = interaction.guild_id;
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
@@ -28,7 +29,7 @@ module.exports = {
       interaction.channel.send(`User **${targetUser.tag}** (ID: ${targetUserId}) has been **unbanned**. (${reason})`);
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(logsChannel);
+      const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
         const embed = new EmbedBuilder()
           .setColor('#00FF00') // Green color for unban
@@ -49,7 +50,7 @@ module.exports = {
       // Delete the deferred private reply to stop the "thinking" state
       await interaction.deleteReply();
     } catch (error) {
-      console.log(`There was an error when unbanning: ${error}`);
+      console.log(`There was an error when unbanning: ${error.stack}`);
       await interaction.editReply({ content: "I couldn't unban that user.", ephemeral: true }); // Private error message
     }
   },
