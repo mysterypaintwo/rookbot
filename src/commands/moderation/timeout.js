@@ -57,12 +57,24 @@ module.exports = {
 
       // Reply publicly in the channel to confirm the timeout
       let plural = "second" + (timeoutDuration != 1 ? "s" : "")
+
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
+      players["target"] = {
+        name: targetUserName,
+        avatar: guildMember.avatarURL()
+      }
+
       let props = {
         color: "#00FF00",
         title: {
           text: "Success!"
         },
-        description: `User **${targetUserName}** has been **timed out** for ${timeoutDuration} ${plural}. (${reason})`
+        description: `User **${targetUserName}** has been **timed out** for ${timeoutDuration} ${plural}. (${reason})`,
+        players: players
       }
       const embed = new RookEmbed(props)
       interaction.channel.send({ embeds: [ embed ] });

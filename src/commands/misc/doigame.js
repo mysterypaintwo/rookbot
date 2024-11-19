@@ -24,10 +24,7 @@ module.exports = {
         fields: [
           { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${guildMeta['downloads']})`, inline: false },
           { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${guildMeta['supportpost']}).`, inline: false }
-        ],
-        footer: {
-          msg: `Requested by ${interaction.user.tag}`
-        }
+        ]
       }
       const embed = new RookEmbed(props)
 

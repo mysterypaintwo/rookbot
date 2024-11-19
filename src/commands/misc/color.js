@@ -40,6 +40,11 @@ module.exports = {
     const b = parseInt(hexInput.substring(4, 6), 16);
 
     // Create the embed
+    let players = {}
+    players["user"] = {
+      name: interaction.user.displayName,
+      avatar: interaction.user.avatarURL()
+    }
     let props = {
       color: `${hexInput}`,
       title: {
@@ -48,7 +53,8 @@ module.exports = {
       fields: [
         { name: 'Hex', value: `#${hexInput}`,       inline: true },
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
-      ]
+      ],
+      players: players
     }
     const embed = new RookEmbed(props)
 

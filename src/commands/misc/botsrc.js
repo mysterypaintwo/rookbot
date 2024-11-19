@@ -34,7 +34,7 @@ module.exports = {
       ],
       footer: {
         msg: "Check out the bot's repository for more!",
-        image: "https://github.com/favicon.ico"
+        image: "https://github.com/fluidicon.png"
       }
     }
     const embed = new RookEmbed(props)

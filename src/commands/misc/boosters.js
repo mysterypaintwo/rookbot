@@ -18,6 +18,15 @@ module.exports = {
       const boostLevel = interaction.guild.premiumTier;
 
       // Prepare a message to show the boost information
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
+      players["target"] = {
+        name: interaction.guild.name,
+        avatar: interaction.guild.iconURL()
+      }
       let props = {
         color: "#00BFFF",
         title: {
@@ -27,7 +36,8 @@ module.exports = {
           `**Total Boosters:** ${boosts}`,
           `**Boost Level:** ${boostLevel}`
         ],
-        footer: `Requested by ${interaction.user.tag}`
+        footer: `Requested by ${interaction.user.tag}`,
+        players: players
       }
       const embed = new RookEmbed(props)
 
