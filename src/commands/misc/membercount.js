@@ -21,15 +21,22 @@ module.exports = {
       const totalBots = members.filter(member => member.user.bot).size;
 
       // Create an embed to send the member count
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
+      players["target"] = {
+        name: interaction.guild.name,
+        avatar: interaction.guild.iconURL()
+      }
       let props = {
         color: "#00FF00",
         title: {
           text: "Total Member Count"
         },
         description: `There are currently ${totalMembers} registered members in this server!\n(Count includes staff and excludes our ${totalBots} bots.)`,
-        footer: {
-          msg: `Requested by ${interaction.user.tag}`
-        }
+        players: players
       }
       const embed = new RookEmbed(props)
 

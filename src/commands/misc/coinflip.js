@@ -8,11 +8,17 @@ module.exports = {
         // Randomly choose between "Heads" and "Tails"
         const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
 
+        let players = {}
+        players["user"] = {
+          name: interaction.user.displayName,
+          avatar: interaction.user.avatarURL()
+        }
         let props = {
           title: {
             text: "Flip a coin!"
           },
-          description: `The coin landed on **${outcome}**!`
+          description: `The coin landed on **${outcome}**!`,
+          players: players
         }
         const embed = new RookEmbed(props)
 

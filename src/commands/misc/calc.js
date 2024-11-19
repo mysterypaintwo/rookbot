@@ -24,6 +24,11 @@ module.exports = {
       const result = evaluate(expression);
 
       // Create and send the embed
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
       let props = {
         color: "#00FF00",
         title: {
@@ -32,7 +37,8 @@ module.exports = {
         fields: [
           { name: "Expression", value: `\`${expression}\``, inline: false },
           { name: "Result",     value: `\`${result}\``,     inline: false }
-        ]
+        ],
+        players: players
       }
       const embed = new RookEmbed(props)
 

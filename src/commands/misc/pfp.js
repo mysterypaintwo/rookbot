@@ -19,12 +19,23 @@ module.exports = {
     // Get the user's avatar URL
     const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 });
 
+    let players = {}
+    players["user"] = {
+      name: interaction.user.displayName,
+      avatar: interaction.user.avatarURL()
+    }
+    players["target"] = {
+      name: targetUserName,
+      avatar: avatarURL
+    }
+
     let props = {
       title: {
         text: `${targetUserName}'s Avatar`,
         url: avatarURL
       },
-      image: avatarURL
+      image: avatarURL,
+      players: players
     }
     const embed = new RookEmbed(props)
 

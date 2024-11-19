@@ -175,6 +175,15 @@ module.exports = {
       randomFooterText = randomFooterText.replace('[USELESS_ITEM]', randomUselessItem);
 
       // Create the embed
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
+      players["target"] = {
+        name: "SMZ3",
+        avatar: "http://alttp.mymm1.com/holyimage/images/alttpo/smz3.png"
+      }
       let props = {
         color: "#00FF00",
         title: {
@@ -200,7 +209,8 @@ module.exports = {
         ],
         footer: {
           msg: randomFooterText
-        }
+        },
+        players: players
       }
       const embed = new RookEmbed(props)
 

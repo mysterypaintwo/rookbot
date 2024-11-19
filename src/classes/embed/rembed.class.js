@@ -245,9 +245,11 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
     author.url = props?.caption?.url && props.caption.url.trim() != "" ? props.caption.url.trim() : avatars.author.url
     if (author && author.name != "") {
       this.setAuthor(
-        author.name,
-        avatars.author.avatar,
-        author.url
+        {
+          name: author.name,
+          iconURL: avatars.author.avatar,
+          url: author.url
+        }
       )
     }
 

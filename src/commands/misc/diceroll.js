@@ -34,11 +34,17 @@ module.exports = {
           total += roll;
         }
 
+        let players = {}
+        players["user"] = {
+          name: interaction.user.displayName,
+          avatar: interaction.user.avatarURL()
+        }
         let props = {
           title: {
             text: `Roll ${count}d${sides}!`
           },
-          description: `🎲You got ${rolls.join(', ')} for a total of ${total}`
+          description: `🎲You got ${rolls.join(', ')} for a total of ${total}`,
+          players: players
         }
         const embed = new RookEmbed(props)
 
