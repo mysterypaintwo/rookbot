@@ -31,6 +31,12 @@ module.exports = {
       type: ApplicationCommandOptionType.String,
       required: false,
     },
+    {
+      name: 'prep_time',
+      description: 'The number of minutes to prepare before the game starts.',
+      type: ApplicationCommandOptionType.Integer,
+      required: false,
+    },
   ],
 
   /**
@@ -43,6 +49,7 @@ module.exports = {
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
     const seedURL = interaction.options.getString('seed_url') || null;
+    const prepTimeMinutes = interaction.options.getInteger('prep_time') || 5; // Default to 5 minutes
 
       /*
     const sahaBot = interaction.guild.members.fetch(userIDs['sahabot']);
@@ -62,14 +69,10 @@ module.exports = {
       const randNum = Math.floor(Math.random() * 10000000001);
       const groupName = `zdoi${randNum}`;
 
-      // Get the current timestamp and add 15 minutes of prep time
+      // Get the current timestamp and add <prepTimeMinutes> minutes of prep time
       const now = new Date();
-      const prepTime = 15 * 60 * 1000; // 15 minutes in milliseconds
-
-      // Add the prep time to the current time
+      const prepTime = prepTimeMinutes * 60 * 1000; // Convert minutes to milliseconds
       const adjustedTime = new Date(now.getTime() + prepTime);
-
-      // Format the timestamp
       const timestamp = `<t:${Math.floor(adjustedTime.getTime() / 1000)}:F>`;
 
       // Define the Major Items
