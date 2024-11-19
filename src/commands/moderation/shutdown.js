@@ -39,12 +39,22 @@ module.exports = {
         })
       })
     } catch (err) {
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL()
+      }
+      players["target"] = {
+        name: client.user.name,
+        avatar: client.user.avatarURL()
+      }
       let props = {
         color: "#FF0000",
         title: {
           text: "Bot Shutdown!"
         },
-        description: `Shutting down <@${client.user.id}>.`
+        description: `Shutting down <@${client.user.id}>.`,
+        players: players
       }
       let embed = new RookEmbed(props)
       await interaction.reply({ embeds: [ embed ] })
