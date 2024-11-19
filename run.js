@@ -1,7 +1,7 @@
 // import shell from 'shelljs'
 const shell = require('shelljs')
 
-let QUICK = false
+let QUICK = true
 
 if (!QUICK) {
   shell.exec("node ./src/res/ci/common/ver.js")

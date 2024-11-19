@@ -3,7 +3,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
-   * Locks a specified channel, preventing the @everyone role from sending messages.
+   * Unlocks a specified channel, allowing the @everyone role to send messages.
    * @param {Client} client
    * @param {Interaction} interaction
    */
@@ -19,17 +19,17 @@ module.exports = {
 
     try {
       if (!DEV_MODE) {
-        // Lock the channel by denying SEND_MESSAGES for @everyone
+        // Unlock the channel by allowing SEND_MESSAGES for @everyone
         await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-          SendMessages: false,
+          SendMessages: null, // Removes the overwrite
         });
       }
 
       // Send public confirmation in the channel
       const embedProps = {
-        color: '#FF0000',
-        title: { text: 'Channel Locked!' },
-        description: `Channel <#${channel.id}> has been **locked**.`,
+        color: '#00FF00',
+        title: { text: 'Channel Unlocked!' },
+        description: `Channel <#${channel.id}> has been **unlocked**.`,
       };
       const embed = new RookEmbed(embedProps);
       channel.send({ embeds: [embed] });
@@ -40,11 +40,11 @@ module.exports = {
         let props = {
           color: "#FF0000",
           title: {
-            text: "🔒 Channel Locked"
+            text: "🔓 Channel Unlocked"
           },
           fields: [
-            { name: 'Channel Locked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
-            { name: 'Locked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
+            { name: 'Channel Unlocked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
+            { name: 'Unlocked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
           ],
           footer: {
             msg: `Actioned by ${interaction.user.displayName}`
@@ -58,28 +58,28 @@ module.exports = {
 
       // Complete the interaction with a private success message
       await interaction.editReply({
-        content: `Channel <#${channel.id}> has been successfully **locked**!`,
+        content: `Channel <#${channel.id}> has been successfully **unlocked**!`,
       });
     } catch (error) {
-       console.log(`There was an error when locking the channel: ${error.stack}`);
+      console.log(`There was an error when unlocking the channel: ${error.stack}`);
       let props = {
         color: "#FF0000",
         title: {
           text: "Error"
         },
-        description: "I couldn't lock the channel."
+        description: "I couldn't unlock the channel."
       }
       const embed = new RookEmbed(props)
       await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
     }
   },
 
-  name: 'lock',
-  description: 'Locks a channel, preventing anyone from sending messages.',
+  name: 'unlock',
+  description: 'Unlocks a channel, allowing users to send messages again.',
   options: [
     {
       name: 'channel',
-      description: 'The channel to lock.',
+      description: 'The channel to unlock.',
       type: ApplicationCommandOptionType.Channel,
       required: true,
     },
