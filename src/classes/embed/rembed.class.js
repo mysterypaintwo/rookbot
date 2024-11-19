@@ -124,8 +124,8 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
           props.color = this.defaults.stripe;
           break;
       }
-    } else {
-      props.color = this.defaults.stripe;
+    // } else {
+    //   props.color = this.defaults.stripe;
     }
 
     // Inbound footer message

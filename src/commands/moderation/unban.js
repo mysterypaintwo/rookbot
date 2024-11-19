@@ -1,4 +1,5 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
@@ -7,7 +8,10 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const guildID = interaction.guild_id;
+    const PROFILE = require('../../PROFILE.json');
+    const guildIDs = require('../../dbs/guilds.json');
+    let DEV_MODE = PROFILE["profiles"][PROFILE["profile"]]?.DEV
+    const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
@@ -19,39 +23,64 @@ module.exports = {
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
     try {
-      // Unban the user
-      await interaction.guild.bans.remove(targetUserId, reason);
+      if (!DEV_MODE) {
+        // Unban the user
+        await interaction.guild.bans.remove(targetUserId, reason);
+      }
 
       // Get the user object for the unbanned user
       const targetUser = await client.users.fetch(targetUserId);
 
       // Reply publicly in the channel to confirm the unban
-      interaction.channel.send(`User **${targetUser.tag}** (ID: ${targetUserId}) has been **unbanned**. (${reason})`);
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Success!"
+        },
+        description: `User **${targetUser.tag}** has been **unbanned**. (${reason})`
+      }
+      const embed = new RookEmbed(props)
+      interaction.channel.send({ embeds: [ embed ] });
 
-      // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(guildChannels["logging"]);
-      if (logs) {
-        const embed = new EmbedBuilder()
-          .setColor('#00FF00') // Green color for unban
-          .setTitle('✅ User Unbanned')
-          .addFields(
-            { name: 'User Unbanned', value: `${targetUser.tag} (ID: ${targetUserId})`, inline: true },
-            { name: 'Unbanned By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
-            { name: 'Reason', value: reason, inline: false }
-          )
-          .setTimestamp()
-          .setFooter({ text: `Actioned by ${interaction.user.tag}` });
+      if (!DEV_MODE) {
+        // Log the action in the logs channel (private)
+        const logs = client.channels.cache.get(guildChannels["logging"]);
+        if (logs) {
+          let props = {
+            color: "#00FF00",
+            title: {
+              text: "✅ User Unbanned"
+            },
+            fields: [
+              { name: 'User Unbanned',  value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
+              { name: 'Unbanned By',    value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
+              { name: 'Reason',         value: reason,                                              inline: false }
+            ],
+            footer: {
+              msg: `Actioned by ${interaction.user.displayName}`
+            }
+          }
+          const embed = new RookEmbed(props)
 
-        logs.send({ embeds: [embed] });
-      } else {
-        console.log("Logs channel not found.");
+          logs.send({ embeds: [ embed ] });
+        } else {
+          console.log("Logs channel not found.");
+        }
       }
 
       // Delete the deferred private reply to stop the "thinking" state
       await interaction.deleteReply();
     } catch (error) {
       console.log(`There was an error when unbanning: ${error.stack}`);
-      await interaction.editReply({ content: "I couldn't unban that user.", ephemeral: true }); // Private error message
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "I couldn't unban that user."
+      }
+      const embed = new RookEmbed(props)
+      await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
     }
   },
 

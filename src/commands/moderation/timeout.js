@@ -1,4 +1,5 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
@@ -7,10 +8,13 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const guildID = interaction.guild_id;
+    const PROFILE = require('../../PROFILE.json');
+    const guildIDs = require('../../dbs/guilds.json');
+    let DEV_MODE = PROFILE["profiles"][PROFILE["profile"]]?.DEV
+    const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
-    const timeoutDuration = interaction.options.get('duration').value; // Duration in seconds
+    const timeoutDuration = Math.abs(interaction.options.get('duration').value); // Duration in seconds
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     // Make the initial reply private
@@ -24,7 +28,15 @@ module.exports = {
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      await interaction.editReply({ content: "User not found.", ephemeral: true });
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "User not found."
+      }
+      const embed = new RookEmbed(props)
+      await interaction.editReply({ embeds: [ embed ], ephemeral: true });
       return;
     }
 
@@ -35,40 +47,66 @@ module.exports = {
       // Convert the timeout duration from seconds to milliseconds
       const timeoutDurationMilliseconds = timeoutDuration * 1000;
 
-      // Set the timeout (mute and prevent interactions)
-      await guildMember.timeout(timeoutDurationMilliseconds, reason);
+      if (guildMember && !DEV_MODE) {
+        // Set the timeout (mute and prevent interactions)
+        await guildMember.timeout(timeoutDurationMilliseconds, reason);
+      }
 
       // Determine the name to display (use nickname if available, otherwise default to tag or username)
       const targetUserName = guildMember?.nickname || targetUser.username;
 
       // Reply publicly in the channel to confirm the timeout
-      interaction.channel.send(`User **${targetUserName}** (ID: ${targetUserId}) has been **timed out** for ${timeoutDuration} seconds. (${reason})`);
+      let plural = "second" + (timeoutDuration != 1 ? "s" : "")
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Success!"
+        },
+        description: `User **${targetUserName}** has been **timed out** for ${timeoutDuration} ${plural}. (${reason})`
+      }
+      const embed = new RookEmbed(props)
+      interaction.channel.send({ embeds: [ embed ] });
 
-      // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(guildChannels["logging"]);
-      if (logs) {
-        const embed = new EmbedBuilder()
-          .setColor('#FF8800') // Orange color for timeout
-          .setTitle('⏰ User Timeout')
-          .addFields(
-            { name: 'User', value: `${targetUserName} (ID: ${targetUserId})`, inline: true },
-            { name: 'Timeout Duration', value: `${timeoutDuration} seconds`, inline: true },
-            { name: 'Timeout By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true },
-            { name: 'Reason', value: reason, inline: false }
-          )
-          .setTimestamp()
-          .setFooter({ text: `Actioned by ${interaction.user.tag}` });
+      if (!DEV_MODE) {
+        // Log the action in the logs channel (private)
+        const logs = client.channels.cache.get(guildChannels["logging"]);
+        if (logs) {
+          let props = {
+            color: "#FF8800",
+            title: {
+              text: "⏰ User Timeout"
+            },
+            fields: [
+              { name: 'User',             value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
+              { name: 'Timeout By',       value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
+              { name: 'Reason',           value: reason,                                              inline: false },
+              { name: 'Timeout Duration', value: `${timeoutDuration} ${plural}`,                      inline: true }
+            ],
+            footer: {
+              msg: `Actioned by ${interaction.user.displayName}`
+            }
+          }
+          const embed = new RookEmbed(props)
 
-        logs.send({ embeds: [embed] });
-      } else {
-        console.log("Logs channel not found.");
+          logs.send({ embeds: [ embed ] });
+        } else {
+          console.log("Logs channel not found.");
+        }
       }
 
       // Delete the deferred private reply to avoid it being left pending
       await interaction.deleteReply();
     } catch (error) {
       console.log(`There was an error when timing out the user: ${error.stack}`);
-      await interaction.editReply({ content: "I couldn't timeout that user.", ephemeral: true }); // Private error message
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "I couldn't timeout that user."
+      }
+      const embed = new RookEmbed(props)
+      await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
     }
   },
 

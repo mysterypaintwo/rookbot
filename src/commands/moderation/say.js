@@ -1,10 +1,11 @@
 const { PermissionFlagsBits } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
-   * 
-   * @param {Client} client 
-   * @param {Interaction} interaction 
+   *
+   * @param {Client} client
+   * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
     const targetChannel = interaction.options.getChannel('channel'); // Get the target channel
@@ -12,8 +13,16 @@ module.exports = {
 
     // Check if the bot has permissions to send messages in the target channel
     if (!targetChannel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages)) {
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: `I don't have permission to send messages in ${targetChannel}.`
+      }
+      const embed = new RookEmbed(props)
       await interaction.reply({
-        content: `I don't have permission to send messages in ${targetChannel}.`,
+        embeds: [ embed ],
         ephemeral: true,
       });
       return;
@@ -24,14 +33,30 @@ module.exports = {
       await targetChannel.send(message);
 
       // Acknowledge the command
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Success!"
+        },
+        description: `Message successfully sent to ${targetChannel}.`
+      }
+      const embed = new RookEmbed(props)
       await interaction.reply({
-        content: `Message successfully sent to ${targetChannel}.`,
+        embeds: [ embed ],
         ephemeral: true,
       });
     } catch (error) {
       console.error(`Error sending message to ${targetChannel.name}:`, error);
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: `There was an error trying to send the message to ${targetChannel}.`
+      }
+      const embed = new RookEmbed(props)
       await interaction.reply({
-        content: `There was an error trying to send the message to ${targetChannel}.`,
+        embeds: [ embed ],
         ephemeral: true,
       });
     }

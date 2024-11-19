@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
   name: 'embed',
   description: 'Sends an embed with predefined content',
-  
+
   /**
    * Sends an embed message in response to a slash command interaction.
    * @param {Client} client
@@ -43,6 +43,6 @@ module.exports = {
       });
 
     // Send the embed to the channel
-    await interaction.editReply({ embeds: [embed] }); // Edit the initial deferred reply to send the embed
+    await interaction.editReply({ embeds: [ embed ] }); // Edit the initial deferred reply to send the embed
   },
 };

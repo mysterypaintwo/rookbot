@@ -32,7 +32,7 @@ module.exports = {
       const embed = new RookEmbed(props)
 
       // Reply to the command with the embed
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [ embed ] });
     } catch (error) {
       let props = {
         color: "#FF0000",

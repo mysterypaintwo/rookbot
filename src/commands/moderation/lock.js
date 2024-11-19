@@ -1,4 +1,5 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
   /**
@@ -7,7 +8,10 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const guildID = interaction.guild_id;
+    const PROFILE = require('../../PROFILE.json');
+    const guildIDs = require('../../dbs/guilds.json');
+    let DEV_MODE = PROFILE["profiles"][PROFILE["profile"]]?.DEV
+    const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const channel = interaction.options.getChannel('channel');
 
@@ -16,34 +20,59 @@ module.exports = {
 
     // Attempt to lock the channel
     try {
-      // Lock the channel by denying the SEND_MESSAGES permission for @everyone
-      await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-        SEND_MESSAGES: false,
-      });
+      if (!DEV_MODE) {
+        // Lock the channel by denying the SEND_MESSAGES permission for @everyone
+        await channel.permissionOverwrites.edit(
+          interaction.guild.roles.everyone,
+          {
+            SendMessages: false
+          }
+        );
+      }
 
       // Reply publicly in the channel to confirm the action
-      interaction.channel.send(`Channel **${channel.name}** has been **locked**.`);
+      let props = {
+        color: "#00FF00",
+        title: {
+          text: "Success!"
+        },
+        description: `Channel <#${channel.id}> has been **locked**.`
+      }
+      const embed = new RookEmbed(props)
+      interaction.channel.send({ embeds: [ embed ] });
 
       // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
-        const embed = new EmbedBuilder()
-          .setColor('#FF0000') // Red color for lock
-          .setTitle('🔒 Channel Locked')
-          .addFields(
-            { name: 'Channel Locked', value: `${channel.name}`, inline: true },
-            { name: 'Locked By', value: `${interaction.user.displayName} (${interaction.user.tag})`, inline: true }
-          )
-          .setTimestamp()
-          .setFooter({ text: `Actioned by ${interaction.user.tag}` });
-
-        logs.send({ embeds: [embed] });
+        let props = {
+          color: "#FF0000",
+          title: {
+            text: "🔒 Channel Locked"
+          },
+          fields: [
+            { name: 'Channel Locked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
+            { name: 'Locked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
+          ],
+          footer: {
+            msg: `Actioned by ${interaction.user.displayName}`
+          }
+        }
+        const embed = new RookEmbed(props)
+        logs.send({ embeds: [ embed ] });
       } else {
         console.log("Logs channel not found.");
       }
     } catch (error) {
       console.log(`There was an error when locking the channel: ${error.stack}`);
-      await interaction.editReply({ content: "I couldn't lock the channel.", ephemeral: true }); // Private error message
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: "I couldn't lock the channel."
+      }
+      const embed = new RookEmbed(props)
+      await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
     }
   },
 

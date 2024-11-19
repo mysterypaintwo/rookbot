@@ -1,8 +1,9 @@
 {
   "stripe": "#FFFFFF",
   "footer": {
-    "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true",
-    "msg": "This bot was created by Castle and his Fortifiers"
+    "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon.png?raw=true",
+    "msg": "This bot was created by castIe and his Fortifiers"
   },
-  "thumbnail": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true"
+  "thumbnail": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon.png?raw=true",
+  "targetserver": "1303864272832565268"
 }

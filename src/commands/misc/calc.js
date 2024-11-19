@@ -36,7 +36,7 @@ module.exports = {
       }
       const embed = new RookEmbed(props)
 
-      await interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [ embed ] });
     } catch (error) {
       console.error('Error evaluating expression:', error);
 

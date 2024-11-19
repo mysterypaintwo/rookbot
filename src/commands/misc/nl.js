@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 
 module.exports = {
   name: 'nl',
@@ -38,11 +38,9 @@ module.exports = {
 
     try {
       // Create the embed with the rainbow divider line image
-      let props = {
-        color: getRandomRainbowColor(),
-        image: "https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif"
-      }
-      const embed = new RookEmbed(props)
+      const embed = new EmbedBuilder()
+        .setColor(getRandomRainbowColor())
+        .setImage("https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif")
 
       // Send the embed to the channel
       const channel = interaction.channel; // Get the channel where the command was used

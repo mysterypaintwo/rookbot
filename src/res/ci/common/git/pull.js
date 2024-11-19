@@ -1,6 +1,6 @@
 import shell from 'shelljs'
 
-let DEBUG = true
+let DEBUG = false
 
 console.log("Pull")
 console.log("----")

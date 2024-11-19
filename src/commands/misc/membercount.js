@@ -34,7 +34,7 @@ module.exports = {
       const embed = new RookEmbed(props)
 
       // Send the embed as a reply to the command
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [ embed ] });
     } catch (error) {
       let props = {
         title: {

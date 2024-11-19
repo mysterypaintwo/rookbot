@@ -6,7 +6,7 @@ module.exports = async (client) => {
   try {
     const PROFILE = require('../../PROFILE.json');
     const guildIDs = require('../../dbs/guilds.json');
-    const testGuildID = PROFILE["profiles"][PROFILE["profile"]]["testserver"];
+    const testGuildID = PROFILE["profiles"][PROFILE["profile"]]["targetserver"];
     let testGuilds = [];
     for (let [guildID, guildName] of Object.entries(guildIDs)) {
       if (guildName.includes("Test")) {

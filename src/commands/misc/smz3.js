@@ -37,7 +37,7 @@ module.exports = {
    * @param {import('discord.js').Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const guildID = interaction.guild_id;
+    const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 
     const pingMultiplayerRole =
@@ -203,7 +203,7 @@ module.exports = {
 
       // Construct the content for the channel message
       let messageContent = pingMultiplayerRole
-        ? `<@&Multiplayer Ping> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`
+        ? `<@&1300904313081565236> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`
         : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`;
 
       if (isValidURLFromDomain(seedURL, 'https://samus.link/seed/')) {

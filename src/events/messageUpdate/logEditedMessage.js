@@ -53,7 +53,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     }
 
     // Fetch the log channel using its ID
-    const guildID = interaction.guild_id;
+    const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"]);
 
@@ -73,7 +73,7 @@ module.exports = async (client, oldMessage, newMessage) => {
 
     // Send the embed to the log channel, if found and valid
     if (logChannelObject?.isTextBased()) {
-      await logChannelObject.send({ embeds: [embed] });
+      await logChannelObject.send({ embeds: [ embed ] });
     } else {
       console.warn('Log channel not found or not a text-based channel.');
     }

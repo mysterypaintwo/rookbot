@@ -20,7 +20,7 @@ module.exports = async (client, deletedMessage) => {
     }
 
     // Fetch the log channel using the logsChannel ID
-    const guildID = interaction.guild_id;
+    const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const logChannel = client.channels.cache.get(guildChannels["logging"]);
 

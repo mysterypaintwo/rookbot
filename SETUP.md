@@ -93,9 +93,6 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
    - Add your variables (e.g.):
      ```env
      TOKEN = the_bot_token
-     TEST_GUILD_ID = test_guild_id_goes_here
-     DOI_GUILD_ID = doi_guild_id_goes_here
-     CLIENT_ID = client_id_goes_here
      ```
    - Save and exit (Ctrl+O, Enter, Ctrl+X).
 
@@ -112,7 +109,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 1. **Run rookbot Temporarily**:
    - Start rookbot to test:
      ```bash
-     node src/index.js
+     npm run-script run
      ```
    - Call menu of commands:
      ```bash
@@ -122,7 +119,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 2. **Run rookbot Persistently with PM2**:
    - Start rookbot with PM2:
      ```bash
-     pm2 start src/index.js --name rookbot
+     pm2 start run.js --name rookbot
      ```
    - Ensure it starts on boot:
      ```bash
@@ -152,7 +149,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
    - On the Raspberry Pi, navigate to the rookbot repo's ``root directory`` and pull updates:
      ```bash
      cd ~/rookbot
-     git pull
+     node git-pull.js
      ```
 
 3. **Restart rookbot**:

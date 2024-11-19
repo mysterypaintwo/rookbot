@@ -1,13 +1,17 @@
 // import shell from 'shelljs'
 const shell = require('shelljs')
 
-shell.exec("node ./src/res/ci/common/ver.js")
-console.log()
+let QUICK = false
 
-shell.exec("node ./src/res/ci/common/npm/audit.js")
-console.log()
+if (!QUICK) {
+  shell.exec("node ./src/res/ci/common/ver.js")
+  console.log()
 
-shell.exec("node ./src/res/ci/common/npm/outdated.js")
+  shell.exec("node ./src/res/ci/common/npm/audit.js")
+  console.log()
+
+  shell.exec("node ./src/res/ci/common/npm/outdated.js")
+}
 
 let TRACE_WARNINGS = false
 let UNHANDLED_REJECTIONS = false

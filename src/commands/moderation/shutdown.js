@@ -1,4 +1,5 @@
 const { PermissionFlagsBits } = require('discord.js')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 
 module.exports = {
   /**
@@ -38,11 +39,15 @@ module.exports = {
         })
       })
     } catch (err) {
-      await interaction.reply(
-        {
-          content: `Shutting down <@${client.user.id}>.`
-        }
-      )
+      let props = {
+        color: "#FF0000",
+        title: {
+          text: "Bot Shutdown!"
+        },
+        description: `Shutting down <@${client.user.id}>.`
+      }
+      let embed = new RookEmbed(props)
+      await interaction.reply({ embeds: [ embed ] })
       console.log(`!!! SHUTDOWN`)
       process.exit(1337)
     }

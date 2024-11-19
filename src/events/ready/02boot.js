@@ -1,4 +1,5 @@
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const shell = require('shelljs')
 const fs = require('fs')
 
 module.exports = async (client) => {
@@ -23,19 +24,35 @@ module.exports = async (client) => {
   }
   let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
   let BRANCH = ""
-    try {
-      if (fs.existsSync("./.git/HEAD")) {
+  let COMMIT = ""
+  try {
+    if (fs.existsSync("./.git/HEAD")) {
+      // @ts-ignore
+      BRANCH = fs.readFileSync("./.git/HEAD","utf8").trim().match(/(?:\/)([^\/]*)$/)
+      if (BRANCH && (BRANCH.length > 0)) {
         // @ts-ignore
-        BRANCH = fs.readFileSync("./.git/HEAD","utf8").trim().match(/(?:\/)([^\/]*)$/)
-        if (BRANCH && (BRANCH.length > 0)) {
-          // @ts-ignore
-          BRANCH = BRANCH[1]
-        }
-      } else if (process.env?.HOME == "/app") {
-        BRANCH = "heroku"
+        BRANCH = BRANCH[1]
       }
-    } catch (err) {
-      console.log(err)
+    } else if (process.env?.HOME == "/app") {
+      BRANCH = "heroku"
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
+  try {
+    let git_log = shell.exec(
+      "git log -1",
+      { silent: true }
+    )
+    git_log = git_log.stdout.trim()
+    let latest_commit = git_log.split("\n")[0]
+    COMMIT = latest_commit.match(/^(?:[^\s]+)(?:[\s])([^\s]{7})/)
+    if (COMMIT && (COMMIT.length > 0)) {
+      COMMIT = COMMIT[1]
+    }
+  } catch (err) {
+    console.log(err)
   }
 
   let DEV = GLOBALS.DEV
@@ -51,14 +68,14 @@ module.exports = async (client) => {
     ` v${PACKAGE.version} is Online!`
   )
   if (DEV) {
-    let profileName = `${GLOBALS.name}-<${BRANCH}>`
+    let profileName = `${GLOBALS.name}-<${BRANCH}>:[${COMMIT}]`
     output.push(
-      `!!! DEV MODE (${profileName}) ENABLED !!!`
+      `!!! DEV MODE (${profileName}) !!!`
     )
   } else {
-    let profileName = (user ? user.username : "") + `-<${BRANCH}>`
+    let profileName = (user ? user.username : "") + `-<${BRANCH}>:[${COMMIT}]`
     output.push(
-      `\*\*\* PRODUCTION MODE (${profileName}) ENABLED \*\*\*`
+      `\*\*\* PROD MODE (${profileName}) \*\*\*`
     )
   }
   // output.push("Mongoose warning about collection.ensureIndex will be thrown.")
@@ -73,9 +90,22 @@ module.exports = async (client) => {
       `<@${GLOBALS.discord.user.id}>` :
       GLOBALS.name
     )
-    .replace(/\*/g, "🟩")
-    .replace(/!/g, "🟧")
-    .replace(`<${BRANCH}>`,`\`${BRANCH}\``),
+    .replace(
+      /\*\*\*/g,
+      "🟩"
+    )
+    .replace(
+      /!!!/g,
+      "🟧"
+    )
+    .replace(
+      `<${BRANCH}>`,
+      `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
+    )
+    .replace(
+      `[${COMMIT}]`,
+      `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
+    ),
     user ? output[4].replace(
       "Bot",
       `<@${user.id}>`
@@ -110,9 +140,9 @@ module.exports = async (client) => {
         }
       }
 
-      let channelIDs = require(`../../dbs/${GLOBALS['testserver']}/channels.json`);
+      let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`);
       let channelID = channelIDs["bot-console"];
-      let guild = await client.guilds.cache.find(g => g.id === GLOBALS["testserver"]);
+      let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"]);
       let channel = await guild.channels.cache.find(c => c.id === channelID);
 
       let embed = new RookEmbed(props)

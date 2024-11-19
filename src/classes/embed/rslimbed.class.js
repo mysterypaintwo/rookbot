@@ -6,9 +6,9 @@
  * @public
  */
 
-import RookEmbed from './rembed.class.js'
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 
-let embed = class SlimEmbed extends RookEmbed {
+module.exports.SlimEmbed = class SlimEmbed extends RookEmbed {
   /**
    * @typedef {Object} EmbedField
    * @property {string} name Field Name
@@ -59,5 +59,3 @@ let embed = class SlimEmbed extends RookEmbed {
     super(props)
   }
 }
-
-export default embed
