@@ -1,0 +1,28 @@
+name: ⏱️Test
+description: Test app
+
+#########
+# actions
+#########
+# actions/setup-node@v4
+
+runs:
+  using: "composite"
+  steps:
+    # install node
+    - name: 💿Install Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22.11.0"
+    # install modules
+    - name: 💿Install Modules
+      run: npm i
+      shell: bash
+    # install cross-env-shell
+    - name: 💿Install cross-env-shell
+      run: npm i cross-env-shell --save
+      shell: bash
+    # run version
+    - name: 🧮App Version
+      run: npm run-script ver
+      shell: bash

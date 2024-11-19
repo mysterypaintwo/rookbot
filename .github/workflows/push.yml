@@ -8,6 +8,9 @@ on: [push, pull_request]
 # actions
 #########
 # actions/checkout@v4.2.2
+# actions/setup-python@v5.3.0
+# mysterypaintwo/rookbot/install
+# mysterypaintwo/rookbot/test
 
 #########
 # runners
@@ -52,6 +55,9 @@ jobs:
         shell: bash
         run: |
           python ./resources/ci/common/list_actions.py
+      # test
+      - name: ⏱️Call Test
+        uses: ./.github/actions/test
 
       # Send Discord Notification to Updates
       - name: Build Discord Notification Payload
