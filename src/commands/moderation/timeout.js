@@ -14,7 +14,7 @@ module.exports = {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
-    const timeoutDuration = Math.abs(interaction.options.get('duration').value); // Duration in seconds
+    const timeoutDuration = Math.abs(interaction.options.get('duration-seconds').value); // Duration in seconds
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     // Make the initial reply private
@@ -132,8 +132,8 @@ module.exports = {
       required: true,
     },
     {
-      name: 'duration',
-      description: 'The duration of the timeout in seconds.',
+      name: 'duration-seconds',
+      description: 'The duration of the timeout (in seconds).',
       type: ApplicationCommandOptionType.Integer,
       required: true,
     },
