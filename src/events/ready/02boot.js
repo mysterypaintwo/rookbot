@@ -12,11 +12,11 @@ module.exports = async (client) => {
       console.log("🟡Ready Event: PROFILE manifest not found! Using defaults!")
     }
     GLOBALS = (
-      GLOBALS?.profile &&
+      GLOBALS?.selectedprofile &&
       GLOBALS?.profiles &&
-      GLOBALS.profile in GLOBALS.profiles
+      GLOBALS.selectedprofile in GLOBALS.profiles
     ) ?
-      GLOBALS.profiles[GLOBALS.profile]:
+      GLOBALS.profiles[GLOBALS.selectedprofile]:
       defaults
   } catch(err) {
     console.log("🔴Ready Event: PROFILE manifest not found!")
@@ -144,12 +144,8 @@ module.exports = async (client) => {
       let channelID = channelIDs["bot-console"];
       let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"]);
       let channel = await guild.channels.cache.find(c => c.id === channelID);
-
       let embed = new RookEmbed(props)
-
-      if (channel) {
-        channel.send({ embeds: [ embed ] })
-      }
+      channel.send({ embeds: [ embed ] })
     }
   }
 }
