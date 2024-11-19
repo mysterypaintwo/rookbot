@@ -36,7 +36,6 @@ module.exports = {
           `**Total Boosters:** ${boosts}`,
           `**Boost Level:** ${boostLevel}`
         ],
-        footer: `Requested by ${interaction.user.tag}`,
         players: players
       }
       const embed = new RookEmbed(props)
