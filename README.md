@@ -1,5 +1,5 @@
 # rookbot
-Invite only discord bot geared towards [Dungeons of Infinity discord] but also multi-purpose for other servers
+Invite only discord bot geared towards Dungeons of Infinity discord but also multi-purpose for other servers
 
 Includes many commands
 - Ban
