@@ -228,10 +228,7 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
       }
     }
 
-    let eggs = {
-      "matrethewey": "#C8A0C8",
-      "castierook": "#5F5F90"
-    }
+    let eggs = require('../../dbs/eggs.json')
 
     if (props?.players?.user?.username) {
       if (eggs[props.players.user.username]) {
