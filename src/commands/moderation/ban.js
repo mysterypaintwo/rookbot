@@ -87,6 +87,8 @@ module.exports = {
           const embed = new RookEmbed(props)
           await interaction.followUp({ embeds: [ embed ], ephemeral: true }); // Private follow-up
         }
+      } else {
+        await interaction.followUp({content: `User **${targetUserName}** has been **banned**. (${reason})`});
       }
 
       if (!DEV_MODE) {
