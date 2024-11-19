@@ -1,6 +1,7 @@
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
+const manageCommands = require('../../utils/manageCommands');
 
 module.exports = async (client) => {
   let GLOBALS = null
@@ -22,6 +23,22 @@ module.exports = async (client) => {
     console.log("🔴Ready Event: PROFILE manifest not found!")
     process.exit(1)
   }
+
+  // Optional: Delete commands if enabled in the profile
+  if (GLOBALS.deleteCommands) {
+    console.log("🟡 Deleting existing commands...");
+    await manageCommands(
+      GLOBALS.deleteCommands, 
+      GLOBALS.targetserver, 
+      GLOBALS.name,
+      process.env.DISCORD_CLIENT_ID, 
+      process.env.TOKEN
+    );
+    
+  } else {
+    console.log("🟢 Command deletion is disabled.");
+  }
+
   let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
   let BRANCH = ""
   let COMMIT = ""
