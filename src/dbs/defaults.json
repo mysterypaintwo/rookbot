@@ -2,7 +2,7 @@
   "stripe": "#FFFFFF",
   "footer": {
     "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon.png?raw=true",
-    "msg": "This bot was created by castIe and his Fortifiers"
+    "msg": "rookbot"
   },
   "thumbnail": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon.png?raw=true",
   "targetserver": "1303864272832565268"

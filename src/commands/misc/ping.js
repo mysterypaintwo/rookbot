@@ -15,9 +15,14 @@ module.exports = {
     const ping = reply.createdTimestamp - interaction.createdTimestamp;
 
     let players = {}
+    players["bot"] = {
+      name: client.user.displayName,
+      avatar: client.user.avatarURL()
+    }
     players["user"] = {
       name: interaction.user.displayName,
-      avatar: interaction.user.avatarURL()
+      avatar: interaction.user.avatarURL(),
+      username: interaction.user.username
     }
     let props = {
       title: {

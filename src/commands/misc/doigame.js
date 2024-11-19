@@ -15,7 +15,6 @@ module.exports = {
     try {
       // Create an embed message
       let props = {
-        color: "#00FF00",
         title: {
           text: `Download ${serverGameName}`,
           url: guildMeta["downloads"]

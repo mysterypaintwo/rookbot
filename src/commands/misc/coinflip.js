@@ -9,9 +9,14 @@ module.exports = {
         const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
 
         let players = {}
+        players["bot"] = {
+          name: client.user.displayName,
+          avatar: client.user.avatarURL()
+        }
         players["user"] = {
           name: interaction.user.displayName,
-          avatar: interaction.user.avatarURL()
+          avatar: interaction.user.avatarURL(),
+          username: interaction.user.username
         }
         let props = {
           title: {

@@ -41,9 +41,14 @@ module.exports = {
 
     // Create the embed
     let players = {}
+    players["bot"] = {
+      name: client.user.displayName,
+      avatar: client.user.avatarURL()
+    }
     players["user"] = {
       name: interaction.user.displayName,
-      avatar: interaction.user.avatarURL()
+      avatar: interaction.user.avatarURL(),
+      username: interaction.user.username
     }
     let props = {
       color: `${hexInput}`,
@@ -51,7 +56,7 @@ module.exports = {
         text: "Color Information"
       },
       fields: [
-        { name: 'Hex', value: `#${hexInput}`,       inline: true },
+        { name: 'Hex', value: `\`#${hexInput}\``,   inline: true },
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
       ],
       players: players

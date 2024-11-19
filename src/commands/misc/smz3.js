@@ -178,7 +178,8 @@ module.exports = {
       let players = {}
       players["user"] = {
         name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL()
+        avatar: interaction.user.avatarURL(),
+        username: interaction.user.username
       }
       players["target"] = {
         name: "SMZ3",

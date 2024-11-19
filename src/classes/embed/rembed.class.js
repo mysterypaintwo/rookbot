@@ -176,9 +176,6 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
       props.color = "#ff0000" // RED
     }
 
-    // Stripe
-    this.setColor(props.color)
-
     // Avatars
     //  Default: Bot as Thumbnail
     //  Custom Thumbnail: Bot as Author
@@ -230,6 +227,20 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
         avatars.thumbnail = avatars.target
       }
     }
+
+    let eggs = {
+      "matrethewey": "#C8A0C8",
+      "castierook": "#5F5F90"
+    }
+
+    if (props?.players?.user?.username) {
+      if (eggs[props.players.user.username]) {
+        props.color = eggs[props.players.user.username]
+      }
+    }
+
+    // Stripe
+    this.setColor(props.color)
 
     // Title
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {

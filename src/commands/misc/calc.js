@@ -25,12 +25,16 @@ module.exports = {
 
       // Create and send the embed
       let players = {}
+      players["bot"] = {
+        name: client.user.displayName,
+        avatar: client.user.avatarURL()
+      }
       players["user"] = {
         name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL()
+        avatar: interaction.user.avatarURL(),
+        username: interaction.user.username
       }
       let props = {
-        color: "#00FF00",
         title: {
           text: "Calculator"
         },
