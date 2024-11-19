@@ -79,11 +79,11 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
       }
       const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
       this.GLOBALS = (
-        this.GLOBALS?.profile &&
+        this.GLOBALS?.selectedprofile &&
         this.GLOBALS?.profiles &&
-        this.GLOBALS.profile in this.GLOBALS.profiles
+        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
       ) ?
-        this.GLOBALS.profiles[this.GLOBALS.profile]:
+        this.GLOBALS.profiles[this.GLOBALS.selectedprofile]:
         defaults
     } catch(err) {
       console.log("🔴VEmbed: PROFILE manifest not found!")
