@@ -14,7 +14,7 @@ module.exports = {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
-    const timeoutDuration = Math.abs(interaction.options.get('duration-seconds').value); // Duration in seconds
+    const timeoutDurationSeconds = Math.abs(interaction.options.get('duration-seconds').value); // Duration in seconds
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     // Make the initial reply private
@@ -45,7 +45,7 @@ module.exports = {
 
     try {
       // Convert the timeout duration from seconds to milliseconds
-      const timeoutDurationMilliseconds = timeoutDuration * 1000;
+      const timeoutDurationMilliseconds = timeoutDurationSeconds * 1000;
 
       if (guildMember && !DEV_MODE) {
         // Set the timeout (mute and prevent interactions)
@@ -56,7 +56,7 @@ module.exports = {
       const targetUserName = guildMember?.nickname || targetUser.username;
 
       // Reply publicly in the channel to confirm the timeout
-      let plural = "second" + (timeoutDuration != 1 ? "s" : "")
+      let plural = "second" + (timeoutDurationSeconds != 1 ? "s" : "")
 
       let props = {
         color: "#00FF00",
