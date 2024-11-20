@@ -1,0 +1,106 @@
+const { RookEmbed } = require('../../classes/embed/rembed.class')
+const weather = require('weather-js')
+
+module.exports = {
+  name: 'weather',
+  description: 'Weather',
+  options: [
+    {
+      name: 'unit',
+      description: 'Celsius or Fahrenheit',
+      type: 3, // String
+      choices: [
+        {
+          name: 'Celsius',
+          value: 'C'
+        },
+        {
+          name: 'Fahrenheit',
+          value: 'F'
+        }
+      ],
+      required: true
+    },
+    {
+      name: 'location',
+      description: 'Location to search for',
+      type: 3, // String
+      required: true
+    }
+  ],
+
+  execute: async (client, interaction) => {
+    await interaction.deferReply()
+
+    let degreeType = interaction.options.getString('unit')
+    let props = { caption: {}, players: { user: {}, bot: {} } }
+    let embed = null
+    let search = interaction.options.getString('location')
+    if (search == "") {
+      error = true
+      props.description = "Please specify a location."
+      return
+    }
+    weather.find({
+      search: search,
+      degreeType: degreeType
+    }, await function(error, result) {
+      if(error || !search || result === undefined || result.length === 0) {
+        props.error = true
+        props.caption.text = "Error"
+        props.color = "RED"
+        if(error) {
+          props.description = error
+        } else if(!search) {
+          props.description = "Please specify a location"
+        } else if(result === undefined || result.length === 0) {
+          props.description = "**Invalid** Location"
+        } else {
+          props.description = ""
+        }
+      } else {
+        let current = result[0].current;
+        let location = result[0].location;
+        props.description = `**${current.skytext}**`
+        props.caption.text = `Weather forecast for ${current.observationpoint}`
+        props.players.bot.url = `https://www.accuweather.com/en/search-locations?query=` + encodeURI(`${current.observationpoint}`)
+        props.players.user.avatar = current.imageUrl
+        props.fields = [
+          {
+            name: "Timezone",
+            value: "UTC" + (parseInt(location.timezone) >= 0 ? '+' : "") + location.timezone,
+            inline: true
+          },
+          {
+            name: "Degree Type",
+            value: degreeType,
+            inline: true
+          },
+          {
+            name: "Temperature",
+            value: `${current.temperature}°${degreeType}`,
+            inline: true
+          },
+          {
+            name: "Wind",
+            value: current.winddisplay,
+            inline: true
+          },
+          {
+            name: "Feels Like",
+            value: `${current.feelslike}°${degreeType}`,
+            inline: true
+          },
+          {
+            name: "Humidity",
+            value: `${current.humidity}%`,
+            inline: true
+            }
+          ]
+        }
+        embed = new RookEmbed(props)
+        interaction.editReply({ embeds: [ embed ] })
+      }
+    )
+  }
+}

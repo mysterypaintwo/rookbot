@@ -5,7 +5,7 @@ const manageCommands = async (deleteCommands, serverId, botName, clientId, token
 
   try {
     if (deleteCommands) {
-      console.log(`Deleting commands for bot: ${botName}`);
+      console.log(`  Deleting commands for bot: ${botName}`);
       const commands = await rest.get(Routes.applicationGuildCommands(clientId, serverId));
 
       const deletePromises = commands.map((command) =>
@@ -13,12 +13,12 @@ const manageCommands = async (deleteCommands, serverId, botName, clientId, token
       );
 
       await Promise.all(deletePromises);
-      console.log('All commands deleted.');
+      console.log('   All commands deleted.');
     } else {
-      console.log('Command deletion skipped.');
+      console.log('   Command deletion skipped.');
     }
   } catch (error) {
-    console.error(`Error managing commands for bot: ${botName}`, error);
+    console.error(`   Error managing commands for bot: ${botName}`, error);
   }
 };
 

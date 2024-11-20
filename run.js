@@ -14,11 +14,15 @@ if (!QUICK) {
 }
 
 let TRACE_WARNINGS = false
+let TRACE_DEPRECATIONS = true
 let UNHANDLED_REJECTIONS = false
 
 let command = "node "
 if (TRACE_WARNINGS) {
   command += "--trace-warnings "
+}
+if (TRACE_DEPRECATIONS) {
+  command += "--trace-deprecation "
 }
 if (UNHANDLED_REJECTIONS) {
   command += "--unhandled-rejections=strict "

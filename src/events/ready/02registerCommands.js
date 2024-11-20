@@ -1,6 +1,5 @@
 const areCommandsDifferent = require('../../utils/areCommandsDifferent');
 const getLocalCommands = require('../../utils/getLocalCommands');
-const fs = require('fs');
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -13,6 +12,9 @@ module.exports = async (client) => {
 
     // Determine if we are in development or production mode
     let isDevelopment = process.env.NODE_ENV === 'development';
+    if (!isDevelopment) {
+      isDevelopment = PROFILE.profiles[PROFILE.selectedprofile]?.DEV;
+    }
     let commandsManager = null;
 
     if (isDevelopment) {
@@ -37,17 +39,17 @@ module.exports = async (client) => {
 
       if (existingCommand) {
         if (deleted) {
-          console.log(`🗑 Deleting command "${name}".`);
+          console.log(`🗑 Deleting: "${name}"`);
           try {
             await commandsManager.delete(existingCommand.id);
           } catch (error) {
-            console.error(`❌ Failed to delete command "${name}":`, error.message);
+            console.error(`❌ Failed to delete: "${name}":`, error.message);
           }
           continue;
         }
 
         if (areCommandsDifferent(existingCommand, localCommand)) {
-          console.log(`🔁 Updating command "${name}".`);
+          console.log(`🔁 Updating: "${name}"`);
           try {
             await commandsManager.edit(existingCommand.id, { description, options });
           } catch (error) {
@@ -56,19 +58,19 @@ module.exports = async (client) => {
               await wait(error.retry_after || 1000);
               await commandsManager.edit(existingCommand.id, { description, options });
             } else {
-              console.error(`❌ Failed to edit command "${name}":`, error.message);
+              console.error(`❌ Failed to edit: "${name}":`, error.message);
             }
           }
         } else {
-          console.log(`✅ Command "${name}" is up-to-date.`);
+          console.log(`✅ Current: "${name}"`);
         }
       } else {
         if (deleted) {
-          console.log(`⏩ Skipping deleted command "${name}".`);
+          console.log(`⏩ Skipping deleted: "${name}"`);
           continue;
         }
 
-        console.log(`👍 Registering new command "${name}".`);
+        console.log(`👍 Registering new: "${name}"`);
         try {
           await commandsManager.create({ name, description, options });
         } catch (error) {
@@ -77,14 +79,14 @@ module.exports = async (client) => {
             await wait(error.retry_after || 1000);
             await commandsManager.create({ name, description, options });
           } else {
-            console.error(`❌ Failed to register command "${name}":`, error.message);
+            console.error(`❌ Failed to register: "${name}":`, error.message);
           }
         }
       }
     }
 
-    console.log('🎉 Command registration completed.');
+    console.log('🎉 Registration completed');
   } catch (error) {
-    console.error(`❌ An error occurred during command registration: ${error.stack}`);
+    console.error(`❌ Registration error: ${error.stack}`);
   }
 };
