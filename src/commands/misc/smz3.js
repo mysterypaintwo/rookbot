@@ -71,6 +71,38 @@ module.exports = {
 
       // Get the current timestamp and add <prepTimeMinutes> minutes of prep time
       const now = new Date();
+
+      const maxAllowedMinutes = 10080;
+      if (prepTimeMinutes > maxAllowedMinutes) {        
+        // Respond with an error message if something goes wrong
+        let props = {
+          title: {
+            text: "Invalid Prep Time Duration"
+          },
+          description: `Exceeded max duration of ${maxAllowedMinutes} minutes (1 week). Please try again.`
+        }
+        const embed = new RookEmbed(props)
+        await interaction.followUp({
+          embeds: [ embed ],
+          ephemeral: true
+        });
+        return;
+      } else if (prepTimeMinutes < 0) {
+        // Respond with an error message if something goes wrong
+        let props = {
+          title: {
+            text: "Invalid Prep Time Duration"
+          },
+          description: `Duration ${prepTimeMinutes} minutes **may not be negative**. Please try again.`
+        }
+        const embed = new RookEmbed(props)
+        await interaction.followUp({
+          embeds: [ embed ],
+          ephemeral: true
+        });
+        return;
+      }
+
       const prepTime = prepTimeMinutes * 60 * 1000; // Convert minutes to milliseconds
       const adjustedTime = new Date(now.getTime() + prepTime);
       const timestamp = `<t:${Math.floor(adjustedTime.getTime() / 1000)}:F>`;
