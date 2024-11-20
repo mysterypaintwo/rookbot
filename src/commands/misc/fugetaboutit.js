@@ -10,7 +10,7 @@ module.exports = {
    */
   execute: async (client, interaction) => {
     // Path to the local video file
-    const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4');
+    const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'fugetaboutit.mp4');
 
     try {
 
@@ -33,6 +33,6 @@ module.exports = {
     }
   },
 
-  name: 'moth',
-  description: 'Hear it from the legend himself',
+  name: 'fugetaboutit',
+  description: 'Pronunciation tutorial',
 };
