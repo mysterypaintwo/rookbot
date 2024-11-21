@@ -71,7 +71,8 @@ module.exports = {
     }
     console.log("")
     console.log("---")
-    console.log(`${client.user.username}#${client.user.discriminator} (ID:${client.user.id}) is on ${Object.keys(sorted).length} servers!`)
+    let plural = "server" + ((Object.keys(sorted).length != 1) ? "s" : "")
+    console.log(`${client.user.username}#${client.user.discriminator} (ID:${client.user.id}) is on ${Object.keys(sorted).length} ${plural}!`)
     props.description = []
     const Table = new AsciiTable("", {})
       .setHeading("Type","Name","ID")
