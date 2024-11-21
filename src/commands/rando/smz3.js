@@ -49,7 +49,7 @@ module.exports = {
     const pingMultiplayerRole =
       interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
     const seedURL = interaction.options.getString('seed_url') || null;
-    const prepTimeMinutes = interaction.options.getInteger('prep_time') || 5; // Default to 5 minutes
+    const prepTimeMinutes = interaction.options.getInteger('prep_time') ?? 5; // Default to 5 minutes
 
       /*
     const sahaBot = interaction.guild.members.fetch(userIDs['sahabot']);
