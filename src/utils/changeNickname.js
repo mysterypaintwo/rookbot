@@ -2,12 +2,12 @@ const fs = require('fs');  // For reading the JSON file
 const nicknames = require('../dbs/castIe');  // Import the nickname arrays
 
 // Main function to compare commands
-module.exports = (client, member) => {
-  changeNickname(client, member);
+module.exports = (client, member, isDoI) => {
+  changeNickname(client, member, isDoI);
 };
 
 // Function to change a member's nickname
-async function changeNickname(client, member) {
+async function changeNickname(client, member, isDoI) {
   try {
     if (client?.guilds) {
       for (let [ guildID, guildData ] of client.guilds.cache) {
@@ -26,7 +26,11 @@ async function changeNickname(client, member) {
             randomWord = nicknames.meh[Math.floor(Math.random() * nicknames.meh.length)];
           }
 
-          // Change castIe's nickname
+          /// Change castIe's nickname
+          // If we're specifically on the DoI server, prepend [Admin] to the start of the username
+          if (isDoI) {
+            randomWord = `[Admin] ${randomWord}`
+          }
           await castleMember.setNickname(randomWord);
 
           return {

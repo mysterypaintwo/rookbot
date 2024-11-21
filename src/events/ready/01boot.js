@@ -1,6 +1,5 @@
 const fs = require('fs');
 const manageCommands = require('../../utils/manageCommands.js');
-const scheduleNicknameChange = require('../../utils/scheduleNicknameChange');
 
 module.exports = async (client) => {
   let GLOBALS = null;
@@ -37,10 +36,4 @@ module.exports = async (client) => {
   } else {
     console.log('  🟢 Command deletion is disabled.');
   }
-
-  // Schedule the nickname change
-  const targetGuildId = GLOBALS.targetserver;
-  const castIeUserID = 1111517386588307536;
-
-  scheduleNicknameChange(client, targetGuildId, castIeUserID);
 };

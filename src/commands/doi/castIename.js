@@ -5,6 +5,8 @@ module.exports = {
   execute: async (client, interaction) => {
     const guildID = interaction.guild.id;
     const userID = '1111517386588307536';
+    const doiGuildID = 1282788953052676177;
+    const isDoI = interaction.guild.id === doiGuildID;
 
     // Ensure the command is properly deferred and acknowledged with ephemeral response
     await interaction.deferReply({ ephemeral: true });
@@ -24,7 +26,7 @@ module.exports = {
       }
 
       // Call the utility function to change the nickname
-      const result = await changeNickname(client, member);
+      const result = await changeNickname(client, member, isDoI);
     
       if (result.success) {
         const props = {
