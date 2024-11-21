@@ -6,7 +6,6 @@ module.exports = (client, member) => {
   changeNickname(client, member);
 };
 
-
 // Function to change a member's nickname
 async function changeNickname(client, member) {
   if (client?.guilds) {
