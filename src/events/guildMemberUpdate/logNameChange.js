@@ -1,6 +1,7 @@
 const { Client, EmbedBuilder, GuildMember } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 /**
  * Logs changes to a user's nickname in the server.
@@ -23,18 +24,38 @@ module.exports = async (client, oldMember, newMember) => {
     }
 
     // Prepare the log embed
-    const embed = new EmbedBuilder()
-      .setColor('#FFD700') // Gold color for nickname changes
-      .setTitle('✏️ Nickname Changed')
-      .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true, size: 128 })) // User's profile picture
-      .addFields(
-        { name: 'User', value: `<@${newMember.user.id}> (ID: ${newMember.user.id})`, inline: false },
-        { name: 'Old Nickname', value: oldMember.nickname ?? 'No nickname', inline: false },
-        { name: 'New Nickname', value: newMember.nickname ?? newMember.user.displayName, inline: false }, // Use username if nickname is undefined
-        { name: 'Guild', value: `${newMember.guild.name} (ID: ${newMember.guild.id})`, inline: false }
-      )
-      .setTimestamp()
-      .setFooter({ text: `User ID: ${newMember.user.id}` });
+    const embed = new RookEmbed({
+      color: '#FFD700', // Gold color for nickname changes
+      title: {
+        text: '✏️ Nickname Changed',
+      },
+      thumbnail: {
+        url: newMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
+      },
+      fields: [
+        {
+          name: 'User',
+          value: `<@${newMember.user.id}> (ID: ${newMember.user.id})`,
+        },
+        {
+          name: 'Old Nickname',
+          value: oldMember.nickname ?? 'No nickname',
+        },
+        {
+          name: 'New Nickname',
+          value: newMember.nickname ?? newMember.user.displayName, // Use username if nickname is undefined
+        },
+        {
+          name: 'Guild',
+          value: `${newMember.guild.name} (ID: ${newMember.guild.id})`,
+        },
+      ],
+      footer: {
+        msg: `User ID: ${newMember.user.id}`,
+      },
+      timestamp: true,
+    });
+    
 
     // Fetch the log channel using its ID
     const guildID = newMember.guild.id;

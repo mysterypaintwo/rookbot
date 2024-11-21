@@ -1,6 +1,7 @@
 const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 /**
  * Logs edited messages from the server.
@@ -56,20 +57,38 @@ module.exports = async (client, oldMessage, newMessage) => {
     const guildID = newMessage.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"]);
-
-    // Prepare the log embed
-    const embed = new EmbedBuilder()
-      .setColor('#FFA500') // Orange for message updates
-      .setTitle('✏️ Message Edited')
-      .setThumbnail(newMessage.author.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
-      .addFields(
-        { name: 'Author', value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`, inline: false },
-        { name: 'Channel', value: `<#${newMessage.channel.id}>`, inline: false },
-        { name: 'Old Content', value: oldContent, inline: false },
-        { name: 'New Content', value: newContent, inline: false }
-      )
-      .setTimestamp()
-      .setFooter({ text: `Message ID: ${newMessage.id}` });
+    
+    const embed = new RookEmbed({
+      color: '#FFA500', // Orange for message updates
+      title: {
+        text: '✏️ Message Edited',
+      },
+      thumbnail: {
+        url: newMessage.author.displayAvatarURL({ dynamic: true, size: 128 }), // Add user's profile picture
+      },
+      fields: [
+        {
+          name: 'Author',
+          value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`,
+        },
+        {
+          name: 'Channel',
+          value: `<#${newMessage.channel.id}>`,
+        },
+        {
+          name: 'Old Content',
+          value: oldContent || '*No old content*', // Ensure there's always a default value
+        },
+        {
+          name: 'New Content',
+          value: newContent || '*No new content*', // Ensure there's always a default value
+        },
+      ],
+      footer: {
+        msg: `Message ID: ${newMessage.id}`,
+      },
+      timestamp: true,
+    });    
 
     // Send the embed to the log channel, if found and valid
     if (logChannelObject?.isTextBased()) {
