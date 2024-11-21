@@ -20,6 +20,23 @@ const client = new Client({
   ],
 });
 
+// CTRL+C
+process.on('SIGINT', function() {
+});
+
+// win CTRL+C
+if (process.platform === "win32") {
+  console.log('Win:SIGINT')
+  var rl = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  rl.on("SIGINT", function () {
+    process.emit("SIGINT");
+  });
+}
+
 (async () => {
   // Create Client Object
   if (process.env.NODE_ENV === 'development') {

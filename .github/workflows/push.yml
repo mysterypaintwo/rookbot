@@ -65,4 +65,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_UPDATES }}
         run: |
           python ./resources/ci/common/prepare_discord_notif.py
-        if: (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/stable')
+        if: (contains(fromJSON('["main","stable","unstable"]'), github.ref))
