@@ -4,23 +4,31 @@ const { changeNickname } = require('../../utils/changeNickname');  // Import the
 module.exports = {
   execute: async (client, interaction) => {
     const guildID = interaction.guild.id;
-    const userID = 1111517386588307536;
+    const userID = '1111517386588307536';
 
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
 
+    
     try {
       const guild = await client.guilds.fetch(guildID);
-      const member = await guild.members.fetch(userID);
-
-      if (!member) {
-        console.error(`Member with ID ${userID} not found in guild ${guildID}.`);
-        return await interaction.editReply({ content: "User not found!" });
+      if (!guild) {
+        throw new Error("Guild not found.");
+      }
+        
+      const member = await guild.members.fetch(userID, { force: true }).catch(err => {
+        console.error("Fetch error:", err);
+      });
+            
+      if (!member || !member.user) {
+        throw new Error("Member not found or invalid data.");
       }
 
-      // Call the utility function to change the nickname
-      const result = await changeNickname(member, interaction.guild.id);
+      //console.log(`Fetched member: ${member.user.tag}`);
 
+      // Call the utility function to change the nickname
+      const result = await changeNickname(client, member);
+    
       if (result.success) {
         const props = {
           title: {
@@ -34,9 +42,7 @@ module.exports = {
       } else {
         const errorProps = {
           color: "#FF0000",
-          title: {
-            text: "Error"
-          },
+          title: { text: "Error" },
           description: result.message,
         };
         const embed = new RookEmbed(errorProps);
@@ -45,15 +51,15 @@ module.exports = {
     } catch (error) {
       let props = {
         color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "There was an error changing the nickname."
+        title: { text: "Error" },
+        description: "There was an error changing the nickname.",
       };
       const embed = new RookEmbed(props);
       await interaction.editReply({ embeds: [embed] });
       console.error("Error changing nickname:", error);
     }
+    
+
   },
 
   name: 'castlename',

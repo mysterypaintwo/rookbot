@@ -16,7 +16,7 @@ function scheduleNicknameChange(client, guildId, userId) {
       }
 
       // Call the changeNickname function to change the nickname
-      const result = await changeNickname(member, guildId);
+      const result = await changeNickname(client, member);
 
       // Check the result and log accordingly
       if (result.success) {
