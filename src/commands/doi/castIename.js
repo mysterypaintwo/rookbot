@@ -33,7 +33,7 @@ module.exports = {
           title: {
             text: "Nickname Changed",
           },
-          description: `${member.user.tag}'s nickname has been changed to "${result.message}".`,
+          description: result.message,
         };
         const embed = new RookEmbed(props);
         await interaction.editReply({ ephemeral: true, embeds: [embed] });
