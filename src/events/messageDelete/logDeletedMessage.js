@@ -1,6 +1,7 @@
 const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 /**
  * Logs deleted messages from the server.
@@ -30,17 +31,34 @@ module.exports = async (client, deletedMessage) => {
     }
 
     // Prepare the log embed
-    const logEmbed = new EmbedBuilder()
-      .setColor('#FF0000') // Orange for message updates
-      .setTitle('🚮 Message Deleted')
-      .setThumbnail(deletedMessage.author.displayAvatarURL({ dynamic: true, size: 128 })) // Add user's profile picture
-      .addFields(
-        { name: 'Author', value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`, inline: false },
-        { name: 'Channel', value: `<#${deletedMessage.channel.id}>`, inline: false },
-        { name: 'Content', value: deletedMessage.content || '*No content*', inline: false }
-      )
-      .setTimestamp()
-      .setFooter({ text: `Message ID: ${deletedMessage.id}` });
+    const logEmbed = new RookEmbed({
+      color: '#FF0000', // Orange for message updates
+      title: {
+        text: '🚮 Message Deleted',
+      },
+      thumbnail: {
+        url: deletedMessage.author.displayAvatarURL({ dynamic: true, size: 128 }), // Add user's profile picture
+      },
+      fields: [
+        {
+          name: 'Author',
+          value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`,
+        },
+        {
+          name: 'Channel',
+          value: `<#${deletedMessage.channel.id}>`,
+        },
+        {
+          name: 'Content',
+          value: deletedMessage.content || '*No content*',
+        },
+      ],
+      footer: {
+        msg: `Message ID: ${deletedMessage.id}`,
+      },
+      timestamp: true,
+    });
+    
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
