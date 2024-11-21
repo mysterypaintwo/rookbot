@@ -28,12 +28,24 @@ module.exports = {
       // Call the utility function to change the nickname
       const result = await changeNickname(client, member, isDoI);
     
+      let players = {}
+      players["user"] = {
+        name: interaction.user.displayName,
+        avatar: interaction.user.avatarURL(),
+        username: interaction.user.username
+      }
+      players["target"] = {
+        name: member.displayName,
+        avatar: member.user.displayAvatarURL()
+      }
+      
       if (result.success) {
         const props = {
           title: {
             text: "Nickname Changed",
           },
           description: result.message,
+          players: players
         };
         const embed = new RookEmbed(props);
         await interaction.editReply({ ephemeral: true, embeds: [embed] });
