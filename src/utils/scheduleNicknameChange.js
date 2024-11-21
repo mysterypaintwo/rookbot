@@ -2,6 +2,8 @@ const schedule = require('node-schedule');
 const { changeNickname } = require('../utils/changeNickname');  // Import the changeNickname function
 
 function scheduleNicknameChange(client, member, isDoI) {
+  if (member === null)
+    return;
   const midnightPacific = { hour: 0, minute: 0, tz: "America/Los_Angeles" };
 
   // Schedule the task at midnight Pacific Time
@@ -22,7 +24,7 @@ function scheduleNicknameChange(client, member, isDoI) {
     }
   });
 
-  console.log("Scheduled nickname changes for user:", member.id);
+  console.log("Scheduled nickname changes for user:", member.tag);
 }
 
 module.exports = scheduleNicknameChange;
