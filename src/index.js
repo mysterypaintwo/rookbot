@@ -22,6 +22,7 @@ const client = new Client({
 
 // CTRL+C
 process.on('SIGINT', function() {
+  process.exit(9001)
 });
 
 // win CTRL+C
