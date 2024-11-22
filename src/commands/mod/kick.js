@@ -87,6 +87,14 @@ module.exports = {
           }
           const embed = new RookEmbed(props)
           await targetUser.send({ embeds: [ embed ] })
+          let props2 = {
+            color: "#FF0000",
+            title: {
+              text: "Error"
+            },
+            description: `✅ User **${targetUserName}** successfully kicked via DMs! Message: ${props.description}`
+          }
+          const embed2 = new RookEmbed(props2);
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
           let props = {
