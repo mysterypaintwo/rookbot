@@ -69,7 +69,14 @@ module.exports = {
       }
 
       // Delete the deferred private reply to stop the "thinking" state
-      await interaction.deleteReply();
+      let props2 = {
+        color: "#FF0000",
+        title: {
+          text: "Error"
+        },
+        description: `✅ User **${targetUserName}** successfully unbanned! (${reason})`
+      }
+      const embed2 = new RookEmbed(props2);
     } catch (error) {
       console.log(`There was an error when unbanning: ${error.stack}`);
       let props = {

@@ -23,7 +23,7 @@ module.exports = {
       fields: [
         {
           name: 'Game Design Showcase',
-          value: 'Justin Bohemier’s portfolio features innovative and engaging video games. Explore the games he has worked on and their development journey.',
+          value: `Justin Bohemier's portfolio features innovative and engaging video games. Explore the games he has worked on and their development journey.`,
           inline: false,
         },
         {

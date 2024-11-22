@@ -250,7 +250,7 @@ This guide walks you through setting up and running rookbot on a Raspberry Pi 4 
 
 ---
 
-Now you’re ready to securely clone and work with your private GitHub repository on your Raspberry Pi!
+Now you're ready to securely clone and work with your private GitHub repository on your Raspberry Pi!
 
 # Removing PM2 Script and Bot Files from Raspberry Pi
 
@@ -301,7 +301,7 @@ Now you’re ready to securely clone and work with your private GitHub repositor
      ```bash
      rm -rf rookbot
      ```
-   - **Warning**: Ensure you’re in the correct directory before running this command to avoid deleting unintended files.
+   - **Warning**: Ensure you're in the correct directory before running this command to avoid deleting unintended files.
 
 ---
 
