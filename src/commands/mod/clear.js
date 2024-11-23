@@ -1,3 +1,4 @@
+const { PermissionFlagsBits } = require('discord.js');
 const { SlimEmbed } = require('../../classes/embed/rslimbed.class.js')
 const fs = require('fs')
 
