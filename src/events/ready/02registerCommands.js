@@ -80,6 +80,11 @@ module.exports = async (client) => {
             await commandsManager.create({ name, description, options });
           } else {
             console.error(`❌ Failed to register: "${name}":`, error.message);
+            let cmd = new localCommand()
+            console.log("---")
+            console.log("Failed command:")
+            console.log(cmd)
+            console.log("---")
           }
         }
       }
