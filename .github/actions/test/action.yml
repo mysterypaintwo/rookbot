@@ -11,7 +11,7 @@ runs:
   steps:
     # install node
     - name: 💿Install Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v4.1.0
       with:
         node-version: "22.11.0"
     # disable funding message
