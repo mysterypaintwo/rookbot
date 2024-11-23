@@ -55,7 +55,7 @@ module.exports = async (client, oldMember, newMember) => {
       },
       timestamp: true,
     });
-    
+
 
     // Fetch the log channel using its ID
     const guildID = newMember.guild.id;
@@ -70,7 +70,13 @@ module.exports = async (client, oldMember, newMember) => {
     }
 
     // Optional: Save the nickname change to a log file
-    const logFilePath = path.join(__dirname, '..', '..', 'nicknameChanges.log');
+    const logFilePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'botlogs',
+      'nicknameChanges.log'
+    );
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `User: ${newMember.user.tag} (ID: ${newMember.user.id})`,

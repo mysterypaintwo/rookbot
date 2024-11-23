@@ -90,7 +90,10 @@ module.exports = {
     output.push("Bot is Ready!")
     output.push("")
 
-    props.title = { text: output[1], url: "https://github.com/mysterypaintwo/rookbot" }
+    props.title = {
+      text: "🔼 " + output[1],
+      url: "https://github.com/mysterypaintwo/rookbot"
+    }
     props.description = [
       output[2].replace(
         GLOBALS.name,

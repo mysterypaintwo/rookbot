@@ -57,7 +57,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     const guildID = newMessage.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"]);
-    
+
     const embed = new RookEmbed({
       color: '#FFA500', // Orange for message updates
       title: {
@@ -88,7 +88,7 @@ module.exports = async (client, oldMessage, newMessage) => {
         msg: `Message ID: ${newMessage.id}`,
       },
       timestamp: true,
-    });    
+    });
 
     // Send the embed to the log channel, if found and valid
     if (logChannelObject?.isTextBased()) {
@@ -98,7 +98,13 @@ module.exports = async (client, oldMessage, newMessage) => {
     }
 
     // Optional: Save the edited message to a log file
-    const logFilePath = path.join(__dirname, '..', '..', 'editedMessages.log');
+    const logFilePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'botlogs',
+      'editedMessages.log'
+    );
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `Author: ${newMessage.author.tag} (ID: ${newMessage.author.id})`,

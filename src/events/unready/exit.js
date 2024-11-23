@@ -58,7 +58,7 @@ module.exports = async (client) => {
 
   let DEV = GLOBALS.DEV
 
-  let props = {}
+  props = {}
   let user = client?.user
 
   let output = [
@@ -66,7 +66,7 @@ module.exports = async (client) => {
   ]
   output.push(
     (user ? user.username : "") +
-    ` v${PACKAGE.version} is Online!`
+    ` v${PACKAGE.version} is Offline!`
   )
   if (DEV) {
     let profileName = `${GLOBALS.name}-<${BRANCH}>:[${COMMIT}]`
@@ -76,15 +76,15 @@ module.exports = async (client) => {
   } else {
     let profileName = (user ? user.username : "") + `-<${BRANCH}>:[${COMMIT}]`
     output.push(
-      `\*\*\* PROD MODE (${profileName}) \*\*\*`
+      `vvv PROD MODE (${profileName}) vvv`
     )
   }
   // output.push("Mongoose warning about collection.ensureIndex will be thrown.")
-  output.push("Bot is Ready!")
+  output.push("Bot is Unready!")
   output.push("")
 
   props.title = {
-    text: "🔼 " + output[1],
+    text: "🔽 " + output[1],
     url: "https://github.com/mysterypaintwo/rookbot"
   }
   props.description = [
@@ -95,8 +95,8 @@ module.exports = async (client) => {
       GLOBALS.name
     )
     .replace(
-      /\*\*\*/g,
-      "🟩"
+      /vvv/g,
+      "🟥"
     )
     .replace(
       /!!!/g,
@@ -123,25 +123,6 @@ module.exports = async (client) => {
       let clientMember = null
       if(user) {
         clientMember = await guildData.members.fetch(user.id)
-      }
-
-      if (clientMember) {
-        let nick = clientMember?.nickname || clientMember.user.username
-        let prefix = client?.options?.defaultPrefix ||
-          client?.options?.prefix ||
-          client?.prefix ||
-          "/ "
-        if (!(nick.includes(`[${prefix.trim()}] `))) {
-          let regexp = /^[\[\(\{]([\S]+)[\}\)\]] /
-          if (nick.match(regexp)) {
-            nick = nick.replace(regexp,`[${prefix.trim()}] `)
-          } else {
-            nick = `[${prefix.trim()}] ${nick}`
-          }
-        }
-        if (nick != (clientMember?.nickname || clientMember.user.username)) {
-          clientMember.setNickname(nick)
-        }
       }
 
       let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`);

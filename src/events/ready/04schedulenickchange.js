@@ -18,7 +18,7 @@ module.exports = async (client) => {
         throw new Error("Member not found or invalid data.");
       }
 
-      scheduleNicknameChange(client, member, isDoI);
+      await scheduleNicknameChange(client, member, isDoI);
     } catch (error) {
       const isDoI = false;
       const member = null;

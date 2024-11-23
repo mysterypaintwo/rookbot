@@ -53,7 +53,13 @@ module.exports = async (client, newMember) => {
     await logChannel.send({ embeds: [logEmbed] });
 
     // Save the joining member to a log file
-    const logFilePath = path.join(__dirname, '..', '..', 'memberChanges.log');
+    const logFilePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'botlogs',
+      'memberChanges.log'
+    );
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `User: ${newMember.user.tag} (ID: ${newMember.user.id})`,

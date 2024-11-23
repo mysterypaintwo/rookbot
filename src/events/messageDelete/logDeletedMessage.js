@@ -58,13 +58,19 @@ module.exports = async (client, deletedMessage) => {
       },
       timestamp: true,
     });
-    
+
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
 
     // Optional: Save the deleted message to a log file
-    const logFilePath = path.join(__dirname, '..', '..', 'deletedMessages.log');
+    const logFilePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'botlogs',
+      'deletedMessages.log'
+    );
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `Author: ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,

@@ -1,5 +1,6 @@
 const { PermissionFlagsBits } = require('discord.js')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
+const unready = require('../../events/unready/exit')
 
 module.exports = {
   /**
@@ -9,6 +10,7 @@ module.exports = {
    */
   execute: async (client, interaction) => {
     console.log(`!!! Bot Shutdown by: ${interaction.member.user.tag} !!!`)
+    let processed_pm2 = false
     try {
       const pm2 = require('pm2')
       pm2.connect(function(err) {
@@ -37,8 +39,13 @@ module.exports = {
             }
           }
         })
+        processed_pm2 = true
       })
     } catch (err) {
+      // do nothing
+    }
+
+    if (!processed_pm2) {
       let players = {}
       players["user"] = {
         name: interaction.user.displayName,
@@ -60,6 +67,9 @@ module.exports = {
       let embed = new RookEmbed(props)
       await interaction.reply({ embeds: [ embed ] })
       console.log(`!!! SHUTDOWN`)
+
+      await unready(client)
+
       process.exit(1337)
     }
   },
