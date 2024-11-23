@@ -39,5 +39,7 @@ module.exports = {
     let embed = new SlimEmbed(props)
 
     await interaction.editReply({ embeds: [ embed ] })
-  }
+  },
+  permissionsRequired: [PermissionFlagsBits.ManageMessages],
+  botPermissions: [PermissionFlagsBits.ManageMessages],
 }
