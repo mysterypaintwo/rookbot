@@ -5,7 +5,7 @@ const fs = require('fs')
 
 module.exports = {
   name: 'update',
-  description: 'Update',
+  description: 'Update from Main',
 
   execute: async (client, interaction) => {
     await interaction.deferReply()
@@ -73,10 +73,19 @@ module.exports = {
       console.log(err.stack)
     }
 
+    // Checkout
+    try {
+      shell.exec(
+        "git checkout main",
+        { silent: true }
+      )
+    } catch(err) {
+      console.log(err.stack)
+    }
     // Pull
     try {
       shell.exec(
-        "git pull",
+        "git pull origin",
         { silent: true }
       )
     } catch(err) {
