@@ -5,19 +5,23 @@ const fs = require('fs')
 module.exports = async (client) => {
   let GLOBALS = null
   const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
+  let profileName = "default"
   try {
     if (fs.existsSync("./src/PROFILE.json")) {
       GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
     } else {
       console.log("🟡Ready Event: PROFILE manifest not found! Using defaults!")
     }
-    GLOBALS = (
+    if (
       GLOBALS?.selectedprofile &&
       GLOBALS?.profiles &&
       GLOBALS.selectedprofile in GLOBALS.profiles
-    ) ?
-      GLOBALS.profiles[GLOBALS.selectedprofile]:
-      defaults
+    ) {
+      profileName = GLOBALS.selectedprofile
+      GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
+    } else {
+      GLOBALS = defaults
+    }
   } catch(err) {
     console.log("🔴Ready Event: PROFILE manifest not found!")
     process.exit(1)
@@ -61,39 +65,52 @@ module.exports = async (client) => {
   let props = {}
   let user = client?.user
 
-  let output = [
+  let console_output = [
     "---"
   ]
-  output.push(
+
+  console_output.push(
     (user ? user.username : "") +
     ` v${PACKAGE.version} is Online!`
   )
+  props = {
+    title: {
+      text: "🔼 " + console_output[1],
+      url: "https://github.com/mysterypaintwo/rookbot"
+    }
+  }
+
   if (DEV) {
-    let profileName = `${GLOBALS.name}-<${BRANCH}>:[${COMMIT}]`
-    output.push(
-      `!!! DEV MODE (${profileName}) !!!`
+    console_output.push(
+      `!!! DEV MODE !!!`,
+      `Footer Tag:  "${GLOBALS.name}"`
     )
   } else {
-    let profileName = (user ? user.username : "") + `-<${BRANCH}>:[${COMMIT}]`
-    output.push(
-      `\*\*\* PROD MODE (${profileName}) \*\*\*`
+    console_output.push(
+      `\*\*\* PROD MODE \*\*\*`,
+      `Footer Tag:  "` + (user ? user.username : "") + '"'
     )
   }
-  // output.push("Mongoose warning about collection.ensureIndex will be thrown.")
-  output.push("Bot is Ready!")
-  output.push("")
+  console_output.push(
+    `Profile Key: '${profileName}'`,
+    `Branch Key:  <${BRANCH}>`,
+    `Commit ID:   [${COMMIT}]`,
+    "Bot is Ready!",
+    ""
+  )
+  /*
 
-  props.title = {
-    text: "🔼 " + output[1],
-    url: "https://github.com/mysterypaintwo/rookbot"
-  }
-  props.description = [
-    output[2].replace(
-      GLOBALS.name,
-      GLOBALS?.discord?.user?.id ?
-      `<@${GLOBALS.discord.user.id}>` :
-      GLOBALS.name
-    )
+  console_output[1] = ---
+  console_output[2] = MODE
+  console_output[3] = Footer  Tag
+  console_outout[4] = Profile Key
+  console_output[5] = Branch  Key
+  console_output[6] = Commit  ID
+  console_output[7] = Ready
+
+  */
+  props.description =
+    console_output[2]
     .replace(
       /\*\*\*/g,
       "🟩"
@@ -102,21 +119,94 @@ module.exports = async (client) => {
       /!!!/g,
       "🟧"
     )
-    .replace(
-      `<${BRANCH}>`,
-      `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
-    )
-    .replace(
-      `[${COMMIT}]`,
-      `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
-    ),
-    user ? output[4].replace(
-      "Bot",
-      `<@${user.id}>`
-    ) : output[4]
-  ].join("\n")
+  let server = {
+    id: GLOBALS?.targetserver ? GLOBALS.targetserver : "?"
+  }
+  if (server.id != "?") {
+    server.name = await client.guilds.cache.find(g => g.id == server.id).name
+  }
+  props.fields = [
+    {
+      name: "Name",
+      value:
+        console_output[3].substring(console_output[3].indexOf(':') + 2)
+        .replace(
+          GLOBALS.name,
+          GLOBALS?.discord?.user?.id ?
+          `<@${GLOBALS.discord.user.id}>` :
+          GLOBALS.name
+        ),
+      inline: true
+    },
+    {
+      name: "Profile",
+      value:
+        console_output[4].substring(console_output[4].indexOf(':') + 2)
+        .replace(
+          `'${profileName}'`,
+          `\`${profileName}\``
+        ),
+      inline: true
+    },
+    {
+      name: " ",
+      value: " ",
+      inline: true
+    },
+    {
+      name: "Server Name",
+      value: server?.name ? server.name : "?",
+      inline: true
+    },
+    {
+      name: "Server ID",
+      value: server.id,
+      inline: true
+    },
+    {
+      name: " ",
+      value: " ",
+      inline: true
+    },
+    {
+      name: "Branch",
+      value:
+        console_output[5].substring(console_output[5].indexOf(':') + 2)
+        .replace(
+          `<${BRANCH}>`,
+          `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
+        ),
+      inline: true
+    },
+    {
+      name: "Commit",
+      value:
+        console_output[6].substring(console_output[6].indexOf(':') + 2)
+        .replace(
+          `[${COMMIT}]`,
+          `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
+        ),
+      inline: true
+    },
+    {
+      name: " ",
+      value: " ",
+      inline: true
+    },
+    {
+      name: "Status",
+      value:
+        user ?
+          console_output[7]
+          .replace(
+            "Bot",
+            `<@${user.id}>`
+          ) :
+          console_output[7]
+    }
+  ]
 
-  console.log(output.join("\n"))
+  console.log(console_output.join("\n"))
 
   if (client?.guilds) {
     for (let [ guildID, guildData ] of client.guilds.cache) {
