@@ -33,7 +33,7 @@ module.exports = async (client) => {
     const applicationCommands = await commandsManager.fetch();
 
     for (const localCommand of localCommands) {
-      const { name, description, options = [], deleted } = localCommand;
+      let { name, description, options = [], deleted } = localCommand;
 
       const existingCommand = applicationCommands.find(cmd => cmd.name === name);
 
@@ -70,6 +70,13 @@ module.exports = async (client) => {
           continue;
         }
 
+        if (name.indexOf("Command") > -1) {
+          let cmd = new localCommand()
+            name = cmd.name
+            description = cmd.description
+            options = cmd.options
+        }
+
         console.log(`👍 Registering new: "${name}"`);
         try {
           await commandsManager.create({ name, description, options });
@@ -80,11 +87,6 @@ module.exports = async (client) => {
             await commandsManager.create({ name, description, options });
           } else {
             console.error(`❌ Failed to register: "${name}":`, error.message);
-            let cmd = new localCommand()
-            console.log("---")
-            console.log("Failed command:")
-            console.log(cmd)
-            console.log("---")
           }
         }
       }

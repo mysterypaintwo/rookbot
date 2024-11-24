@@ -1,44 +1,59 @@
 const { PermissionFlagsBits } = require('discord.js')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const unready = require('../../events/unready/exit')
 
-module.exports = {
+// Multiple messages
+
+module.exports = class ExitCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "exit",
+      category: "app",
+      description: "Exit rookbot",
+      permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
+      botPermissions: [PermissionFlagsBits.SendMessages], // Ensure bot can send messages
+    }
+    let props = {
+      title: { text: "Exit", emoji: "⏹️" },
+      color: "#FF0000"
+    }
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
   /**
    *
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async execute(client, interaction, cmd) {
+    await interaction.deferReply();
+
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
-    let players = {}
-    players["user"] = {
-      name: interaction.user.displayName,
-      avatar: interaction.user.avatarURL(),
-      username: interaction.user.username
+
+    this.props.description = `Exiting <@${client.user.id}>`
+
+    // Entities
+    let entities = {
+      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
+      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username }
     }
-    players["target"] = {
-      name: client.user.name,
-      avatar: client.user.avatarURL()
+    // Players
+    this.props.players = {
+      user: entities.user,
+      target: entities.bot
     }
-    let props = {
-      color: "#FF0000",
-      title: {
-        text: "Bot Exit!"
-      },
-      description: `Exiting <@${client.user.id}>.`,
-      players: players
-    }
-    let embed = new RookEmbed(props)
-    await interaction.reply({ embeds: [ embed ] })
+
+    await interaction.deleteReply();
+
+    this.send(interaction, new RookEmbed(this.props))
 
     await unready(client)
 
     console.log(`!!! EXIT`)
     process.exit(1337)
-  },
-
-  name: 'exit',
-  description: 'Exit rookbot',
-  permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
-  botPermissions: [PermissionFlagsBits.SendMessages], // Ensure bot can send messages
+  }
 }

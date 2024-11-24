@@ -1,4 +1,5 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const { ApplicationCommandOptionType } = require('discord.js')
 const AsciiTable = require('ascii-table')
 
 function ksort(obj){
@@ -11,37 +12,37 @@ function ksort(obj){
   return sortedObj;
 }
 
-module.exports = {
-  name: 'botguilds',
-  description: 'Bot Guilds',
-  options: [
-    {
-      name: 'locale',
-      description: 'Locale',
-      type: 3 // String
+module.exports = class BotGuildsCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "botguilds",
+      category: "bot",
+      description: "Bot Guilds",
+      options: [
+        {
+          name: "locale",
+          description: "Locale",
+          type: ApplicationCommandOptionType.String
+        }
+      ]
     }
-  ],
+    let props = {
+      caption: { text: "Bot Guilds" }
+    }
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     await interaction.deferReply()
 
-    let props = {
-      title: {
-        text: `Guilds that ${client.user.displayName} is in`
-      },
-      players: {
-        user: {
-          name: interaction.user.displayName,
-          avatar: interaction.user.avatarURL(),
-          username: interaction.user.username
-        },
-        target: {
-          name: client.user.displayName,
-          avatar: client.user.avatarURL(),
-          username: client.user.username
-        }
-      }
-    }
+    this.props.description = []
+    this.props.description.push(
+      `***Guilds that ${client.user} is in:***`,
+      ""
+    )
 
     let guilds = client.guilds.cache
     let locale = interaction.options.getString('locale')
@@ -73,7 +74,6 @@ module.exports = {
     console.log("---")
     let plural = "server" + ((Object.keys(sorted).length != 1) ? "s" : "")
     console.log(`${client.user.username}#${client.user.discriminator} (ID:${client.user.id}) is on ${Object.keys(sorted).length} ${plural}!`)
-    props.description = []
     const Table = new AsciiTable("", {})
       .setHeading("Type","Name","ID")
     for (let [guildID, guildData] of Object.entries(ksort(sorted))) {
@@ -84,7 +84,7 @@ module.exports = {
         .addRow("Added",guildData.added)
         .addRow("Tier",tier)
         .addRow("")
-      props.description.push(
+      this.props.description.push(
         `**Guild:** ${guildData.guild.name} (ID:\`${guildData.guild.id}\`)`,
         `**Owner:** \`${guildData.owner.username}#${guildData.owner.discriminator}\` (ID:\`${guildData.owner.id}\`, <@${guildData.owner.id}>)`,
         `**Added:** ${guildData.added}`,
@@ -94,8 +94,15 @@ module.exports = {
     }
     console.log(Table.toString())
 
-    const embed = new RookEmbed(props)
+    // Entities
+    let entities = {
+      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username }
+    }
+    // Players
+    this.props.players = {
+      user: entities.bot
+    }
 
-    await interaction.editReply({ embeds: [ embed ] })
+    await interaction.deleteReply();
   }
 }

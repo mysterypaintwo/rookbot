@@ -1,13 +1,27 @@
 const { PermissionFlagsBits } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = {
-  name: 'update',
-  description: 'Update from Main',
-
-  execute: async (client, interaction) => {
+module.exports = class UpdateCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "update",
+      category: "app",
+      description: "Update from Main",
+      permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
+      botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+    }
+    let props = {
+      caption: { text: "Update", emoji: "⏫" },
+      title: { text: "Update", emoji: "⏫" }
+    }
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+  async action(client, interaction) {
     await interaction.deferReply()
 
     let GLOBALS = null
@@ -115,7 +129,6 @@ module.exports = {
       console.log(err.stack)
     }
 
-    let props = {}
     let user = client?.user
 
     let console_output = [
@@ -127,9 +140,10 @@ module.exports = {
       (user ? user.username : "") +
       ` v${PACKAGE.version}!`
     )
-    props = {
+    this.props = {
       title: {
-        text: "🔼 " + console_output[1],
+        text: console_output[1],
+        emoji: "⏫",
         url: "https://github.com/mysterypaintwo/rookbot"
       }
     }
@@ -155,7 +169,7 @@ module.exports = {
     console_output[7] = Ready
 
     */
-    props.fields = [
+    this.props.fields = [
       {
         name: "Branch",
         value:
@@ -167,7 +181,7 @@ module.exports = {
       }
     ]
 
-    props.fields.push(
+    this.props.fields.push(
       {
         name: "Old Commit",
         value: `[\`${COMMITS.current}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.current})`,
@@ -177,22 +191,22 @@ module.exports = {
 
     // If fresh isn't the same as the old current
     if (COMMITS.fresh != COMMITS.current) {
-      props.fields.push(
+      this.props.fields.push(
         {
           name: "New Commit",
           value: `[\`${COMMITS.fresh}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.fresh})`,
           inline: true
         }
       )
-      props.fields.push(
+      this.props.fields.push(
         {
           name: "Updated?",
           value: "Yes"
         }
       )
     } else {
-      props.fields[1].name = "Same Commit"
-      props.fields.push(
+      this.props.fields[1].name = "Same Commit"
+      this.props.fields.push(
         {
           name: "Updated?",
           value: "No"
@@ -200,10 +214,17 @@ module.exports = {
       )
     }
 
-    const embed = new RookEmbed(props)
+    // Entities
+    let entities = {
+      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
+      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username }
+    }
+    // Players
+    this.props.players = {
+      user: entities.user,
+      target: entities.bot
+    }
 
-    await interaction.editReply({ embeds: [ embed ] })
-  },
-  permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
-  botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+    await interaction.deleteReply();
+  }
 }

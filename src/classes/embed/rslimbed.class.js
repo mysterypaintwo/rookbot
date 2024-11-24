@@ -8,7 +8,7 @@
 
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 
-module.exports.SlimEmbed = class SlimEmbed extends RookEmbed {
+class SlimEmbed extends RookEmbed {
   /**
    * @typedef {Object} EmbedField
    * @property {string} name Field Name
@@ -59,3 +59,5 @@ module.exports.SlimEmbed = class SlimEmbed extends RookEmbed {
     super(props)
   }
 }
+
+exports.SlimEmbed = SlimEmbed;

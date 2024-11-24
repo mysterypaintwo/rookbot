@@ -8,7 +8,7 @@ const fs = require('fs')
  * @extends {EmbedBuilder}
  * @public
  */
-module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
+class RookEmbed extends EmbedBuilder {
   /**
    * @typedef {Object} EmbedField
    * @property {string} name Field Name
@@ -241,6 +241,9 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
 
     // Title
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
+      if (props.title?.emoji) {
+        props.title.text = `${props.title.emoji} ${props.title.text}`
+      }
       this.setTitle(props.title.text)
       if (props?.title?.url && props.title.url.trim() != "") {
         this.setURL(props.title.url.trim())
@@ -278,8 +281,16 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
     }
 
     // Timestamp
-    if(props?.timestamp && props.timestamp) {
+    if(
+      (!props?.timestamp) ||
+      (
+        (props?.timestamp && props.timestamp) &&
+        (props?.timestamp && props.timestamp != "<NONE>")
+      )
+    ) {
       this.setTimestamp()
     }
   }
 }
+
+exports.RookEmbed = RookEmbed;

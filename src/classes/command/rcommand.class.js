@@ -1,8 +1,8 @@
 // @ts-check
 
-const { BaseChannel, Client, Message } = require('discord.js');
-const RookEmbed = require('../embed/rembed.class');
-const SlimEmbed = require('../embed/rslimbed.class');
+const { Client, Message, TextChannel } = require('discord.js');
+const { RookEmbed } = require('../embed/rembed.class');
+const { SlimEmbed } = require('../embed/rslimbed.class');
 
 const { Pagination } = require('pagination.djs');
 const fs = require('fs');
@@ -19,6 +19,8 @@ class RookCommand  {
    */
   // @ts-ignore
   name;   // Command Name
+  permissionsRequired;
+  botPermissions;
   /**
    * @type {boolean} Development Mode?
    */
@@ -44,7 +46,7 @@ class RookCommand  {
    */
   #errors;  // Private: Global Error Message strings
   /**
-   * @type {BaseChannel} Channel to send embeds to
+   * @type {TextChannel | any} Channel to send embeds to
    */
   #channel;   // Private: Channel to send VillainsEmbed to
   /**
@@ -90,6 +92,11 @@ class RookCommand  {
    * @param {EmbedProps} props        Local list of command properties
    */
   constructor(comprops = {}, props = {}) {
+    this.name = comprops?.name ? comprops.name.toLowerCase() : "unknown"
+    this.description = comprops?.description ? comprops.description : this.name
+    this.permissionsRequired = []
+    this.botPermissions = []
+
     /**
      * Embed Properties
      * @type {EmbedProps}
@@ -103,11 +110,10 @@ class RookCommand  {
     if (!(this?.props?.full)) {
       this.props.full = true
     }
-    if (!(this?.props?.caption?.text)) {
-      if (!(props?.caption)) {
-        this.props.caption = {}
+    if (this?.props?.caption?.text) {
+      if (this.props.caption?.emoji) {
+        this.props.caption.text = `${this.props.caption.emoji} ${this.props.caption.text}`
       }
-      this.props.caption.text = this.name.charAt(0).toUpperCase() + this.name.slice(1)
     }
     if (!(this?.props?.title)) {
       this.props.title = {}
@@ -288,21 +294,21 @@ class RookCommand  {
       return
     }
 
-    this.prefix = GLOBALS.prefix
+    // this.prefix = GLOBALS.prefix
 
     // Bail if we fail to get command prefix
-    if (!this.prefix) {
-      this.error = true
-      this.props.description = "Failed to get command prefix."
-      return
-    }
+    // if (!this.prefix) {
+    //   this.error = true
+    //   this.props.description = "Failed to get command prefix."
+    //   return
+    // }
   }
 
   /**
    * Get Channel object based on general key name
    * @param {Message | any} message Message that called the command
    * @param {string} channelType Key for channel to get from database
-   * @returns {Promise.<BaseChannel>} Found channel object
+   * @returns {Promise.<TextChannel>} Found channel object
    */
   async getChannel(message, channelType) {
     // Get botdev-defined list of channelIDs/channelNames
@@ -595,14 +601,20 @@ class RookCommand  {
   /**
    * Send pages to Discord Client
    *
-   * @param {Message | any} message Message that called the command
+   * @param {Message} message Message that called the command
    * @param {Array.<(RookEmbed)> | RookEmbed} pages Pages to send to client
    * @param {Array.<string>} emojis Emoji for pagination
    * @param {number} timeout Timeout for disabling pagination
    * @param {boolean} forcepages Force pagination
    */
   // @ts-ignore
-  async send(message, pages = [new RookEmbed({"description":"No pages sent!"})], emojis = ["◀️", "▶️"], timeout = 600000, forcepages = false) {
+  async send(
+    message,
+    pages       = [new RookEmbed({"description":"No pages sent!"})],
+    emojis      = ["◀️", "▶️"],
+    timeout     = 600000,
+    forcepages  = false
+  ) {
     if ((!this.channel) && message) {
       this.channel = message.channel
     }
@@ -616,9 +628,9 @@ class RookCommand  {
     if (Array.isArray(pages)) {
       // If it's just one and we're not forcing pages, just send the embed
       if ((pages.length <= 1) && !forcepages) {
+        console.log("Sending an embed")
         // @ts-ignore
-        // return this.channel.send({ embeds: [pages[0]] }) // discord.js v13
-        return this.channel.send(pages[0])
+        return this.channel.send({ embeds: [pages[0]] })
       } else {
         // Else, set up for pagination
         // Sanity check for emoji pageturners
@@ -642,22 +654,24 @@ class RookCommand  {
           message,
           {
             firstEmoji: emojis[0],
-            prevEmoji: emojis[1],
-            nextEmoji: emojis[2],
-            lastEmoji: emojis[3],
-            idle: timeout
+            prevEmoji:  emojis[1],
+            nextEmoji:  emojis[2],
+            lastEmoji:  emojis[3],
+            idle:       timeout
           }
         )
         // @ts-ignore
         these_pages.setEmbeds(pages)
         these_pages.paginate(message)
-        return true
+        // @ts-ignore
+        console.log("Sending pages")
+        return this.channel.send({ embeds: [ these_pages ]})
       }
     } else {
+      console.log("Sending one embed page")
       // Else, it's just an embed, send it
       // @ts-ignore
-      // return this.channel.send({ embeds: [ pages ] }) // discord.js v13
-      return this.channel.send(pages)
+      return this.channel.send({ embeds: [ pages ] })
     }
   }
 
@@ -671,15 +685,19 @@ class RookCommand  {
    * @returns {Promise.<any>}
    */
   // @ts-ignore
-  async execute(client, message, args, util, cmd) {
+  async execute(client, message, args,  cmd) {
     // Load profile
     await this.getProfile()
 
     // Process arguments
     await this.processArgs(message, args, this.flags)
 
-    // Build the thing
-    await this.build(client, message, cmd)
+    try {
+      // Build the thing
+      await this.build(client, message, cmd)
+    } catch(err) {
+      console.log(err.stack)
+    }
 
     // If we have an error, make it errortastic
     if (this.error) {

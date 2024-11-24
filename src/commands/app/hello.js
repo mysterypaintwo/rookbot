@@ -1,12 +1,26 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = {
-  name: 'hello',
-  description: 'Hello',
+module.exports = class HelloCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "hello",
+      category: "app",
+      description: "Hello"
+    }
+    let props = {
+      caption: { text: "Hello World" },
+      title: { text: "Hello World", emoji: "🔼" },
+      color: "#00FF00"
+    }
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     await interaction.deferReply()
 
     let GLOBALS = null
@@ -68,7 +82,6 @@ module.exports = {
 
     let DEV = GLOBALS.DEV
 
-    let props = {}
     let user = client?.user
 
     let console_output = [
@@ -79,12 +92,8 @@ module.exports = {
       (user ? user.username : "") +
       ` v${PACKAGE.version} is Online!`
     )
-    props = {
-      title: {
-        text: "🔼 " + console_output[1],
-        url: "https://github.com/mysterypaintwo/rookbot"
-      }
-    }
+    this.props.title.text = console_output[1]
+    this.props.title.url  = "https://github.com/mysterypaintwo/rookbot"
 
     if (DEV) {
       console_output.push(
@@ -115,7 +124,7 @@ module.exports = {
     console_output[7] = Ready
 
     */
-    props.description =
+    this.props.description =
       console_output[2]
       .replace(
         /\*\*\*/g,
@@ -131,7 +140,7 @@ module.exports = {
     if (server.id != "?") {
       server.name = await client.guilds.cache.find(g => g.id == server.id).name
     }
-    props.fields = [
+    this.props.fields = [
       {
         name: "Name",
         value:
@@ -212,8 +221,6 @@ module.exports = {
       }
     ]
 
-    const embed = new RookEmbed(props)
-
-    await interaction.editReply({ embeds: [ embed ] })
+    await interaction.deleteReply();
   }
 }

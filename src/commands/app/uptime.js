@@ -1,10 +1,21 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
-module.exports = {
-  name: 'uptime',
-  description: 'Uptime',
-
-  execute: async (client, interaction) => {
+module.exports = class UptimeCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "uptime",
+      category: "app",
+      description: "Uptime"
+    }
+    let props = {
+      caption: { text: "Uptime", emoji: "⏱️" }
+    }
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+  async action(client, interaction) {
     function timeConversion(duration = 0) {
       const portions = [];
       const msInSec = 1000;
@@ -39,20 +50,21 @@ module.exports = {
 
     await interaction.deferReply()
 
-    let props = {
-      title: {
-        text: "Uptime"
-      }
+    // Entities
+    let entities = {
+      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username }
+    }
+    // Players
+    this.props.players = {
+      user: entities.bot
     }
 
-    const uptime = client.uptime
-    props.description = [
+    const uptime = await client.uptime
+    this.props.description = [
         `<@${client.user.id}> has been online for:`,
         await timeConversion(uptime)
     ]
 
-    const embed = new RookEmbed(props)
-
-    await interaction.editReply({ embeds: [ embed ] })
+    await interaction.deleteReply()
   }
 }

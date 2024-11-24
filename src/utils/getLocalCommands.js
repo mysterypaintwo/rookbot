@@ -13,10 +13,15 @@ module.exports = (exceptions = []) => {
     const commandFiles = getAllFiles(commandCategory);
 
     for (const commandFile of commandFiles) {
-      const commandObject = require(commandFile);
+      let commandObject = require(commandFile);
 
       if (exceptions.includes(commandObject.name)) {
         continue;
+      }
+
+      if (commandObject.name.indexOf("Command") > -1) {
+        let cmd = new commandObject()
+        commandObject = cmd
       }
 
       localCommands.push(commandObject);

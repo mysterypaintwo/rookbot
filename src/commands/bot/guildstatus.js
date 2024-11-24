@@ -1,46 +1,50 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
-module.exports = {
-  name: 'guildstatus',
-  description: 'Guild Status',
+module.exports = class GuildStatusCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "guildstatus",
+      category: "bot",
+      description: "Guild Status",
+    }
+    let props = {}
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     await interaction.deferReply()
 
-    let props = {
-      title: {
-        text: "Guild Status"
-      },
-      players: {
-        user: {
-          name: interaction.user.displayName,
-          avatar: interaction.user.avatarURL(),
-          username: interaction.user.username
-        },
-        target: {
-          name: interaction.guild.name,
-          avatar: interaction.guild.iconURL()
-        }
-      }
+    // Entities
+    let entities = {
+      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username },
+      guild: { name: interaction.guild.name, avatar: interaction.guild.iconURL() }
+    }
+    // Players
+    this.props.players = {
+      user: entities.user,
+      target: entities.guild
     }
 
     let serverBoostEmoji = await interaction.guild.emojis.cache.find(emoji => emoji.name === "serverboost2")
     if (!(serverBoostEmoji)) {
       serverBoostEmoji = "[*]"
     }
-    props.description = `**${interaction.guild.name}**`
+    this.props.description = `***Guild Status for: ${interaction.guild.name}***`
     if (interaction.guild.features.length > 0) {
-      props.description += "\n"
-      props.description += "*Features*" + "\n" + '`'
-      props.description += interaction.guild.features.join("`, `")
-      props.description += '`'
+      this.props.description += "\n\n"
+      this.props.description += "**Features**" + "\n" + '`'
+      this.props.description += interaction.guild.features.join("`, `")
+      this.props.description += '`'
     }
 
-    props.fields = []
+    this.props.fields = []
 
     if (interaction?.guild?.ownerId && interaction.guild.ownerId != "undefined") {
       // console.log(`Guild Owner: ${interaction.guild.ownerId}`)
-      props.fields.push(
+      this.props.fields.push(
         {
           name: "Owner",
           value: `<@${interaction.guild.ownerId}>`
@@ -50,7 +54,7 @@ module.exports = {
 
     if (interaction?.guild?.vanityURLCode && interaction.guild.vanityURLCode != "") {
       let vanityURL = `https://discord.gg/${interaction.guild.vanityURLCode}`
-      props.fields.push(
+      this.props.fields.push(
         {
           name: "Vanity URL",
           value: `[${interaction.guild.vanityURLCode}](${vanityURL} '${vanityURL}')`
@@ -58,7 +62,7 @@ module.exports = {
       )
     }
 
-    props.fields.push(
+    this.props.fields.push(
       {
         name: "Members",
         value: interaction.guild.memberCount.toString(),
@@ -85,8 +89,6 @@ module.exports = {
       }
     )
 
-    const embed = new RookEmbed(props)
-
-    await interaction.editReply({ embeds: [ embed ] })
+    await interaction.deleteReply()
   }
 }
