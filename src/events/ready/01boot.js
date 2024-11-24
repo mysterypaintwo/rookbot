@@ -24,7 +24,7 @@ module.exports = async (client) => {
     if (fs.existsSync("./src/PROFILE.json")) {
       GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
     } else {
-      console.log("🟡Hello Sequence: PROFILE manifest not found! Using defaults!")
+      console.log("🟡Boot Sequence: PROFILE manifest not found! Using defaults!")
     }
     if (
       GLOBALS?.selectedprofile &&
@@ -36,7 +36,7 @@ module.exports = async (client) => {
       GLOBALS = defaults
     }
   } catch(err) {
-    console.log("🔴Hello Sequence: PROFILE manifest not found!")
+    console.log("🔴Boot Sequence: PROFILE manifest not found!")
     process.exit(1)
   }
 
@@ -48,7 +48,7 @@ module.exports = async (client) => {
      */
     PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
   } catch(err) {
-    console.log("🔴Hello Sequence: PACKAGE manifest not found!")
+    console.log("🔴Boot Sequence: PACKAGE manifest not found!")
     process.exit(1)
   }
 

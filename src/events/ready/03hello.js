@@ -12,7 +12,7 @@ module.exports = async (client) => {
      */
     defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
   } catch(err) {
-    console.log("🔴Boot Sequence: DEFAULTS manifest not found!")
+    console.log("🔴Hello Sequence: DEFAULTS manifest not found!")
     process.exit(1)
   }
 

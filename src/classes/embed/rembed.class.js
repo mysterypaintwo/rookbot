@@ -75,7 +75,7 @@ class RookEmbed extends EmbedBuilder {
        */
       this.defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
     } catch(err) {
-      console.log("🔴Boot Sequence: DEFAULTS manifest not found!")
+      console.log("🔴REmbed: DEFAULTS manifest not found!")
       process.exit(1)
     }
 
@@ -88,7 +88,7 @@ class RookEmbed extends EmbedBuilder {
       if (fs.existsSync("./src/PROFILE.json")) {
         this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
       } else {
-        console.log("🟡Hello Sequence: PROFILE manifest not found! Using defaults!")
+        console.log("🟡REmbed: PROFILE manifest not found! Using defaults!")
       }
       if (
         this.GLOBALS?.selectedprofile &&
@@ -100,7 +100,7 @@ class RookEmbed extends EmbedBuilder {
         this.GLOBALS = this.defaults
       }
     } catch(err) {
-      console.log("🔴Hello Sequence: PROFILE manifest not found!")
+      console.log("🔴REmbed: PROFILE manifest not found!")
       process.exit(1)
     }
 
@@ -112,7 +112,7 @@ class RookEmbed extends EmbedBuilder {
        */
       this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
     } catch(err) {
-      console.log("🔴Hello Sequence: PACKAGE manifest not found!")
+      console.log("🔴REmbed: PACKAGE manifest not found!")
       process.exit(1)
     }
 

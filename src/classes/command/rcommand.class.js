@@ -296,7 +296,7 @@ class RookCommand  {
         this.PACKAGE.profileName = profileName
       }
     } catch(err) {
-      console.log("🔴Hello Sequence: PACKAGE manifest not found!")
+      console.log("🔴RCommand: PACKAGE manifest not found!")
       process.exit(1)
     }
 
