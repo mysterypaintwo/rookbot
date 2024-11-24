@@ -13,7 +13,7 @@ module.exports = async (client, oldMember) => {
     // Fetch the log channel using the oldMember's guild ID
     const guildID = oldMember.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const logChannel = client.channels.cache.get(guildChannels["logging"]);
+    const logChannel = client.channels.cache.get(guildChannels["logging-members"]);
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.');
