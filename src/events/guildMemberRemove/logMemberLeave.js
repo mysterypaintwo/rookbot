@@ -24,7 +24,7 @@ module.exports = async (client, oldMember) => {
     const logEmbed = new RookEmbed({
       color: '#FF0000', // Red for member leaving
       title: {
-        text: '👋 Member Left',
+        text: '🚶‍♂️🚪 Member Left',
       },
       thumbnail: {
         url: oldMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
@@ -32,7 +32,7 @@ module.exports = async (client, oldMember) => {
       fields: [
         {
           name: 'Left Member',
-          value: `<@${oldMember.user.id}> (ID: ${oldMember.user.id})`,
+          value: `[${oldMember.user.tag}](https://discord.com/users/${oldMember.user.id}) (ID: ${oldMember.user.id})`,
         },
         {
           name: 'Left At',
@@ -47,7 +47,7 @@ module.exports = async (client, oldMember) => {
         msg: `User ID: ${oldMember.user.id}`,
       },
       timestamp: true,
-    });
+    });    
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });

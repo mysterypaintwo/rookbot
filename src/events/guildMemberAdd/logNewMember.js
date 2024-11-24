@@ -1,4 +1,4 @@
-const { Client, EmbedBuilder, GuildMember } = require('discord.js');
+const { Client, GuildMember } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
@@ -10,8 +10,11 @@ const { RookEmbed } = require('../../classes/embed/rembed.class');
  */
 module.exports = async (client, newMember) => {
   try {
-    // Fetch the log channel using the newMember's guild ID
-    const guildID = newMember.guild.id;
+    // Ensure the member's data is fully fetched
+    const fetchedMember = await newMember.guild.members.fetch(newMember.user.id);
+
+    // Fetch the log channel using the fetchedMember's guild ID
+    const guildID = fetchedMember.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const logChannel = client.channels.cache.get(guildChannels["logging"]);
 
@@ -27,24 +30,26 @@ module.exports = async (client, newMember) => {
         text: '👋 New Member Joined',
       },
       thumbnail: {
-        url: newMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
+        url: fetchedMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
       },
       fields: [
         {
           name: 'New Member',
-          value: `<@${newMember.user.id}> (ID: ${newMember.user.id})`,
+          value: `[${fetchedMember.user.tag}](https://discord.com/users/${fetchedMember.user.id}) (ID: ${fetchedMember.user.id})`,
         },
         {
           name: 'Joined At',
-          value: newMember.joinedAt.toISOString(),
+          value: fetchedMember.joinedAt
+            ? fetchedMember.joinedAt.toISOString()
+            : 'Unknown', // Handle cases where joinedAt is null
         },
         {
           name: 'Guild',
-          value: newMember.guild.name,
+          value: fetchedMember.guild.name,
         },
       ],
       footer: {
-        msg: `User ID: ${newMember.user.id}`,
+        msg: `User ID: ${fetchedMember.user.id}`,
       },
       timestamp: true,
     });
@@ -56,10 +61,10 @@ module.exports = async (client, newMember) => {
     const logFilePath = path.join(__dirname, '..', '..', 'memberChanges.log');
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `User: ${newMember.user.tag} (ID: ${newMember.user.id})`,
-      `Guild: ${newMember.guild.name} (ID: ${newMember.guild.id})`,
+      `User: ${fetchedMember.user.tag} (ID: ${fetchedMember.user.id})`,
+      `Guild: ${fetchedMember.guild.name} (ID: ${fetchedMember.guild.id})`,
       `Event: Member Joined`,
-      `User ID: ${newMember.user.id}`,
+      `User ID: ${fetchedMember.user.id}`,
     ].join('\n') + '\n\n';
 
     // Append the log entry to the file
