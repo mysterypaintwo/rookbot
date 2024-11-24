@@ -3,14 +3,29 @@ const shell = require('shelljs')
 const fs = require('fs')
 
 module.exports = async (client) => {
-  let GLOBALS = null
-  const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
   let profileName = "default"
+  let defaults = {}
   try {
+    /**
+     * Profile properties
+     * @type {Object.<string, any>}
+     */
+    defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
+  } catch(err) {
+    console.log("🔴Boot Sequence: DEFAULTS manifest not found!")
+    process.exit(1)
+  }
+
+  let GLOBALS = {}
+  try {
+    /**
+     * Global properties
+     * @type {Object.<string, any>}
+     */
     if (fs.existsSync("./src/PROFILE.json")) {
       GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
     } else {
-      console.log("🟡Ready Event: PROFILE manifest not found! Using defaults!")
+      console.log("🟡Hello Sequence: PROFILE manifest not found! Using defaults!")
     }
     if (
       GLOBALS?.selectedprofile &&
@@ -23,11 +38,22 @@ module.exports = async (client) => {
       GLOBALS = defaults
     }
   } catch(err) {
-    console.log("🔴Ready Event: PROFILE manifest not found!")
+    console.log("🔴Hello Sequence: PROFILE manifest not found!")
     process.exit(1)
   }
 
-  let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
+  let PACKAGE = {}
+  try {
+    /**
+     * Package properties
+     * @type {Object.<string, any>}
+     */
+    PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
+  } catch(err) {
+    console.log("🔴Hello Sequence: PACKAGE manifest not found!")
+    process.exit(1)
+  }
+
   let BRANCH = ""
   let COMMIT = ""
   try {

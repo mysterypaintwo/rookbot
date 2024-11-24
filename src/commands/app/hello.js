@@ -23,31 +23,6 @@ module.exports = class HelloCommand extends RookCommand {
   async action(client, interaction) {
     await interaction.deferReply()
 
-    let GLOBALS = null
-    const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-    let profileName = "default"
-    try {
-      if (fs.existsSync("./src/PROFILE.json")) {
-        GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡Ready Event: PROFILE manifest not found! Using defaults!")
-      }
-      if (
-        GLOBALS?.selectedprofile &&
-        GLOBALS?.profiles &&
-        GLOBALS.selectedprofile in GLOBALS.profiles
-      ) {
-        profileName = GLOBALS.selectedprofile
-        GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
-      } else {
-        GLOBALS = defaults
-      }
-    } catch(err) {
-      console.log("🔴Ready Event: PROFILE manifest not found!")
-      process.exit(1)
-    }
-
-    let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
     let BRANCH = ""
     let COMMIT = ""
     try {
@@ -80,8 +55,6 @@ module.exports = class HelloCommand extends RookCommand {
       console.log(err)
     }
 
-    let DEV = GLOBALS.DEV
-
     let user = client?.user
 
     let console_output = [
@@ -90,12 +63,12 @@ module.exports = class HelloCommand extends RookCommand {
 
     console_output.push(
       (user ? user.username : "") +
-      ` v${PACKAGE.version} is Online!`
+      ` v${this.PACKAGE.version} is Online!`
     )
     this.props.title.text = console_output[1]
     this.props.title.url  = "https://github.com/mysterypaintwo/rookbot"
 
-    if (DEV) {
+    if (this.DEV) {
       console_output.push(
         `!!! DEV MODE !!!`,
         `Footer Tag:  "${GLOBALS.name}"`
@@ -107,7 +80,7 @@ module.exports = class HelloCommand extends RookCommand {
       )
     }
     console_output.push(
-      `Profile Key: '${profileName}'`,
+      `Profile Key: '${this.PACKAGE.profileName}'`,
       `Branch Key:  <${BRANCH}>`,
       `Commit ID:   [${COMMIT}]`,
       "Bot is Ready!",
@@ -135,7 +108,7 @@ module.exports = class HelloCommand extends RookCommand {
         "🟧"
       )
     let server = {
-      id: GLOBALS?.targetserver ? GLOBALS.targetserver : "?"
+      id: this.GLOBALS?.targetserver ? this.GLOBALS.targetserver : "?"
     }
     if (server.id != "?") {
       server.name = await client.guilds.cache.find(g => g.id == server.id).name
@@ -146,10 +119,10 @@ module.exports = class HelloCommand extends RookCommand {
         value:
           console_output[3].substring(console_output[3].indexOf(':') + 2)
           .replace(
-            GLOBALS.name,
-            GLOBALS?.discord?.user?.id ?
-            `<@${GLOBALS.discord.user.id}>` :
-            GLOBALS.name
+            this.GLOBALS.name,
+            this.GLOBALS?.discord?.user?.id ?
+            `<@${this.GLOBALS.discord.user.id}>` :
+            this.GLOBALS.name
           ),
         inline: true
       },
@@ -158,8 +131,8 @@ module.exports = class HelloCommand extends RookCommand {
         value:
           console_output[4].substring(console_output[4].indexOf(':') + 2)
           .replace(
-            `'${profileName}'`,
-            `\`${profileName}\``
+            `'${this.PACKAGE.profileName}'`,
+            `\`${this.PACKAGE.profileName}\``
           ),
         inline: true
       },

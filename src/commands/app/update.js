@@ -24,31 +24,6 @@ module.exports = class UpdateCommand extends RookCommand {
   async action(client, interaction) {
     await interaction.deferReply()
 
-    let GLOBALS = null
-    const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-    let profileName = "default"
-    try {
-      if (fs.existsSync("./src/PROFILE.json")) {
-        GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡Ready Event: PROFILE manifest not found! Using defaults!")
-      }
-      if (
-        GLOBALS?.selectedprofile &&
-        GLOBALS?.profiles &&
-        GLOBALS.selectedprofile in GLOBALS.profiles
-      ) {
-        profileName = GLOBALS.selectedprofile
-        GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
-      } else {
-        GLOBALS = defaults
-      }
-    } catch(err) {
-      console.log("🔴Ready Event: PROFILE manifest not found!")
-      process.exit(1)
-    }
-
-    let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
     let BRANCH = ""
     let COMMITS = {
       current: "",

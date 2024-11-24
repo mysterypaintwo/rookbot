@@ -26,12 +26,13 @@ module.exports = class PingCommand extends RookCommand {
     // Entities
     let entities = {
       bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
-      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username }
+      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username },
+      discord: { name: "Discord", avatar: "https://cdn.iconscout.com/icon/free/png-512/free-discord-logo-icon-download-in-svg-png-gif-file-formats--social-media-pack-logos-icons-3073764.png?f=webp&w=256" }
     }
     // Players
     this.props.players = {
       user: entities.bot,
-      target: entities.user
+      target: entities.discord
     }
 
     this.props.fields = [

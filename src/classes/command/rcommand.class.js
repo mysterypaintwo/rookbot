@@ -93,9 +93,9 @@ class RookCommand  {
    */
   constructor(comprops = {}, props = {}) {
     this.name = comprops?.name ? comprops.name.toLowerCase() : "unknown"
-    this.description = comprops?.description ? comprops.description : this.name
-    this.permissionsRequired = []
-    this.botPermissions = []
+    this.description = comprops?.description ? comprops.description : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
+    this.permissionsRequired = comprops?.permissionsRequired ? comprops.permissionsRequired : []
+    this.botPermissions = comprops?.botPermissions ? comprops.botPermissions : []
 
     /**
      * Embed Properties
@@ -259,36 +259,57 @@ class RookCommand  {
    * Get Profile data from loaded profile
    */
   async getProfile() {
-    let GLOBALS = null
-    const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
+    let profileName = "default"
     try {
+      /**
+       * Global properties
+       * @type {Object.<string, any>}
+       */
+      this.defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
       if (fs.existsSync("./src/PROFILE.json")) {
-        GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-        GLOBALS = (
-          GLOBALS?.profile &&
-          GLOBALS?.profiles &&
-          GLOBALS.profile in GLOBALS.profiles
-        ) ?
-          GLOBALS.profiles[GLOBALS.profile]:
-          defaults
+        this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
       } else {
-        console.log("🟡VCommand: PROFILE manifest not found! Using defaults!")
-        GLOBALS = defaults
+        console.log("🟡RCommand: PROFILE manifest not found! Using defaults!")
+      }
+      if (
+        this.GLOBALS?.selectedprofile &&
+        this.GLOBALS?.profiles &&
+        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
+      ) {
+        profileName = this.GLOBALS.selectedprofile
+        this.GLOBALS = this.GLOBALS.profiles[this.GLOBALS.selectedprofile]
+      } else {
+        this.GLOBALS = this.defaults
       }
     } catch(err) {
-      console.log("🔴VCommand: PROFILE manifest not found!")
+      console.log("🔴RCommand: PROFILE manifest not found!")
       process.exit(1)
     }
-    this.DEV = GLOBALS.DEV
+
+    try {
+      /**
+       * Package properties
+       * @type {Object.<string, any>}
+       */
+      this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
+      if (this?.PACKAGE) {
+        this.PACKAGE.profileName = profileName
+      }
+    } catch(err) {
+      console.log("🔴Hello Sequence: PACKAGE manifest not found!")
+      process.exit(1)
+    }
+
+    this.DEV = this.GLOBALS?.DEV && this.GLOBALS.DEV
 
     // Bail if we fail to get server profile information
-    if (!GLOBALS) {
+    if (!this.GLOBALS) {
       this.error = true
       this.props.description = "Failed to get server profile information."
       return
     }
     // Bail if we fail to get bot default information
-    if (!defaults) {
+    if (!this.defaults) {
       this.error = true
       this.props.description = "Failed to get bot default information."
       return
