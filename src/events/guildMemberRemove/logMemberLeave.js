@@ -13,7 +13,7 @@ module.exports = async (client, oldMember) => {
     // Fetch the log channel using the oldMember's guild ID
     const guildID = oldMember.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const logChannel = client.channels.cache.get(guildChannels["logging"]);
+    const logChannel = client.channels.cache.get(guildChannels["logging-members"]);
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.');
@@ -24,7 +24,7 @@ module.exports = async (client, oldMember) => {
     const logEmbed = new RookEmbed({
       color: '#FF0000', // Red for member leaving
       title: {
-        text: '👋 Member Left',
+        text: '🚶‍♂️🚪 Member Left',
       },
       thumbnail: {
         url: oldMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
@@ -32,7 +32,7 @@ module.exports = async (client, oldMember) => {
       fields: [
         {
           name: 'Left Member',
-          value: `<@${oldMember.user.id}> (ID: ${oldMember.user.id})`,
+          value: `[${oldMember.user.tag}](https://discord.com/users/${oldMember.user.id}) (ID: ${oldMember.user.id})`,
         },
         {
           name: 'Left At',
@@ -47,7 +47,7 @@ module.exports = async (client, oldMember) => {
         msg: `User ID: ${oldMember.user.id}`,
       },
       timestamp: true,
-    });
+    });    
 
     // Send the log embed to the log channel
     await logChannel.send({ embeds: [logEmbed] });
