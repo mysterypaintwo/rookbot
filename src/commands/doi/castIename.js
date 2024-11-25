@@ -5,7 +5,7 @@ module.exports = {
   execute: async (client, interaction) => {
     const guildID = interaction.guild.id;
     const userID = '1111517386588307536';
-    const doiGuildID = 1282788953052676177;
+    const doiGuildID = '1282788953052676177';
     const isDoI = interaction.guild.id === doiGuildID;
 
     // Ensure the command is properly deferred and acknowledged with ephemeral response
