@@ -1,14 +1,20 @@
-const { EmbedBuilder } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
-module.exports = {
-  name: 'nl',
-  description: 'Posts a rainbow divider line.',
+module.exports = class NLCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "nl",
+      description: "Posts a rainbow divider line"
+    }
+    let props = {}
 
-  /**
-   * @param {import('discord.js').Interaction} interaction
-   */
-  execute: async (client, interaction) => {
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
+  async execute(client, interaction) {
     // Function to generate a random rainbow color in hexadecimal format
     const getRandomRainbowColor = () => {
       const hue = Math.floor(Math.random() * 360); // Random hue value (0-360)
@@ -38,33 +44,18 @@ module.exports = {
 
     try {
       // Create the embed with the rainbow divider line image
-      const embed = new EmbedBuilder()
-        .setColor(getRandomRainbowColor())
-        .setImage("https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif")
-
-      // Send the embed to the channel
-      const channel = interaction.channel; // Get the channel where the command was used
-      await channel.send({ embeds: [ embed ] });
+      this.props.color = getRandomRainbowColor()
+      this.props.image = "https://cdn.discordapp.com/attachments/565312923271168000/985473102702071838/divider-line.gif"
 
       // Optionally end the interaction without a visible message
-      await interaction.deleteReply();
     } catch (error) {
       console.error('Error handling /nl command:', error);
 
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "An error occurred while posting the rainbow line. Pleas try again later."
-      }
-      const embed = new RookEmbed(props)
-
-      // Respond with an error message if something goes wrong
-      await interaction.followUp({
-        embeds: [ embed ],
-        ephemeral: true,
-      });
+      this.error = true
+      this.props.description = "An error occurred while posting the rainbow line. Pleas try again later."
     }
+
+    await interaction.deleteReply();
+    interaction.channel.send({ content: this.props.image })
   }
 };

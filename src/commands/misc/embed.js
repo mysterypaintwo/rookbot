@@ -1,48 +1,59 @@
-const { EmbedBuilder } = require('discord.js');
+const { RookCommand } = require('../../classes/command/rcommand.class');
 
-module.exports = {
-  name: 'embed',
-  description: 'Sends an embed with predefined content',
+module.exports = class EmbedCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "embed",
+      description: "Sends an embed with predefined content"
+    }
+    let props = {
+      title: {
+        text: "Embed Title",
+        url: "https://justinbohemier.wixsite.com/portfolio/game-design"
+      },
+      description: "This is an embed description",
+      color: "Random",
+      fields: [
+        {
+          name: "Field title",
+          value: "Some random value",
+          inline: true
+        },
+        {
+          name: "2nd Field title",
+          value: "Some random value",
+          inline: true
+        },
+        {
+          name: "3rd Field title",
+          value: "Some random value",
+          inline: true
+        }
+      ],
+      image: "https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900",
+      footer: {
+        msg: "Footer text",
+        image: "https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900"
+      }
+    }
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
   /**
    * Sends an embed message in response to a slash command interaction.
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     // Acknowledge the interaction immediately without sending a reply yet
     await interaction.deferReply(); // This avoids the bot "waiting for a response"
 
-    const embed = new EmbedBuilder()
-      .setTitle('Embed title')
-      .setDescription('This is an embed description')
-      .setURL('https://justinbohemier.wixsite.com/portfolio/game-design')
-      .setColor('Random')
-      .setFields(
-        {
-          name: 'Field title',
-          value: 'Some random value',
-          inline: true,
-        },
-        {
-          name: '2nd Field title',
-          value: 'Some random value',
-          inline: true,
-        },
-        {
-          name: '3rd Field title',
-          value: 'Some random value',
-          inline: true,
-        }
-      )
-      .setImage('https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900')
-      .setTimestamp()
-      .setFooter({
-        text: 'Footer text',
-        iconURL: 'https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900'
-      });
+    // all done in constructor
 
-    // Send the embed to the channel
-    await interaction.editReply({ embeds: [ embed ] }); // Edit the initial deferred reply to send the embed
-  },
+    await interaction.deleteReply();
+  }
 };

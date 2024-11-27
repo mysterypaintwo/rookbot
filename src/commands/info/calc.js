@@ -1,22 +1,36 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { ApplicationCommandOptionType } = require('discord.js');
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const { evaluate } = require('mathjs');
 
-module.exports = {
-  name: 'calc',
-  description: 'Evaluates a math expression.',
-  options: [
-    {
-      name: 'expression',
-      description: 'The math expression to evaluate.',
-      type: 3, // String
-      required: true,
-    },
-  ],
+module.exports = class CalcCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "calc",
+      description: "Evaluates a math expression",
+      options: [
+        {
+          name: "expression",
+          description: "The math expression to evaluate",
+          type: ApplicationCommandOptionType.String,
+          required: true
+        }
+      ]
+    }
+    let props = {
+      title: {
+        text: "Calculator"
+      }
+    }
 
-  /**
-   * @param {import('discord.js').Interaction} interaction
-   */
-  execute: async (client, interaction) => {
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
+  async action(client, interaction) {
+    interaction.deferReply()
+
     const expression = interaction.options.getString('expression');
 
     try {
@@ -24,43 +38,18 @@ module.exports = {
       const result = evaluate(expression);
 
       // Create and send the embed
-      let players = {}
-      players["bot"] = {
-        name: client.user.displayName,
-        avatar: client.user.avatarURL()
-      }
-      players["user"] = {
-        name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL(),
-        username: interaction.user.username
-      }
-      let props = {
-        title: {
-          text: "Calculator"
-        },
-        fields: [
-          { name: "Expression", value: `\`${expression}\``, inline: false },
-          { name: "Result",     value: `\`${result}\``,     inline: false }
-        ],
-        players: players
-      }
-      const embed = new RookEmbed(props)
-
-      await interaction.reply({ embeds: [ embed ] });
+      this.props.fields = [
+        { name: "Expression", value: `\`${expression}\``, inline: false },
+        { name: "Result",     value: `\`${result}\``,     inline: false }
+      ]
     } catch (error) {
       console.error('Error evaluating expression:', error);
 
-      // Send an error embed if the math expression is invalid
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "Invalid math expression. Please try again."
-      }
-      const embed = new RookEmbed(props)
+      this.error = true
 
-      await interaction.reply({ embeds: [ embed ], ephemeral: true });
+      // Send an error embed if the math expression is invalid
+      this.props.description = "Invalid math expression. Please try again."
     }
+    await interaction.deleteReply();
   }
 };

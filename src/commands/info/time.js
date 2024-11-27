@@ -1,14 +1,26 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const tz = require('timezone');
 
-module.exports = {
-  name: 'time',
-  description: 'Time',
+module.exports = class TimeCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "time",
+      description: "Time"
+    }
+    let props = {
+      title: {
+        text: "Time"
+      }
+    }
 
-  execute: async (client, interaction) => {
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
+  async action(client, interaction) {
     await interaction.deferReply()
-
-    let props = {}
 
     const now = Date.now()
     const tzs = [
@@ -26,22 +38,20 @@ module.exports = {
       require("timezone/America/Los_Angeles")
     )
 
-    props.description = "```"
+    this.props.description = "```"
 
     for(let zone of tzs) {
       let locale = zone.includes("America") ? "en_US" : "en_AU"
       let tmp = mytz(now, locale, "%Z: %x %T", zone)
       console.log(tmp)
-      props.description += tmp + "\n"
+      this.props.description += tmp + "\n"
     }
-    props.description += "```" + "\n"
+    this.props.description += "```" + "\n"
 
     let tmp = `Local: <t:${Math.floor(now / 1000)}:f>`
-    props.description += tmp
+    this.props.description += tmp
     console.log(tmp)
 
-    const embed = new RookEmbed(props)
-
-    await interaction.editReply({ embeds: [ embed ] })
+    await interaction.deleteReply();
   }
 }

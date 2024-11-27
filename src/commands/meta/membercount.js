@@ -1,12 +1,28 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { RookCommand } = require('../../classes/command/rcommand.class');
 
-module.exports = {
+module.exports = class MemberCountCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "membercount",
+      description: "Displays the total number of registered members on the server."
+    }
+    let props = {
+      title: {
+        text: "Total Member Count"
+      }
+    }
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
   /**
    *
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     // Defer the reply
     await interaction.deferReply();
 
@@ -21,42 +37,16 @@ module.exports = {
       const totalBots = members.filter(member => member.user.bot).size;
 
       // Create an embed to send the member count
-      let players = {}
-      players["user"] = {
-        name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL(),
-        username: interaction.user.username
-      }
-      players["target"] = {
-        name: interaction.guild.name,
-        avatar: interaction.guild.iconURL()
-      }
-      let props = {
-        title: {
-          text: "Total Member Count"
-        },
-        description: `There are currently ${totalMembers} registered members in this server!\n(Count includes staff and excludes our ${totalBots} bots.)`,
-        players: players
-      }
-      const embed = new RookEmbed(props)
-
-      // Send the embed as a reply to the command
-      await interaction.editReply({ embeds: [ embed ] });
+      this.props.description = [
+        `There are currently ${totalMembers} registered members in this server!`,
+        `(Count includes staff and excludes our ${totalBots} bots.)`
+      ]
     } catch (error) {
-      let props = {
-        title: {
-          text: "Error"
-        },
-        description: "There was an error fetching the member count."
-      }
-      const embed = new RookEmbed(props)
+      this.error = true
+      this.props.description = "There was an error fetching the member count."
       console.log(`Error fetching member count: ${error.stack}`);
-      await interaction.editReply({ embeds: [ embed ] });
     }
-  },
 
-  name: 'membercount',
-  description: `Displays the total number of registered members on the server.`,
-  permissionsRequired: [],
-  botPermissions: [],
+    await interaction.deleteReply();
+  }
 };

@@ -1,12 +1,29 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
-module.exports = {
+module.exports = class BoostersCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "boosters",
+      description: "Displays the number of boosters and the server boost level"
+    }
+    let props = {
+      title: {
+        text: "Server Boost Info"
+      }
+    }
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
   /**
    *
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     // Defer the reply to give the bot time to process the request
     await interaction.deferReply();
 
@@ -18,47 +35,22 @@ module.exports = {
       const boostLevel = interaction.guild.premiumTier;
 
       // Prepare a message to show the boost information
-      let players = {}
-      players["user"] = {
-        name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL(),
-        username: interaction.user.username
-      }
-      players["target"] = {
-        name: interaction.guild.name,
-        avatar: interaction.guild.iconURL()
-      }
-      let props = {
-        color: "#00BFFF",
-        title: {
-          text: "Server Boost Info"
+      this.props.fields = [
+        {
+          name: "Boosters",
+          value: boosts + ""
         },
-        description: [
-          `**Total Boosters:** ${boosts}`,
-          `**Boost Level:** ${boostLevel}`
-        ],
-        players: players
-      }
-      const embed = new RookEmbed(props)
-
-      // Send the embed as a reply to the command
-      await interaction.editReply({ embeds: [ embed ] });
-    } catch (error) {
+        {
+          name: "Level",
+          value: boostLevel + ""
+        }
+      ]
+    } catch(error) {
       console.log(`Error fetching boost info: ${error.stack}`);
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "There was an error fetching the server's boost information."
-      }
-      const embed = new RookEmbed(props)
-      await interaction.editReply({ embeds: [ embed ] });
+      this.error = true
+      this.props.description = "There was an error fetching the server's boost information."
     }
-  },
 
-  name: 'boosters',
-  description: 'Displays the number of boosters and the server boost level.',
-  permissionsRequired: [],
-  botPermissions: [],
+    await interaction.deleteReply();
+  }
 };

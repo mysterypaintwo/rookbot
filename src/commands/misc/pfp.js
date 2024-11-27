@@ -1,12 +1,34 @@
 const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
-module.exports = {
+module.exports = class ProfilePicCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "pfp",
+      description: "Displays the profile picture of the mentioned user",
+      options: [
+        {
+          name: "target-user",
+          description: "The user whose profile picture you want to see",
+          type: ApplicationCommandOptionType.String,
+          required: true
+        }
+      ]
+    }
+    let props = {}
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
   /**
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
+    await interaction.deferReply();
+
     // Get the user mentioned in the command
     const targetUserId = interaction.options.get('target-user').value;
 
@@ -19,39 +41,14 @@ module.exports = {
     // Get the user's avatar URL
     const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 });
 
-    let players = {}
-    players["user"] = {
-      name: interaction.user.displayName,
-      avatar: interaction.user.avatarURL(),
-      username: interaction.user.username
-    }
-    players["target"] = {
-      name: targetUserName,
-      avatar: avatarURL
-    }
-
-    let props = {
+    this.props = {
       title: {
         text: `${targetUserName}'s Avatar`,
         url: avatarURL
       },
-      image: avatarURL,
-      players: players
+      image: avatarURL
     }
-    const embed = new RookEmbed(props)
 
-    // Respond with the user's server nickname (or username) and profile picture
-    await interaction.reply({ embeds: [ embed ] });
-  },
-
-  name: 'pfp',
-  description: 'Displays the profile picture of the mentioned user.',
-  options: [
-    {
-      name: 'target-user',
-      description: 'The user whose profile picture you want to see.',
-      type: ApplicationCommandOptionType.User,
-      required: true
-    }
-  ]
+    await interaction.deleteReply();
+  }
 };

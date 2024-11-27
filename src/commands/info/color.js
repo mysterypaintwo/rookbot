@@ -1,37 +1,39 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { ApplicationCommandOptionType } = require('discord.js');
+const { RookCommand } = require('../../classes/command/rcommand.class');
 
-module.exports = {
-  name: 'color',
-  description: 'Displays information about a hex color code.',
-  options: [
-    {
-      name: 'hex',
-      description: 'A hex color code (e.g., #FF5733 or FF5733).',
-      type: 3, // String
-      required: true,
-    },
-  ],
+module.exports = class ColorCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "color",
+      description: "Displays information about a hex color code",
+      options: [
+        {
+          name: "hex",
+          description: "A hex color code (e.g., #FF5733 or FF5733)",
+          type: ApplicationCommandOptionType.String,
+          required: true
+        }
+      ]  
+    }
+    let props = {}
 
-  /**
-   * @param {import('discord.js').Interaction} interaction
-   */
-  execute: async (client, interaction) => {
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
+  async action(client, interaction) {
+    await interaction.deferReply();
+
     const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase();
 
     // Validate hex string
     const hexRegex = /^[0-9A-F]{6}$/;
     if (!hexRegex.test(hexInput)) {
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "Invalid hex color code. Please provide a valid 6-character hexadecimal string (e.g., #FF5733 or FF5733)."
-      }
-      const embed = new RookEmbed(props)
-
-      await interaction.reply({ embeds: [ embed ], ephemeral: true });
-      return;
+      this.error = true
+      this.props.description = "Invalid hex color code. Please provide a valid 6-character hexadecimal string (e.g., #FF5733 or FF5733)."
+      return
     }
 
     // Convert hex to RGB
@@ -40,17 +42,7 @@ module.exports = {
     const b = parseInt(hexInput.substring(4, 6), 16);
 
     // Create the embed
-    let players = {}
-    players["bot"] = {
-      name: client.user.displayName,
-      avatar: client.user.avatarURL()
-    }
-    players["user"] = {
-      name: interaction.user.displayName,
-      avatar: interaction.user.avatarURL(),
-      username: interaction.user.username
-    }
-    let props = {
+    this.props = {
       color: `${hexInput}`,
       title: {
         text: "Color Information"
@@ -58,12 +50,9 @@ module.exports = {
       fields: [
         { name: 'Hex', value: `\`#${hexInput}\``,   inline: true },
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
-      ],
-      players: players
+      ]
     }
-    const embed = new RookEmbed(props)
-
-    // Send the embed
-    await interaction.reply({ embeds: [ embed ] });
+    
+    await interaction.deleteReply();
   }
 };

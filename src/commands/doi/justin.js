@@ -1,19 +1,29 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js');
 
-module.exports = {
-  name: 'justin',
-  description: 'Displays an embed showcasing the developer\'s video games from their portfolio',
+module.exports = class JustinCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "justin",
+      description: "Displays an embed showcasing the developer's video games from their portfolio."
+    }
+    let props = {}
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
   /**
    * Sends an embed message showcasing the developer's video games.
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
+  async action(client, interaction) {
     // Acknowledge the interaction
     await interaction.deferReply();
 
-    let props = {
+    this.props = {
       title: {
         text: "Developer Portfolio: Justin Bohemier",
         url: "https://justinbohemier.wixsite.com/portfolio/game-design"
@@ -42,9 +52,7 @@ module.exports = {
       }
     }
 
-    const embed = new RookEmbed(props)
-
     // Send the embed to the channel
-    await interaction.editReply({ embeds: [ embed ] });
+    await interaction.deleteReply();
   }
 };

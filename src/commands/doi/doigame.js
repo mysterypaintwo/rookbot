@@ -1,20 +1,35 @@
 const { serverGameName_base64encoded } = require('../../../config.json');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { RookCommand } = require('../../classes/command/rcommand.class');
 
-// Decode the base64 string
-const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+module.exports = class DOIGameCommand extends RookCommand {
+  constructor() {
+    // Decode the base64 string
+    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+    let comprops = {
+      name: "doigame",
+      description: `Sends a message with download info for *${serverGameName}*.`
+    }
+    let props = {}
 
-module.exports = {
-  execute: async (client, interaction) => {
-    const guildID = interaction.guild.id;
-    const guildMeta = require(`../../dbs/${guildID}/meta.json`);
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
+  async action(client, interaction) {
     // Ensure the command is properly deferred and acknowledged
     await interaction.deferReply();
 
+    // Decode the base64 string
+    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+
+    const guildID = interaction.guild.id;
+    const guildMeta = require(`../../dbs/${guildID}/meta.json`);
+
     try {
       // Create an embed message
-      let props = {
+      this.props = {
         title: {
           text: `Download ${serverGameName}`,
           url: guildMeta["downloads"]
@@ -25,25 +40,11 @@ module.exports = {
           { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${guildMeta['supportpost']}).`, inline: false }
         ]
       }
-      const embed = new RookEmbed(props)
-
-      // Reply to the command with the embed
-      await interaction.editReply({ embeds: [ embed ] });
     } catch (error) {
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "There was an error posting the download information."
-      }
-      const embed = new RookEmbed(props)
-      await interaction.editReply({ embeds: [ embed ] });
+      this.error = true
+      this.props.description = "There was an error posting the download information."
     }
-  },
 
-  name: 'doigame',
-  description: `Sends a message with download info for *${serverGameName}*.`, // Use decoded string here
-  permissionsRequired: [],
-  botPermissions: [],
+    await interaction.deleteReply();
+  }
 };
