@@ -2,6 +2,7 @@ const { Client, GuildMember } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const colors = require('../../dbs/colors.json')
 
 /**
  * Logs when a member leaves the server and saves it to a log file.
@@ -22,7 +23,7 @@ module.exports = async (client, oldMember) => {
 
     // Prepare the log embed
     const logEmbed = new RookEmbed({
-      color: '#FF0000', // Red for member leaving
+      color: colors["bad"], // Red for member leaving
       title: {
         text: '👋 Member Left',
       },

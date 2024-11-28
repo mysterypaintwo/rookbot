@@ -2,6 +2,7 @@ const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const colors = require('../../dbs/colors.json')
 
 /**
  * Logs deleted messages from the server.
@@ -32,7 +33,7 @@ module.exports = async (client, deletedMessage) => {
 
     // Prepare the log embed
     const logEmbed = new RookEmbed({
-      color: '#FF0000', // Orange for message updates
+      color: colors["bad"], // Orange for message updates
       title: {
         text: '🚮 Message Deleted',
       },

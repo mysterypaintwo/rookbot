@@ -2,6 +2,7 @@ const { Client, EmbedBuilder, GuildMember } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const colors = require('../../dbs/colors.json')
 
 /**
  * Logs when a new member joins the server and saves it to a log file.
@@ -22,7 +23,7 @@ module.exports = async (client, newMember) => {
 
     // Prepare the log embed
     const logEmbed = new RookEmbed({
-      color: '#32CD32', // Green for new members joining
+      color: colors["good"], // Green for new members joining
       title: {
         text: '👋 New Member Joined',
       },

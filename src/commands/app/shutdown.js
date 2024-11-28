@@ -2,6 +2,7 @@ const { PermissionFlagsBits } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const unready = require('../../events/unready/exit')
+const colors = require('../../dbs/colors.json')
 
 // Multiple messages
 
@@ -16,7 +17,7 @@ module.exports = class ShutdownCommand extends RookCommand {
     }
     let props = {
       title: { text: "Bot Shutdown", emoji: "⏹️" },
-      color: "#FF0000"
+      color: colors["bad"]
     }
     super(
       {...comprops},

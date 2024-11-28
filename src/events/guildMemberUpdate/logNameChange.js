@@ -2,6 +2,7 @@ const { Client, EmbedBuilder, GuildMember } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const colors = require('../../dbs/colors.json')
 
 /**
  * Logs changes to a user's nickname in the server.
@@ -25,7 +26,7 @@ module.exports = async (client, oldMember, newMember) => {
 
     // Prepare the log embed
     const embed = new RookEmbed({
-      color: '#FFD700', // Gold color for nickname changes
+      color: colors["info"], // Gold color for nickname changes
       title: {
         text: '✏️ Nickname Changed',
       },

@@ -2,6 +2,7 @@ const { Client, EmbedBuilder, Message } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const colors = require('../../dbs/colors.json')
 
 /**
  * Logs edited messages from the server.
@@ -59,7 +60,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"]);
 
     const embed = new RookEmbed({
-      color: '#FFA500', // Orange for message updates
+      color: colors["info"], // Orange for message updates
       title: {
         text: '✏️ Message Edited',
       },

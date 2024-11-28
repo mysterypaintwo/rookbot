@@ -1,6 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class')
 const shell = require('shelljs')
 const fs = require('fs')
+const colors = require('../../dbs/colors.json')
 
 module.exports = class HelloCommand extends RookCommand {
   constructor() {
@@ -12,7 +13,7 @@ module.exports = class HelloCommand extends RookCommand {
     let props = {
       caption: { text: "Hello World" },
       title: { text: "Hello World", emoji: "🔼" },
-      color: "#00FF00"
+      color:  colors["good"]
     }
     super(
       {...comprops},
