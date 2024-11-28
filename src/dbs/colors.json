@@ -1,0 +1,8 @@
+{
+  "info":     "#FFFF00",
+  "warning":  "#FFAF00",
+  "error":    "#FF0000",
+  "success":  "#00FF00",
+  "bad":      "#FF0000",
+  "good":     "#00FF00"
+}

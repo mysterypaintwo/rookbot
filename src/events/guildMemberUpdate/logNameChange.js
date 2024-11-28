@@ -29,8 +29,15 @@ module.exports = async (client, oldMember, newMember) => {
       title: {
         text: '✏️ Nickname Changed',
       },
-      thumbnail: {
-        url: newMember.user.displayAvatarURL({ dynamic: true, size: 128 }), // User's profile picture
+      players: {
+        user: {
+          name: newMember.user.displayName,
+          avatar: newMember.user.displayAvatarURL( { dynamic: true, size: 128 } )
+        },
+        target: {
+          name: newMember.user.displayName,
+          avatar: newMember.user.displayAvatarURL( { dynamic: true, size: 128 } )
+        }
       },
       fields: [
         {

@@ -36,8 +36,15 @@ module.exports = async (client, deletedMessage) => {
       title: {
         text: '🚮 Message Deleted',
       },
-      thumbnail: {
-        url: deletedMessage.author.displayAvatarURL({ dynamic: true, size: 128 }), // Add user's profile picture
+      players: {
+        user: {
+          name: deletedMessage.author.displayName,
+          avatar: deletedMessage.author.displayAvatarURL( { dynamic: true, size: 128 } )
+        },
+        target: {
+          name: deletedMessage.author.displayName,
+          avatar: deletedMessage.author.displayAvatarURL( { dynamic: true, size: 128 } )
+        }
       },
       fields: [
         {

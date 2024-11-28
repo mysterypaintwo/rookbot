@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { RookCommand } = require('../../classes/command/rcommand.class');
 
 function isValidURLFromDomain(input, domain) {
   try {
@@ -15,39 +15,49 @@ function isValidURLFromDomain(input, domain) {
   }
 }
 
-module.exports = {
-  name: 'smz3',
-  description: 'Starts an SMZ3 game with all necessary details.',
-  options: [
-    {
-      name: 'ping_multiplayer_role',
-      description: 'Whether or not to ping the Multiplayer Ping role.',
-      type: ApplicationCommandOptionType.Boolean,
-      required: false,
-    },
-    {
-      name: 'seed_url',
-      description: 'The URL of the seed to play',
-      type: ApplicationCommandOptionType.String,
-      required: false,
-    },
-    {
-      name: 'prep_time',
-      description: 'The number of minutes to prepare before the game starts.',
-      type: ApplicationCommandOptionType.Integer,
-      required: false,
-    },
-  ],
+module.exports = class Z3M3AnnounceCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "smz3",
+      description: "Starts an SMZ3 game with all necessary details",
+      options: [
+        {
+          name: "ping multiplayer role",
+          description: "Whether or not to ping the Multiplayer Ping role",
+          type: ApplicationCommandOptionType.Boolean,
+          required: false
+        },
+        {
+          name: 'seed_url',
+          description: 'The URL of the seed to play',
+          type: ApplicationCommandOptionType.String,
+          required: false
+        },
+        {
+          name: 'prep_time',
+          description: 'The number of minutes to prepare before the game starts.',
+          type: ApplicationCommandOptionType.Integer,
+          required: false
+        }
+      ]
+    }
+    let props = {
+      title: {
+        text: "SMZ3 Game Details"
+      }
+    }
 
-  /**
-   * @param {import('discord.js').Interaction} interaction
-   */
-  execute: async (client, interaction) => {
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
+
+  async action(client, interaction) {
     const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 
-    const pingMultiplayerRole =
-      interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
+    const pingMultiplayerRole = interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
     const seedURL = interaction.options.getString('seed_url') || null;
     const prepTimeMinutes = interaction.options.getInteger('prep_time') ?? 5; // Default to 5 minutes
 
@@ -73,34 +83,20 @@ module.exports = {
       const now = new Date();
 
       const maxAllowedMinutes = 10080;
-      if (prepTimeMinutes > maxAllowedMinutes) {        
+      if (prepTimeMinutes > maxAllowedMinutes) {
+        this.error = true
         // Respond with an error message if something goes wrong
-        let props = {
-          title: {
-            text: "Invalid Prep Time Duration"
-          },
-          description: `Exceeded max duration of ${maxAllowedMinutes} minutes (1 week). Please try again.`
+        this.props.title = {
+          text: "Invalid Prep Time Duration"
         }
-        const embed = new RookEmbed(props)
-        await interaction.followUp({
-          embeds: [ embed ],
-          ephemeral: true
-        });
-        return;
+        this.props.description = `Exceeded max duration of ${maxAllowedMinutes} minutes (1 week). Please try again.`
       } else if (prepTimeMinutes < 0) {
+        this.error = true
         // Respond with an error message if something goes wrong
-        let props = {
-          title: {
-            text: "Invalid Prep Time Duration"
-          },
-          description: `Duration ${prepTimeMinutes} minutes **may not be negative**. Please try again.`
+        this.props.title = {
+          text: "Invalid Prep Time Duration"
         }
-        const embed = new RookEmbed(props)
-        await interaction.followUp({
-          embeds: [ embed ],
-          ephemeral: true
-        });
-        return;
+        this.props.description = `Duration ${prepTimeMinutes} minutes **may not be negative**. Please try again.`
       }
 
       const prepTime = prepTimeMinutes * 60 * 1000; // Convert minutes to milliseconds
@@ -208,44 +204,31 @@ module.exports = {
 
       // Create the embed
       let players = {}
-      players["user"] = {
-        name: interaction.user.displayName,
-        avatar: interaction.user.avatarURL(),
-        username: interaction.user.username
-      }
       players["target"] = {
         name: "SMZ3",
         avatar: "http://alttp.mymm1.com/holyimage/images/alttpo/smz3.png"
       }
-      let props = {
-        color: "#00FF00",
-        title: {
-          text: "SMZ3 Game Details"
+      this.props.fields = [
+        { name: 'Group Name', value: groupName, inline: false },
+        {
+          name: 'Scripts',
+          value: '[2022 (`alttpo-client-win64-stable-20220213.1`)](https://dev.azure.com/ALttPO/alttpo/_build/results?buildId=693&view=artifacts&pathAsName=false&type=publishedArtifacts)',
+          inline: false,
         },
-        fields: [
-          { name: 'Group Name', value: groupName, inline: false },
-          {
-            name: 'Scripts',
-            value: '[2022 (`alttpo-client-win64-stable-20220213.1`)](https://dev.azure.com/ALttPO/alttpo/_build/results?buildId=693&view=artifacts&pathAsName=false&type=publishedArtifacts)',
-            inline: false,
-          },
-          {
-            name: '__Start Game Reminder__',
-            value: 'Please wait on the Start Game with everyone until the game begins.',
-            inline: false,
-          },
-          {
-            name: 'Game Start Time',
-            value: `The game will begin at ${timestamp}.`,
-            inline: false,
-          }
-        ],
-        footer: {
-          msg: randomFooterText
+        {
+          name: '__Start Game Reminder__',
+          value: 'Please wait on the Start Game with everyone until the game begins.',
+          inline: false,
         },
-        players: players
+        {
+          name: 'Game Start Time',
+          value: `The game will begin at ${timestamp}.`,
+          inline: false,
+        }
+      ]
+      this.props.footer = {
+        msg: randomFooterText
       }
-      const embed = new RookEmbed(props)
 
       // Construct the content for the channel message
       let messageContent = pingMultiplayerRole
@@ -256,30 +239,16 @@ module.exports = {
         messageContent += `\nYou can download it from here: ${seedURL}`;
       }
 
-      // Send the embed to the channel
-      const channel = interaction.channel;
-      await channel.send({
-        content: messageContent,
-        embeds: [ embed ]
-      });
+      this.props.description = messageContent
 
       // Silent conclusion (no visible follow-up)
       await interaction.deleteReply();
     } catch (error) {
       console.error('Error handling /smz3 command:', error);
 
+      this.error = true
       // Respond with an error message if something goes wrong
-      let props = {
-        title: {
-          text: "Error"
-        },
-        description: "An error occurred while setting up the SMZ3 game. Please try again later."
-      }
-      const embed = new RookEmbed(props)
-      await interaction.followUp({
-        embeds: [ embed ],
-        ephemeral: true
-      });
+      this.props.description = "An error occurred while setting up the SMZ3 game. Please try again later."
     }
   }
 };

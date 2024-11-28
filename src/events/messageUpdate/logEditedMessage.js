@@ -63,8 +63,14 @@ module.exports = async (client, oldMessage, newMessage) => {
       title: {
         text: '✏️ Message Edited',
       },
-      thumbnail: {
-        url: newMessage.author.displayAvatarURL({ dynamic: true, size: 128 }), // Add user's profile picture
+      players: {
+        user: {
+          name: newMessage.author.displayName,
+          avatar: newMessage.author.displayAvatarURL( { dyanmic: true, size: 128 } )
+        },
+        target: {
+          avatar: newMessage.author.displayAvatarURL( { dyanmic: true, size: 128 } )
+        }
       },
       fields: [
         {
@@ -72,8 +78,8 @@ module.exports = async (client, oldMessage, newMessage) => {
           value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`,
         },
         {
-          name: 'Channel',
-          value: `<#${newMessage.channel.id}>`,
+          name: 'Message',
+          value: `${newMessage.url} (ID: ${newMessage.id})`
         },
         {
           name: 'Old Content',
