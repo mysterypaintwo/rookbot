@@ -8,7 +8,7 @@ const fs = require('fs')
  * @extends {EmbedBuilder}
  * @public
  */
-module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
+class RookEmbed extends EmbedBuilder {
   /**
    * @typedef {Object} EmbedField
    * @property {string} name Field Name
@@ -66,41 +66,8 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
 
     super()
 
-    try {
-      /**
-       * Global properties
-       * @type {Object.<string, any>}
-       */
-      this.GLOBALS = {}
-      if (fs.existsSync("./src/PROFILE.json")) {
-        this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡VEmbed: PROFILE manifest not found! Using defaults!")
-      }
-      const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-      this.GLOBALS = (
-        this.GLOBALS?.selectedprofile &&
-        this.GLOBALS?.profiles &&
-        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
-      ) ?
-        this.GLOBALS.profiles[this.GLOBALS.selectedprofile]:
-        defaults
-    } catch(err) {
-      console.log("🔴VEmbed: PROFILE manifest not found!")
-      process.exit(1)
-    }
-
-    try {
-      /**
-       * Package properties
-       * @type {Object.<string, any>}
-       */
-      this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
-    } catch(err) {
-      console.log("🔴VEmbed: PACKAGE manifest not found!")
-      process.exit(1)
-    }
-
+    let profileName = "default"
+    this.defaults = {}
     try {
       /**
        * Profile properties
@@ -108,7 +75,44 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
        */
       this.defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
     } catch(err) {
-      console.log("🔴VEmbed: DEFAULTS manifest not found!")
+      console.log("🔴REmbed: DEFAULTS manifest not found!")
+      process.exit(1)
+    }
+
+    this.GLOBALS = {}
+    try {
+      /**
+       * Global properties
+       * @type {Object.<string, any>}
+       */
+      if (fs.existsSync("./src/PROFILE.json")) {
+        this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
+      } else {
+        console.log("🟡REmbed: PROFILE manifest not found! Using defaults!")
+      }
+      if (
+        this.GLOBALS?.selectedprofile &&
+        this.GLOBALS?.profiles &&
+        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
+      ) {
+        this.GLOBALS = this.GLOBALS.profiles[this.GLOBALS.selectedprofile]
+      } else {
+        this.GLOBALS = this.defaults
+      }
+    } catch(err) {
+      console.log("🔴REmbed: PROFILE manifest not found!")
+      process.exit(1)
+    }
+
+    this.PACKAGE = {}
+    try {
+      /**
+       * Package properties
+       * @type {Object.<string, any>}
+       */
+      this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
+    } catch(err) {
+      console.log("🔴REmbed: PACKAGE manifest not found!")
       process.exit(1)
     }
 
@@ -116,7 +120,7 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
      * Development Mode?
      * @type {boolean}
      */
-    this.DEV = this.GLOBALS.DEV
+    this.DEV = this.GLOBALS?.DEV && this.GLOBALS.DEV
 
     if ((!(props?.color)) || (props?.color && props.color.trim() == "")) {
       switch (props.color) {
@@ -241,6 +245,9 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
 
     // Title
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
+      if (props.title?.emoji) {
+        props.title.text = `${props.title.emoji} ${props.title.text}`
+      }
       this.setTitle(props.title.text)
       if (props?.title?.url && props.title.url.trim() != "") {
         this.setURL(props.title.url.trim())
@@ -278,8 +285,16 @@ module.exports.RookEmbed = class RookEmbed extends EmbedBuilder {
     }
 
     // Timestamp
-    if(props?.timestamp && props.timestamp) {
+    if(
+      (!props?.timestamp) ||
+      (
+        (props?.timestamp && props.timestamp) &&
+        (props?.timestamp && props.timestamp != "<NONE>")
+      )
+    ) {
       this.setTimestamp()
     }
   }
 }
+
+exports.RookEmbed = RookEmbed;
