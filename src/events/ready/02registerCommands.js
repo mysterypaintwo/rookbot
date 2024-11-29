@@ -32,7 +32,7 @@ module.exports = async (client) => {
     const applicationCommands = await commandsManager.fetch();
 
     for (const localCommand of localCommands) {
-      let { name, description, options = [], deleted } = localCommand;
+      let { name, description, options = [], autocomplete = null, deleted } = localCommand;
 
       const existingCommand = applicationCommands.find(cmd => cmd.name === name);
 
@@ -50,12 +50,12 @@ module.exports = async (client) => {
         if (areCommandsDifferent(existingCommand, localCommand)) {
           console.log(`🔁 Updating: "${name}"`);
           try {
-            await commandsManager.edit(existingCommand.id, { description, options });
+            await commandsManager.edit(existingCommand.id, { description, options, autocomplete });
           } catch (error) {
             if (error.code === 429) {
               console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`);
               await wait(error.retry_after || 1000);
-              await commandsManager.edit(existingCommand.id, { description, options });
+              await commandsManager.edit(existingCommand.id, { description, options, autocomplete });
             } else {
               console.error(`❌ Failed to edit: "${name}":`, error.message);
             }
@@ -73,17 +73,18 @@ module.exports = async (client) => {
           let cmd = new localCommand()
           name = cmd.name
           description = cmd.description
-          options = cmd.options
+          options = cmd.options,
+          autocomplete = cmd?.autocomplete ? cmd.autocomplete : null
         }
 
         console.log(`👍 Registering new: "${name}"`);
         try {
-          await commandsManager.create({ name, description, options });
+          await commandsManager.create({ name, description, options, autocomplete });
         } catch (error) {
           if (error.code === 429) {
             console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`);
             await wait(error.retry_after || 1000);
-            await commandsManager.create({ name, description, options });
+            await commandsManager.create({ name, description, options, autocomplete });
           } else {
             console.error(`❌ Failed to register: "${name}":`, error.message);
           }

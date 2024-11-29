@@ -50,6 +50,6 @@ module.exports = class PingCommand extends RookCommand {
   }
 
   async test(client, message, args) {
-    this.execute(client, message, args, null, "")
+    await this.execute(client, message, args, null, "")
   }
 };

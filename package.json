@@ -23,6 +23,7 @@
     "dotenv": "^16.4.5",
     "mathjs": "^13.2.2",
     "ms": "^2.1.3",
+    "node-fetch": "^2.7.0",
     "node-schedule": "^2.1.1",
     "pagination.djs": "^4.0.17",
     "pm2": "^5.4.3",

@@ -22,6 +22,6 @@ module.exports = class TestCommand extends RookCommand {
   }
 
   async test(client, interaction, args) {
-    this.execute(client, interaction, args)
+    await this.execute(client, interaction, args)
   }
 }
