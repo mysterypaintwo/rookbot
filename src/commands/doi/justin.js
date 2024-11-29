@@ -21,7 +21,7 @@ module.exports = class JustinCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Acknowledge the interaction
-    await interaction.deferReply();
+
 
     this.props = {
       title: {
@@ -53,6 +53,6 @@ module.exports = class JustinCommand extends RookCommand {
     }
 
     // Send the embed to the channel
-    await interaction.deleteReply();
+
   }
 };

@@ -24,7 +24,7 @@ module.exports = class MemberCountCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Defer the reply
-    await interaction.deferReply();
+
 
     try {
       // Fetch all members in the server to ensure the data is up-to-date
@@ -47,6 +47,6 @@ module.exports = class MemberCountCommand extends RookCommand {
       console.log(`Error fetching member count: ${error.stack}`);
     }
 
-    await interaction.deleteReply();
+
   }
 };

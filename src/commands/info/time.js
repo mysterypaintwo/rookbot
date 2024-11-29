@@ -20,8 +20,6 @@ module.exports = class TimeCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply()
-
     const now = Date.now()
     const tzs = [
       "Australia/Perth",  // + 8
@@ -52,6 +50,6 @@ module.exports = class TimeCommand extends RookCommand {
     this.props.description += tmp
     console.log(tmp)
 
-    await interaction.deleteReply();
+
   }
 }

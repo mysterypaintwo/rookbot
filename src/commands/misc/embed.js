@@ -50,10 +50,10 @@ module.exports = class EmbedCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Acknowledge the interaction immediately without sending a reply yet
-    await interaction.deferReply(); // This avoids the bot "waiting for a response"
+     // This avoids the bot "waiting for a response"
 
     // all done in constructor
 
-    await interaction.deleteReply();
+
   }
 };

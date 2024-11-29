@@ -27,7 +27,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    await interaction.deferReply();
+
 
     // Get the user mentioned in the command
     const targetUserId = interaction.options.get('target-user').value;
@@ -49,6 +49,6 @@ module.exports = class ProfilePicCommand extends RookCommand {
       image: avatarURL
     }
 
-    await interaction.deleteReply();
+
   }
 };

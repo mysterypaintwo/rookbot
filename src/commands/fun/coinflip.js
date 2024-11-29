@@ -19,13 +19,13 @@ module.exports = class CoinFlipCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply();
+
 
     // Randomly choose between "Heads" and "Tails"
     const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
 
     this.props.description = `The coin landed on **${outcome}**!`
 
-    await interaction.deleteReply();
+
   }
 };

@@ -31,7 +31,7 @@ module.exports = async (client) => {
       GLOBALS?.profiles &&
       GLOBALS.selectedprofile in GLOBALS.profiles
     ) {
-      GLOBALS[GLOBALS.selectedprofile]
+      GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
     } else {
       GLOBALS = defaults
     }

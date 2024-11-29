@@ -22,8 +22,6 @@ module.exports = class HelloCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply()
-
     let BRANCH = ""
     let COMMIT = ""
     try {
@@ -72,7 +70,7 @@ module.exports = class HelloCommand extends RookCommand {
     if (this.DEV) {
       console_output.push(
         `!!! DEV MODE !!!`,
-        `Footer Tag:  "${GLOBALS.name}"`
+        `Footer Tag:  "${this.GLOBALS.name}"`
       )
     } else {
       console_output.push(
@@ -195,6 +193,6 @@ module.exports = class HelloCommand extends RookCommand {
       }
     ]
 
-    await interaction.deleteReply();
+
   }
 }

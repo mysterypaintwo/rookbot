@@ -36,8 +36,6 @@ module.exports = class BotGuildsCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply()
-
     this.props.description = []
     this.props.description.push(
       `***Guilds that ${client.user} is in:***`,
@@ -103,6 +101,6 @@ module.exports = class BotGuildsCommand extends RookCommand {
       user: entities.bot
     }
 
-    await interaction.deleteReply();
+
   }
 }

@@ -25,7 +25,7 @@ module.exports = class BoostersCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Defer the reply to give the bot time to process the request
-    await interaction.deferReply();
+
 
     try {
       // Get the number of boosts in the server
@@ -51,6 +51,6 @@ module.exports = class BoostersCommand extends RookCommand {
       this.props.description = "There was an error fetching the server's boost information."
     }
 
-    await interaction.deleteReply();
+
   }
 };

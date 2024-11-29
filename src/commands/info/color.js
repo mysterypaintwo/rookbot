@@ -13,7 +13,7 @@ module.exports = class ColorCommand extends RookCommand {
           type: ApplicationCommandOptionType.String,
           required: true
         }
-      ]  
+      ]
     }
     let props = {}
 
@@ -24,8 +24,6 @@ module.exports = class ColorCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply();
-
     const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase();
 
     // Validate hex string
@@ -52,7 +50,5 @@ module.exports = class ColorCommand extends RookCommand {
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
       ]
     }
-    
-    await interaction.deleteReply();
   }
 };

@@ -20,7 +20,7 @@ module.exports = {
     );
 
     // Make the initial reply private
-    await interaction.deferReply({ ephemeral: true });
+
 
     if (!confirm) {
       return interaction.editReply({

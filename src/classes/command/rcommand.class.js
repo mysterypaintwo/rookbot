@@ -707,6 +707,13 @@ class RookCommand  {
    */
   // @ts-ignore
   async execute(client, message, args,  cmd) {
+    try {
+      // @ts-ignore
+      await message.deferReply()
+    } catch(err) {
+      console.log(err.stack)
+    }
+
     // Load profile
     await this.getProfile()
 
@@ -745,6 +752,13 @@ class RookCommand  {
     // Not setting this.null after sending the page(s) will send the page(s) again
     if ((!(this?.null)) || (this?.null && (!(this.null)))) {
       await this.send(message, this.pages)
+    }
+
+    try {
+      // @ts-ignore
+      await message.deleteReply()
+    } catch(err) {
+      console.log(err.stack)
     }
   }
 }

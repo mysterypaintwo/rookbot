@@ -17,7 +17,7 @@ module.exports = {
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     // Make the initial reply private
-    await interaction.deferReply({ ephemeral: true });
+
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >

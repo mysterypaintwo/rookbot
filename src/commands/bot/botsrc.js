@@ -34,10 +34,10 @@ module.exports = class BotSourceCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Acknowledge the interaction
-    await interaction.deferReply();
+
 
     // all done in constructor
 
-    await interaction.deleteReply();
+
   }
 };

@@ -40,7 +40,7 @@ module.exports = class NLCommand extends RookCommand {
     };
 
     // Defer the reply silently (acknowledges the interaction without user notification)
-    await interaction.deferReply({ ephemeral: true });
+
 
     try {
       // Create the embed with the rainbow divider line image
@@ -55,7 +55,7 @@ module.exports = class NLCommand extends RookCommand {
       this.props.description = "An error occurred while posting the rainbow line. Pleas try again later."
     }
 
-    await interaction.deleteReply();
+
     interaction.channel.send({ content: this.props.image })
   }
 };

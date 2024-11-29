@@ -31,7 +31,7 @@ module.exports = class ExitCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction, cmd) {
-    await interaction.deferReply();
+
 
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
 
@@ -48,7 +48,7 @@ module.exports = class ExitCommand extends RookCommand {
       target: entities.bot
     }
 
-    await interaction.deleteReply();
+
 
     this.send(interaction, new RookEmbed(this.props))
 

@@ -43,7 +43,7 @@ module.exports = class BanCommand extends RookCommand {
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
 
     // Make the initial reply private
-    await interaction.deferReply({ ephemeral: true });
+
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -55,8 +55,6 @@ module.exports = class BanCommand extends RookCommand {
     } catch (error) {
       this.error = true
       this.props.description = "User not found."
-
-      interaction.deleteReply()
       return
     }
 
@@ -145,9 +143,9 @@ module.exports = class BanCommand extends RookCommand {
       this.error = true
       this.props.description = "I couldn't ban that user."
 
-      await interaction.deleteReply()
+
       return
     }
-    await interaction.deleteReply()
+
   }
 };

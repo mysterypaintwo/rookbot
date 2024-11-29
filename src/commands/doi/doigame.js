@@ -19,7 +19,7 @@ module.exports = class DOIGameCommand extends RookCommand {
 
   async action(client, interaction) {
     // Ensure the command is properly deferred and acknowledged
-    await interaction.deferReply();
+
 
     // Decode the base64 string
     const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
@@ -45,6 +45,6 @@ module.exports = class DOIGameCommand extends RookCommand {
       this.props.description = "There was an error posting the download information."
     }
 
-    await interaction.deleteReply();
+
   }
 };

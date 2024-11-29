@@ -1,15 +1,25 @@
 const { PermissionFlagsBits } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = {
-  name: 'install',
-  description: 'Install Node Modules',
+module.exports = class InstallCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "install",
+      description: "Install Node Modules",
+      permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
+      botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+    }
+    let props = {}
 
-  execute: async (client, interaction) => {
-    await interaction.deferReply()
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
 
+  async action(client, interaction) {
     let GLOBALS = null
     const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
     let profileName = "default"
@@ -47,7 +57,6 @@ module.exports = {
       console.log(err.stack)
     }
 
-    let props = {}
     let user = client?.user
 
     let console_output = [
@@ -57,13 +66,11 @@ module.exports = {
     console_output.push(
       "Installing " +
       (user ? user.username : "") +
-      ` v${PACKAGE.version}!`
+      ` v${this.PACKAGE.version}!`
     )
-    props = {
-      title: {
-        text: "💿 " + console_output[1],
-        url: "https://github.com/mysterypaintwo/rookbot"
-      }
+    this.props.title = {
+      text: "💿 " + console_output[1],
+      url: "https://github.com/mysterypaintwo/rookbot"
     }
 
     // console.log(console_output)
@@ -77,12 +84,6 @@ module.exports = {
     */
 
     console_output.push(node_install)
-    props.description = console_output
-
-    const embed = new RookEmbed(props)
-
-    await interaction.editReply({ embeds: [ embed ] })
-  },
-  permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
-  botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+    this.props.description = console_output
+  }
 }

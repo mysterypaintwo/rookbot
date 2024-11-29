@@ -22,8 +22,6 @@ module.exports = class UpdateCommand extends RookCommand {
     )
   }
   async action(client, interaction) {
-    await interaction.deferReply()
-
     let BRANCH = ""
     let COMMITS = {
       current: "",
@@ -113,7 +111,7 @@ module.exports = class UpdateCommand extends RookCommand {
     console_output.push(
       "Updating " +
       (user ? user.username : "") +
-      ` v${PACKAGE.version}!`
+      ` v${this.PACKAGE.version}!`
     )
     this.props = {
       title: {
@@ -200,6 +198,6 @@ module.exports = class UpdateCommand extends RookCommand {
       target: entities.bot
     }
 
-    await interaction.deleteReply();
+
   }
 }

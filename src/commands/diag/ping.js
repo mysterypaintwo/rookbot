@@ -17,7 +17,7 @@ module.exports = class PingCommand extends RookCommand {
   }
 
   async action(client, interaction, cmd) {
-    await interaction.deferReply();
+
 
     const reply = await interaction.fetchReply();
 
@@ -46,7 +46,7 @@ module.exports = class PingCommand extends RookCommand {
       }
     ]
 
-    await interaction.deleteReply();
+
   }
 
   async test(client, message, args) {

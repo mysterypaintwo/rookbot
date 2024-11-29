@@ -72,7 +72,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       return;
     }*/
 
-    await interaction.deferReply({ ephemeral: true }); // Defer reply silently
+     // Defer reply silently
 
     try {
       // Generate random group name
@@ -242,7 +242,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       this.props.description = messageContent
 
       // Silent conclusion (no visible follow-up)
-      await interaction.deleteReply();
+
     } catch (error) {
       console.error('Error handling /smz3 command:', error);
 

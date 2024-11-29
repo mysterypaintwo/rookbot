@@ -15,7 +15,7 @@ module.exports = {
     const channel = interaction.options.getChannel('channel');
 
     // Acknowledge the interaction
-    await interaction.deferReply({ ephemeral: true });
+
 
     try {
       if (!DEV_MODE) {

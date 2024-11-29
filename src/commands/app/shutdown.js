@@ -30,7 +30,7 @@ module.exports = class ShutdownCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction) {
-    await interaction.deferReply();
+
 
     let action = "Shutting Down"
 
@@ -78,7 +78,7 @@ module.exports = class ShutdownCommand extends RookCommand {
         target: entities.bot
       }
 
-      await interaction.deleteReply();
+
 
       this.props.description = `${action} <@${client.user.id}>`
       this.send(interaction, new RookEmbed(this.props))

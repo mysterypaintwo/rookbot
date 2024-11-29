@@ -30,8 +30,6 @@ module.exports = {
   ],
 
   execute: async (client, interaction) => {
-    await interaction.deferReply()
-
     let degreeType = interaction.options.getString('unit')
     let props = { caption: {}, players: { user: {}, bot: {} } }
     let embed = null

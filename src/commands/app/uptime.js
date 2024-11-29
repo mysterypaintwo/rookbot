@@ -48,8 +48,6 @@ module.exports = class UptimeCommand extends RookCommand {
       return portions.join(' ')
     }
 
-    await interaction.deferReply()
-
     // Entities
     let entities = {
       bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username }
@@ -65,6 +63,6 @@ module.exports = class UptimeCommand extends RookCommand {
         await timeConversion(uptime)
     ]
 
-    await interaction.deleteReply()
+
   }
 }

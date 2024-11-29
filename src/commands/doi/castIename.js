@@ -18,7 +18,7 @@ module.exports = class CastleNameCommand extends RookCommand {
 
   async action(client, interaction) {
     // Ensure the command is properly deferred and acknowledged with ephemeral response
-    await interaction.deferReply({ ephemeral: true });
+
 
     // Get this Guild ID
     // Set Castle's User ID
@@ -71,6 +71,6 @@ module.exports = class CastleNameCommand extends RookCommand {
       console.error("Error changing nickname:", error);
     }
 
-    await interaction.deleteReply();
+
   }
 };

@@ -33,7 +33,7 @@ module.exports = class DiceRollCommand extends RookCommand {
   }
 
     async action(client, interaction) {
-      await interaction.deferReply();
+
 
       const sides = interaction.options.getInteger('sides');
       const count = interaction.options.getInteger('count');
@@ -53,6 +53,6 @@ module.exports = class DiceRollCommand extends RookCommand {
       }
 
       // Respond with the result
-      await interaction.deleteReply();
+
     }
   };

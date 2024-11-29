@@ -29,8 +29,6 @@ module.exports = class CalcCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    interaction.deferReply()
-
     const expression = interaction.options.getString('expression');
 
     try {
@@ -50,6 +48,6 @@ module.exports = class CalcCommand extends RookCommand {
       // Send an error embed if the math expression is invalid
       this.props.description = "Invalid math expression. Please try again."
     }
-    await interaction.deleteReply();
+
   }
 };

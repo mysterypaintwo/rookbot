@@ -15,8 +15,6 @@ module.exports = class GuildStatusCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    await interaction.deferReply()
-
     // Entities
     let entities = {
       user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username },
@@ -89,6 +87,6 @@ module.exports = class GuildStatusCommand extends RookCommand {
       }
     )
 
-    await interaction.deleteReply()
+
   }
 }
