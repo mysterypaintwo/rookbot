@@ -2,26 +2,54 @@ const fs = require('fs');
 const manageCommands = require('../../utils/manageCommands.js');
 
 module.exports = async (client) => {
-  let GLOBALS = null;
-  const defaults = JSON.parse(fs.readFileSync('./src/dbs/defaults.json', 'utf8'));
-
+  let profileName = "default"
+  let defaults = {}
   try {
-    if (fs.existsSync('./src/PROFILE.json')) {
-      GLOBALS = JSON.parse(fs.readFileSync('./src/PROFILE.json', 'utf8'));
-    } else {
-      console.log(' 🟡Ready Event: PROFILE manifest not found! Using defaults!');
-    }
+    /**
+     * Profile properties
+     * @type {Object.<string, any>}
+     */
+    defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
+  } catch(err) {
+    console.log("🔴Boot Sequence: DEFAULTS manifest not found!")
+    process.exit(1)
+  }
 
-    GLOBALS = (
+  let GLOBALS = {}
+  try {
+    /**
+     * Global properties
+     * @type {Object.<string, any>}
+     */
+    if (fs.existsSync("./src/PROFILE.json")) {
+      GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
+    } else {
+      console.log("🟡Boot Sequence: PROFILE manifest not found! Using defaults!")
+    }
+    if (
       GLOBALS?.selectedprofile &&
       GLOBALS?.profiles &&
       GLOBALS.selectedprofile in GLOBALS.profiles
-    ) ?
-      GLOBALS.profiles[GLOBALS.selectedprofile] :
-      defaults;
-  } catch (err) {
-    console.log('  🔴Ready Event: PROFILE manifest not found!');
-    process.exit(1);
+    ) {
+      GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
+    } else {
+      GLOBALS = defaults
+    }
+  } catch(err) {
+    console.log("🔴Boot Sequence: PROFILE manifest not found!")
+    process.exit(1)
+  }
+
+  let PACKAGE = {}
+  try {
+    /**
+     * Package properties
+     * @type {Object.<string, any>}
+     */
+    PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
+  } catch(err) {
+    console.log("🔴Boot Sequence: PACKAGE manifest not found!")
+    process.exit(1)
   }
 
   // Optional: Delete commands if enabled in the profile
