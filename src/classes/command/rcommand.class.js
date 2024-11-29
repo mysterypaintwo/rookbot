@@ -18,10 +18,11 @@ class RookCommand {
    * @type {string} Command Name
    */
   // @ts-ignore
-  name;   // Command Name
-  options;
-  permissionsRequired;
-  botPermissions;
+  name;     // Command Name
+  category; // Command Category
+  options;  // Command Options
+  permissionsRequired;  // Required User Permissions
+  botPermissions;       // Required Bot Permissions
   /**
    * @type {boolean} Development Mode?
    */
@@ -98,6 +99,7 @@ class RookCommand {
    */
   constructor(comprops = {}, props = {}) {
     this.name = comprops?.name ? comprops.name.toLowerCase() : "unknown"
+    this.category = comprops?.category ? comprops.category.toLowerCase() : "unknown"
     this.description = comprops?.description ? comprops.description : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
     this.options = comprops?.options ? comprops.options : []
     this.permissionsRequired = comprops?.permissionsRequired ? comprops.permissionsRequired : []
@@ -639,7 +641,7 @@ class RookCommand {
   async send(
     message,
     pages       = [new RookEmbed({"description":"No pages sent!"})],
-    emojis      = ["◀️", "▶️"],
+    emojis      = [],
     timeout     = 600000,
     forcepages  = false
   ) {
@@ -648,7 +650,7 @@ class RookCommand {
     }
     // If pages are being forced, set defaults
     if (forcepages) {
-      emojis = ["◀️", "▶️"]
+      emojis  = []
       timeout = 600000
     }
 
@@ -658,7 +660,12 @@ class RookCommand {
       if ((pages.length <= 1) && !forcepages) {
         console.log("Sending an embed")
         // @ts-ignore
-        return this.channel.send({ embeds: [pages[0]] })
+        return message.editReply(
+          {
+            content: "",
+            embeds: [ pages[0] ]
+          }
+        )
       } else {
         // Else, set up for pagination
         // Sanity check for emoji pageturners
@@ -678,23 +685,23 @@ class RookCommand {
         // return await pagination(message, pages, emojis, timeout) // discord.js v13
         //FIXME: discord-pagination doesn't support discord.js v13 yet
         //TODO: Check on discord-pagination and see if it supports discord.js v13 yet
-        let these_pages = await new Pagination(
-          message,
-          {
-            firstEmoji: emojis[0],
-            prevEmoji:  emojis[1],
-            nextEmoji:  emojis[2],
-            lastEmoji:  emojis[3],
-            idle:       timeout
-          }
+        let these_pages = await new Pagination(message)
+        these_pages.setOptions(
+          { idle: timeout }
         )
-        // @ts-ignore
+        // these_pages.setEmojis({
+        //   firstEmoji: emojis[0],
+        //   prevEmoji:  emojis[1],
+        //   nextEmoji:  emojis[2],
+        //   lastEmoji:  emojis[3]
+        // })
         these_pages.setEmbeds(pages)
-        these_pages.paginate(message)
-        // @ts-ignore
+        these_pages.render()
         console.log("Sending pages")
-        return this.channel.send(
+        // @ts-ignore
+        return message.editReply(
           {
+            content: "",
             embeds: [ these_pages ],
             ephemeral: this.ephemeral
           }
@@ -704,8 +711,9 @@ class RookCommand {
       console.log("Sending one embed page")
       // Else, it's just an embed, send it
       // @ts-ignore
-      return this.channel.send(
+      return message.editReply(
         {
+          content: "",
           embeds: [ pages ],
           ephemeral: this.ephemeral
         }
@@ -773,7 +781,7 @@ class RookCommand {
 
     try {
       // @ts-ignore
-      await message.deleteReply()
+      // await message.editReply( { embeds: [ new RookEmbed({ description: "_" }) ] } )
     } catch(err) {
       console.log(err.stack)
     }

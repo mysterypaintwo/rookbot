@@ -23,7 +23,10 @@ module.exports = async (client, oldMessage, newMessage) => {
       console.warn('MessageUpdate occurred outside of a guild:', newMessage);
       return;
     }
-    if (newMessage.author?.bot) return;
+    if (newMessage.author?.bot) {
+      // console.warn(`Message update from bot:`, newMessage)
+      return;
+    }
 
     // Fetch full messages if necessary
     if (oldMessage.partial) {

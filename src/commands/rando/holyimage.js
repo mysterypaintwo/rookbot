@@ -1,6 +1,5 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
 const { RookCommand } = require('../../classes/command/rcommand.class');
-const fetch = require('node-fetch')
 
 async function get_url(in_url) {
   try {

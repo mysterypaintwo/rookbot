@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 async function get_url(in_url) {
   try {
     let req = await fetch(in_url)
