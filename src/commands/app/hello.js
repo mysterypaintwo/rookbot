@@ -13,7 +13,7 @@ module.exports = class HelloCommand extends RookCommand {
     let props = {
       caption: { text: "Hello World" },
       title: { text: "Hello World", emoji: "🔼" },
-      color:  colors["good"]
+      color:  colors["success"]
     }
     super(
       {...comprops},

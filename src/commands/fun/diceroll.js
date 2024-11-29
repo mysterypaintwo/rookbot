@@ -35,8 +35,8 @@ module.exports = class DiceRollCommand extends RookCommand {
     async action(client, interaction) {
 
 
-      const sides = interaction.options.getInteger('sides');
       const count = interaction.options.getInteger('count');
+      const sides = interaction.options.getInteger('sides') ?? 6;
 
       // Roll the dice and collect results
       const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);

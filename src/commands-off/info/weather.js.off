@@ -1,3 +1,4 @@
+const { ApplicationCommandOptionType } = require('discord.js')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const weather = require('weather-js')
 
@@ -8,7 +9,7 @@ module.exports = {
     {
       name: 'unit',
       description: 'Celsius or Fahrenheit',
-      type: 3, // String
+      type: ApplicationCommandOptionType.String,
       choices: [
         {
           name: 'Celsius',
@@ -24,7 +25,7 @@ module.exports = {
     {
       name: 'location',
       description: 'Location to search for',
-      type: 3, // String
+      type: ApplicationCommandOptionType.String,
       required: true
     }
   ],

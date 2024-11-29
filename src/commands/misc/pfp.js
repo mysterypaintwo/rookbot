@@ -27,10 +27,10 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
+    const targetUserInput = interaction.options.get('target-user').value;
 
-
-    // Get the user mentioned in the command
-    const targetUserId = interaction.options.get('target-user').value;
+    // Extract user ID from mention (if it's a mention)
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
 
     // Fetch the GuildMember object to access server-specific info
     const targetMember = await interaction.guild.members.fetch(targetUserId);

@@ -22,7 +22,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       description: "Starts an SMZ3 game with all necessary details",
       options: [
         {
-          name: "ping multiplayer role",
+          name: "ping_multiplayer_role",
           description: "Whether or not to ping the Multiplayer Ping role",
           type: ApplicationCommandOptionType.Boolean,
           required: false

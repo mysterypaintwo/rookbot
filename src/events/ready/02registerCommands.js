@@ -6,7 +6,6 @@ const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 module.exports = async (client) => {
   try {
     const PROFILE = require('../../PROFILE.json');
-    const guildIDs = require('../../dbs/guilds.json');
     const testGuildID = PROFILE.profiles[PROFILE.selectedprofile]?.targetserver;
     const localCommands = getLocalCommands();
 
@@ -72,9 +71,9 @@ module.exports = async (client) => {
 
         if (name.indexOf("Command") > -1) {
           let cmd = new localCommand()
-            name = cmd.name
-            description = cmd.description
-            options = cmd.options
+          name = cmd.name
+          description = cmd.description
+          options = cmd.options
         }
 
         console.log(`👍 Registering new: "${name}"`);

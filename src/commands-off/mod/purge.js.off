@@ -10,12 +10,8 @@ module.exports = {
   execute: async (client, interaction) => {
     const PROFILE = require('../../PROFILE.json');
     const guildIDs = require('../../dbs/guilds.json');
-    let DEV_MODE = PROFILE["profiles"][PROFILE["selectedprofile"]]?.DEV;
 
     const messagesToDelete = interaction.options.get('amount').value;
-
-    // Make the initial reply private
-
 
     // Validate the number of messages to delete
     if (messagesToDelete < 1 || messagesToDelete > 100) {
@@ -36,7 +32,7 @@ module.exports = {
       const deletedMessages = await interaction.channel.bulkDelete(messagesToDelete, true);
 
       // Log the action in the logs channel if DEV_MODE is off
-      if (!DEV_MODE) {
+      if (!this.DEV) {
         const guildID = interaction.guild.id;
         const guildChannels = require(`../../dbs/${guildID}/channels.json`);
         const logs = client.channels.cache.get(guildChannels["logging"]);
@@ -50,10 +46,7 @@ module.exports = {
               { name: 'Channel', value: `${interaction.channel}`, inline: true },
               { name: 'Purged By', value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
               { name: 'Amount', value: `${deletedMessages.size}`, inline: false }
-            ],
-            footer: {
-              msg: `Actioned by ${interaction.user.displayName}`
-            }
+            ]
           };
           const embed = new RookEmbed(props);
           logs.send({ embeds: [embed] });

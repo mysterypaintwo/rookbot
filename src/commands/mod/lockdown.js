@@ -9,7 +9,6 @@ module.exports = {
    */
   execute: async (client, interaction) => {
     const PROFILE = require('../../PROFILE.json');
-    let DEV_MODE = PROFILE["profiles"][PROFILE["selectedprofile"]]?.DEV;
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
 
@@ -18,9 +17,6 @@ module.exports = {
     const channels = interaction.guild.channels.cache.filter(
       ch => ch.isTextBased() || ch.isVoiceBased()
     );
-
-    // Make the initial reply private
-
 
     if (!confirm) {
       return interaction.editReply({
@@ -79,10 +75,7 @@ module.exports = {
             value: `${interaction.user}\n(ID: ${interaction.user.id})`,
             inline: true,
           },
-        ],
-        footer: {
-          msg: `Actioned by ${interaction.user.username}`,
-        },
+        ]
       });
       logs.send({ embeds: [embed] });
     } else {

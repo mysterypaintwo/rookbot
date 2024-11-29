@@ -1,4 +1,4 @@
-const { PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = {
@@ -68,13 +68,13 @@ module.exports = {
     {
       name: 'channel',
       description: 'The channel to send the message in.',
-      type: 7, // Type 7 is for channel input
+      type: ApplicationCommandOptionType.Channel,
       required: true,
     },
     {
       name: 'message',
       description: 'The message to send.',
-      type: 3, // Type 3 is for string input
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],

@@ -1,5 +1,7 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const colors = require('../../dbs/colors.json')
 
 module.exports = class BanCommand extends RookCommand {
   constructor() {
@@ -36,14 +38,10 @@ module.exports = class BanCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const colors = require('../../dbs/colors.json')
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
-
-    // Make the initial reply private
-
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -72,7 +70,7 @@ module.exports = class BanCommand extends RookCommand {
       const targetUserName = guildMember?.nickname || targetUser.username;
 
       // Reply publicly in the channel to confirm the ban
-      this.props.color = colors["good"]
+      this.props.color = colors["success"]
       this.props.title = { text: "Success!" }
       this.props.description = `User **${targetUserName}** has been **banned**. (${reason})`
 
@@ -90,14 +88,19 @@ module.exports = class BanCommand extends RookCommand {
           await targetUser.send({ embeds: [ dm_embed ] });
 
           props = {
-            color: colors["good"],
+            color: colors["success"],
             title: {
               text: "Success!"
             },
             description: `✅ User **${targetUserName}** successfully banned via DMs! Message: ${props.description}`
           }
           const mod_embed = new RookEmbed(props);
-          await interaction.followUp({ embeds: [ mod_embed ], ephemeral: true }); // Private confirmation message
+          await interaction.followUp(
+            {
+              embeds: [ mod_embed ],
+              ephemeral: true
+            }
+          );
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
           let props = {
@@ -105,13 +108,18 @@ module.exports = class BanCommand extends RookCommand {
             title: {
               text: "Error"
             },
-            description: "I couldn't send the DM to the user. They might have DMs disabled."
+            description: `I couldn't send the DM to the user (ID: ${targetUserId}). They might have DMs disabled.`
           }
           const mod_embed = new RookEmbed(props)
-          await interaction.followUp({ embeds: [ mod_embed ], ephemeral: true }); // Private follow-up
+          await interaction.followUp(
+            {
+              embeds: [ mod_embed ],
+              ephemeral: true
+            }
+          );
         }
       } else {
-        await interaction.followUp({content: `User **${targetUserName}** has been **banned**. (${reason})`});
+        this.props.description = (this.DEV ? "DEV: " : "") + this.props.description
       }
 
       if (!this.DEV) {
@@ -127,10 +135,7 @@ module.exports = class BanCommand extends RookCommand {
               { name: 'User Banned',  value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
               { name: 'Banned By',    value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
               { name: 'Reason',       value: reason,                                             inline: false }
-            ],
-            footer: {
-              msg: `Actioned by ${interaction.user.displayName}`
-            }
+            ]
           }
           const embed = new RookEmbed(props)
           logs.send({ embeds: [ embed ] });
@@ -141,11 +146,8 @@ module.exports = class BanCommand extends RookCommand {
     } catch (error) {
       console.log(`There was an error when banning: ${error.stack}`);
       this.error = true
-      this.props.description = "I couldn't ban that user."
-
-
-      return
+      this.ephemeral = true
+      this.props.description = `I couldn't ban that user (ID: ${$targetUserId}).`
     }
-
   }
 };

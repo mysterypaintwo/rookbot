@@ -34,15 +34,17 @@ module.exports = class ClearCommand extends RookCommand {
     } else {
       limit = 100
 
-      if(this.props.description == "") {
+      duration = "5s"
+      if(!this.DEV) {
         await interaction.channel.messages.fetch( {
           limit: limit
         })
         .then(messages => {
           interaction.channel.bulkDelete(messages)
         })
-        duration = "5s"
         this.props.description = `Clearing ${limit} messages in ${duration}.`
+      } else {
+        this.props.description = (this.DEV ? "DEV: " : "") + `Clearing ${limit} messages in ${duration}.`
       }
     }
   }

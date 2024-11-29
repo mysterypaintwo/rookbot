@@ -13,18 +13,23 @@ const fs = require('fs');
  * @this {RookCommand}
  * @public
  */
-class RookCommand  {
+class RookCommand {
   /**
    * @type {string} Command Name
    */
   // @ts-ignore
   name;   // Command Name
+  options;
   permissionsRequired;
   botPermissions;
   /**
    * @type {boolean} Development Mode?
    */
   #DEV;     // Private: DEV flag
+  /**
+   * @type {boolean} Send Ephemeral?
+   */
+  #ephemeral; // Private: Ephemeral flag
   /**
    * @type {Object.<string, any>} List of properties for embed manipulation
    */
@@ -94,6 +99,7 @@ class RookCommand  {
   constructor(comprops = {}, props = {}) {
     this.name = comprops?.name ? comprops.name.toLowerCase() : "unknown"
     this.description = comprops?.description ? comprops.description : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
+    this.options = comprops?.options ? comprops.options : []
     this.permissionsRequired = comprops?.permissionsRequired ? comprops.permissionsRequired : []
     this.botPermissions = comprops?.botPermissions ? comprops.botPermissions : []
 
@@ -109,6 +115,9 @@ class RookCommand  {
      */
     if (!(this?.props?.full)) {
       this.props.full = true
+    }
+    if (!(this?.props?.ephemeral)) {
+      this.ephemeral = false
     }
     if (this?.props?.caption?.text) {
       if (this.props.caption?.emoji) {
@@ -183,20 +192,18 @@ class RookCommand  {
     }
   }
 
-  // @ts-ignore
-  get name() {
-    return this.name
-  }
-  // @ts-ignore
-  set name(name) {
-    this.#DEV = name
-  }
-
   get DEV() {
     return this.#DEV
   }
   set DEV(DEV) {
     this.#DEV = DEV
+  }
+
+  get ephemeral() {
+    return this.#ephemeral
+  }
+  set ephemeral(ephemeral) {
+    this.#ephemeral = ephemeral
   }
 
   get props() {
@@ -686,13 +693,23 @@ class RookCommand  {
         these_pages.paginate(message)
         // @ts-ignore
         console.log("Sending pages")
-        return this.channel.send({ embeds: [ these_pages ]})
+        return this.channel.send(
+          {
+            embeds: [ these_pages ],
+            ephemeral: this.ephemeral
+          }
+        )
       }
     } else {
       console.log("Sending one embed page")
       // Else, it's just an embed, send it
       // @ts-ignore
-      return this.channel.send({ embeds: [ pages ] })
+      return this.channel.send(
+        {
+          embeds: [ pages ],
+          ephemeral: this.ephemeral
+        }
+      )
     }
   }
 
