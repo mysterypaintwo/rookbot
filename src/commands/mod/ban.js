@@ -1,16 +1,42 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
-module.exports = {
+module.exports = class BanCommand extends RookCommand {
+  constructor() {
+    let comprops = {
+      name: "ban",
+      description: "Bans a user from the server",
+      options: [
+        {
+          name: "user-id",
+          description: "The ID of the user you want to ban.",
+          type: ApplicationCommandOptionType.String,
+          required: true,
+        },
+        {
+          name: "reason",
+          description: "The reason for banning the user.",
+          type: ApplicationCommandOptionType.String,
+          required: false,
+        },
+      ],
+      permissionsRequired: [PermissionFlagsBits.BanMembers],
+      botPermissions: [PermissionFlagsBits.BanMembers],
+    }
+    let props = {}
+
+    super(
+      {...comprops},
+      {...props}
+    )
+  }
   /**
    *
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  execute: async (client, interaction) => {
-    const PROFILE = require('../../PROFILE.json');
-    const guildIDs = require('../../dbs/guilds.json');
-    let DEV_MODE = PROFILE["profiles"][PROFILE["selectedprofile"]]?.DEV
+  async action(client, interaction) {
+    const colors = require('../../dbs/colors.json')
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
@@ -27,16 +53,11 @@ module.exports = {
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "User not found."
-      }
-      const embed = new RookEmbed(props)
-      await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
-      return;
+      this.error = true
+      this.props.description = "User not found."
+
+      interaction.deleteReply()
+      return
     }
 
     // Get the guild member (to fetch nickname if present)
@@ -45,7 +66,7 @@ module.exports = {
     // Attempt to ban the user
     try {
       // Ban the user from the server
-      if (!DEV_MODE) {
+      if (!this.DEV) {
         await interaction.guild.members.ban(targetUserId, { reason });
       }
 
@@ -53,59 +74,54 @@ module.exports = {
       const targetUserName = guildMember?.nickname || targetUser.username;
 
       // Reply publicly in the channel to confirm the ban
-      let props = {
-        color: "#00FF00",
-        title: {
-          text: "Success!"
-        },
-        description: `User **${targetUserName}** has been **banned**. (${reason})`
-      }
-      const embed = new RookEmbed(props)
-      interaction.channel.send({ embeds: [ embed ] });
+      this.props.color = colors["good"]
+      this.props.title = { text: "Success!" }
+      this.props.description = `User **${targetUserName}** has been **banned**. (${reason})`
 
-      if (!DEV_MODE) {
+      if (!this.DEV) {
         // Try to DM the user about the ban (private)
         try {
           let props = {
-            color: "#FF0000",
+            color: colors["bad"],
             title: {
               text: "Banned"
             },
             description: `You have been banned from the ${interaction.guild.name} server. (${reason})`
           }
-          const embed = new RookEmbed(props);
-          await targetUser.send({ embeds: [ embed ] });
-          let props2 = {
-            color: "#FF0000",
+          const dm_embed = new RookEmbed(props);
+          await targetUser.send({ embeds: [ dm_embed ] });
+
+          props = {
+            color: colors["good"],
             title: {
-              text: "Error"
+              text: "Success!"
             },
             description: `✅ User **${targetUserName}** successfully banned via DMs! Message: ${props.description}`
           }
-          const embed2 = new RookEmbed(props2);
-          await interaction.followUp({ embeds: [ embed2 ], ephemeral: true }); // Private confirmation message
+          const mod_embed = new RookEmbed(props);
+          await interaction.followUp({ embeds: [ mod_embed ], ephemeral: true }); // Private confirmation message
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
           let props = {
-            color: "#FF0000",
+            color: colors["red"],
             title: {
               text: "Error"
             },
             description: "I couldn't send the DM to the user. They might have DMs disabled."
           }
-          const embed = new RookEmbed(props)
-          await interaction.followUp({ embeds: [ embed ], ephemeral: true }); // Private follow-up
+          const mod_embed = new RookEmbed(props)
+          await interaction.followUp({ embeds: [ mod_embed ], ephemeral: true }); // Private follow-up
         }
       } else {
         await interaction.followUp({content: `User **${targetUserName}** has been **banned**. (${reason})`});
       }
 
-      if (!DEV_MODE) {
+      if (!this.DEV) {
         // Log the action in the logs channel (private)
         const logs = client.channels.cache.get(guildChannels["logging"]);
         if (logs) {
           let props = {
-            color: "#FF0000",
+            color: colors["bad"],
             title: {
               text: "🔨 User Banned"
             },
@@ -126,34 +142,12 @@ module.exports = {
       }
     } catch (error) {
       console.log(`There was an error when banning: ${error.stack}`);
-      let props = {
-        color: "#FF0000",
-        title: {
-          text: "Error"
-        },
-        description: "I couldn't ban that user."
-      }
-      const embed = new RookEmbed(props)
-      await interaction.editReply({ embeds: [ embed ], ephemeral: true }); // Private error message
-    }
-  },
+      this.error = true
+      this.props.description = "I couldn't ban that user."
 
-  name: 'ban',
-  description: 'Bans a user from the server.',
-  options: [
-    {
-      name: 'user-id',
-      description: 'The ID of the user you want to ban.',
-      type: ApplicationCommandOptionType.String,
-      required: true,
-    },
-    {
-      name: 'reason',
-      description: 'The reason for banning the user.',
-      type: ApplicationCommandOptionType.String,
-      required: false,
-    },
-  ],
-  permissionsRequired: [PermissionFlagsBits.BanMembers],
-  botPermissions: [PermissionFlagsBits.BanMembers],
+      await interaction.deleteReply()
+      return
+    }
+    await interaction.deleteReply()
+  }
 };

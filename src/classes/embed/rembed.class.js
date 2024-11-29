@@ -95,7 +95,7 @@ class RookEmbed extends EmbedBuilder {
         this.GLOBALS?.profiles &&
         this.GLOBALS.selectedprofile in this.GLOBALS.profiles
       ) {
-        this.GLOBALS[this.GLOBALS.selectedprofile]
+        this.GLOBALS = this.GLOBALS.profiles[this.GLOBALS.selectedprofile]
       } else {
         this.GLOBALS = this.defaults
       }
@@ -120,7 +120,7 @@ class RookEmbed extends EmbedBuilder {
      * Development Mode?
      * @type {boolean}
      */
-    this.DEV = this.GLOBALS.DEV
+    this.DEV = this.GLOBALS?.DEV && this.GLOBALS.DEV
 
     if ((!(props?.color)) || (props?.color && props.color.trim() == "")) {
       switch (props.color) {
@@ -157,8 +157,8 @@ class RookEmbed extends EmbedBuilder {
     // Hack in my stuff to differentiate
     if (this.DEV) {
       // Custom user footer
-      props.color = GLOBALS["stripe"]
-      props.footer = GLOBALS.footer
+      props.color = this.GLOBALS["stripe"]
+      props.footer = this.GLOBALS.footer
       this.setTimestamp()
     } else if((!haveFooterMsg) || (haveFooterMsg && (!footerMsgNotNone))) {
       // Default footer
