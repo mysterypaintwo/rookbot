@@ -4,6 +4,7 @@ module.exports = class NLCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "nl",
+      category: "misc",
       description: "Posts a rainbow divider line"
     }
     let props = {}

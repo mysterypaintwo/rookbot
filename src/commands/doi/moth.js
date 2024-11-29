@@ -6,6 +6,7 @@ module.exports = class MothCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "moth",
+      category: "doi",
       description: "Hear it from the legend himself"
     }
     let props = {}

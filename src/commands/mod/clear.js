@@ -6,6 +6,7 @@ module.exports = class ClearCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "clear",
+      category: "mod",
       description: "Clear Messages",
       permissionsRequired: [PermissionFlagsBits.ManageMessages],
       botPermissions: [PermissionFlagsBits.ManageMessages],

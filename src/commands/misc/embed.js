@@ -4,6 +4,7 @@ module.exports = class EmbedCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "embed",
+      category: "misc",
       description: "Sends an embed with predefined content"
     }
     let props = {

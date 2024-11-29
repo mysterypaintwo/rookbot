@@ -4,6 +4,7 @@ module.exports = class BoostersCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "boosters",
+      category: "meta",
       description: "Displays the number of boosters and the server boost level"
     }
     let props = {

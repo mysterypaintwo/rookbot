@@ -5,8 +5,8 @@ module.exports = class CastleNameCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "castlename",
+      category: "doi",
       description: "Immediately triggers a nickname change for castle, to a random castle-esque name",
-      // permissionsRequired: [],
       botPermissions: ["MANAGE_NICKNAMES"]
     }
     let props = {}

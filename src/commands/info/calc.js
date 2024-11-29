@@ -6,6 +6,7 @@ module.exports = class CalcCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "calc",
+      category: "info",
       description: "Evaluates a math expression",
       options: [
         {

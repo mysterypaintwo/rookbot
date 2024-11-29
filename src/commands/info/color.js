@@ -5,6 +5,7 @@ module.exports = class ColorCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "color",
+      category: "info",
       description: "Displays information about a hex color code",
       options: [
         {

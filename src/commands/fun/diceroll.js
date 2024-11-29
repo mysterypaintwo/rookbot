@@ -5,6 +5,7 @@ module.exports = class DiceRollCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "diceroll",
+      category: "fun",
       description: "Rolls a specified number of dice with a specified number of sides",
       options: [
         {

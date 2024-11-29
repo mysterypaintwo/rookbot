@@ -5,6 +5,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "pfp",
+      category: "misc",
       description: "Displays the profile picture of the mentioned user",
       options: [
         {

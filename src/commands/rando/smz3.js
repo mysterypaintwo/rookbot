@@ -19,6 +19,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "smz3",
+      category: "rando",
       description: "Starts an SMZ3 game with all necessary details",
       options: [
         {

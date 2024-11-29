@@ -7,6 +7,7 @@ module.exports = class KickCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "kick",
+      category: "mod",
       description: "Kicks a user from the server.",
       options: [
         {

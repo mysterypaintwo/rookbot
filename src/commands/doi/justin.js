@@ -4,6 +4,7 @@ module.exports = class JustinCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "justin",
+      category: "doi",
       description: "Displays an embed showcasing the developer's video games from their portfolio."
     }
     let props = {}

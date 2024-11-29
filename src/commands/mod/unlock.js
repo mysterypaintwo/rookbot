@@ -7,6 +7,7 @@ module.exports = class UnlockCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "unlock",
+      category: "mod",
       description: "Unlocks a channel, allowing users to send messages again.",
       options: [
         {

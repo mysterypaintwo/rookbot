@@ -7,6 +7,7 @@ module.exports = class WarnCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "warn",
+      category: "mod",
       description: "Warns a user in the server.",
       options: [
         {

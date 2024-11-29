@@ -7,6 +7,7 @@ module.exports = class InstallCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "install",
+      category: "app",
       description: "Install Node Modules",
       permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
       botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages

@@ -7,6 +7,7 @@ module.exports = class TimeoutCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "timeout",
+      category: "mod",
       description: "Times out a user for a specified duration.",
       options: [
         {

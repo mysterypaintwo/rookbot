@@ -4,7 +4,7 @@ module.exports = class TestCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "test",
-      category: "diag"
+      category: "diagnostic"
     }
     super(
       {...comprops}

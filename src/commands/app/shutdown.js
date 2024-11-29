@@ -30,7 +30,8 @@ module.exports = class ShutdownCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction) {
-
+    interaction.deferReply()
+    interaction.deleteReply()
 
     let action = "Shutting Down"
 

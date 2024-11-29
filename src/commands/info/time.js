@@ -5,6 +5,7 @@ module.exports = class TimeCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "time",
+      category: "info",
       description: "Time"
     }
     let props = {

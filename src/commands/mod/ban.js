@@ -7,6 +7,7 @@ module.exports = class BanCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "ban",
+      category: "mod",
       description: "Bans a user from the server",
       options: [
         {

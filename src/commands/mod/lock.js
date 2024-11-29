@@ -7,6 +7,7 @@ module.exports = class LockCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "lock",
+      category: "mod",
       description: "Locks a channel, preventing anyone from sending messages.",
       options: [
         {
