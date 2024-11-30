@@ -89,12 +89,6 @@ jobs:
       - name: 📁Get Parent Directory
         id: parentDir
         uses: ./.github/actions/get-parent-dir
-      # download appversion artifact
-      - name: 🔽Download AppVersion Artifact
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: appversion-build-${{ matrix.os-name }}-py${{ matrix.python-version }}
-          path: ${{ steps.parentDir.outputs.parentDir }}/build
       # Prepare Pages
       - name: 🌎->📦Prepare GitHub Pages
         shell: bash
