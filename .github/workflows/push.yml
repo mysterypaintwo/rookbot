@@ -20,7 +20,7 @@ on: [push, pull_request]
 
 jobs:
   # Test
-  test:
+  install-test:
     name: 🧮
     runs-on: ${{ matrix.os-name }}
     continue-on-error: True
@@ -69,3 +69,86 @@ jobs:
           contains(github.ref, 'stable') ||
           contains(github.ref, 'unstable') ||
           contains(github.ref, 'castIe')
+
+  # Prepare Pages
+  pages-prepare:
+    name: 🌎->📦
+    runs-on: ${{ matrix.os-name }}
+    needs: [install-test]
+
+    strategy:
+      matrix:
+        os-name: [ ubuntu-latest ]
+        python-version: [ "3.12" ]
+
+    steps:
+      # checkout commit
+      - name: ✔️Checkout commit
+        uses: actions/checkout@v4.2.2
+      # get parent dir
+      - name: 📁Get Parent Directory
+        id: parentDir
+        uses: ./.github/actions/get-parent-dir
+      # download appversion artifact
+      - name: 🔽Download AppVersion Artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: appversion-build-${{ matrix.os-name }}-py${{ matrix.python-version }}
+          path: ${{ steps.parentDir.outputs.parentDir }}/build
+      # Prepare Pages
+      - name: 🌎->📦Prepare GitHub Pages
+        shell: bash
+        run: |
+          python ./resources/ci/common/prepare_pages.py
+      # upload pages artifact for later step
+      - name: 🔼Upload Pages Artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: pages-${{ matrix.os-name }}
+          path: ${{ steps.parentDir.outputs.parentDir }}/pages
+
+  # Deploy Pages
+  pages-deploy:
+    name: 🌎->🚀
+    runs-on: ${{ matrix.os-name }}
+    needs: [pages-prepare]
+
+    strategy:
+      matrix:
+        os-name: [ ubuntu-latest ]
+
+    steps:
+      # checkout commit
+      - name: ✔️Checkout commit
+        uses: actions/checkout@v4.2.2
+      # download pages artifact
+      - name: 🔽Download Pages Artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: pages-${{ matrix.os-name }}
+          path: ./
+      # Prepare actor for GH-Pages
+      - name: 📝Prepare actor for GH-Pages
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+      # List Differences
+      - name: ➖List Differences
+        shell: bash
+        run: |
+          git diff --name-status --cached
+      # Set Commit
+      - name: ➕Set Commit (MAIN)
+        shell: bash
+        run: |
+          git commit -q -F commit.txt
+          git log
+        if: contains(github.ref, 'main')
+      # Push to GH-Pages
+      - name: 🚀Push to GH-Pages (MAIN)
+        shell: bash
+        run: |
+          git push
+        if: contains(github.ref, 'main')

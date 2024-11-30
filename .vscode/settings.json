@@ -1,5 +1,8 @@
 {
     "editor.tabSize": 2,
+    "[python]": {
+      "editor.tabSize": 4
+    },
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "javascript.format.placeOpenBraceOnNewLineForControlBlocks": false,
