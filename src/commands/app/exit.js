@@ -1,19 +1,16 @@
-const { PermissionFlagsBits } = require('discord.js')
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const unready = require('../../events/unready/exit')
 const colors = require('../../dbs/colors.json')
 
 // Multiple messages
 
-module.exports = class ExitCommand extends RookCommand {
+module.exports = class ExitCommand extends BotDevCommand {
   constructor() {
     let comprops = {
       name: "exit",
       category: "app",
-      description: "Exit rookbot",
-      permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
-      botPermissions: [PermissionFlagsBits.SendMessages], // Ensure bot can send messages
+      description: "Exit rookbot"
     }
     let props = {
       title: { text: "Exit", emoji: "⏹️" },
@@ -31,8 +28,6 @@ module.exports = class ExitCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction, cmd) {
-
-
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
 
     this.props.description = `Exiting <@${client.user.id}>`
@@ -47,8 +42,6 @@ module.exports = class ExitCommand extends RookCommand {
       user: entities.user,
       target: entities.bot
     }
-
-
 
     this.send(interaction, new RookEmbed(this.props))
 

@@ -1,4 +1,4 @@
-const { RookCommand } = require('../../classes/command/rcommand.class.js');
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class JustinCommand extends RookCommand {
   constructor() {
@@ -21,9 +21,6 @@ module.exports = class JustinCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    // Acknowledge the interaction
-
-
     this.props = {
       title: {
         text: "Developer Portfolio: Justin Bohemier",
@@ -52,8 +49,5 @@ module.exports = class JustinCommand extends RookCommand {
         msg: "Visit Justin Bohemier's Portfolio for more!"
       }
     }
-
-    // Send the embed to the channel
-
   }
-};
+}

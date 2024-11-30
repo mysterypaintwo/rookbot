@@ -80,4 +80,4 @@ module.exports = {
   ],
   permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
   botPermissions: [PermissionFlagsBits.SendMessages], // Ensure bot can send messages
-};
+}

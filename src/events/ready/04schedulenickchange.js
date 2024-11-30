@@ -1,6 +1,3 @@
-const { RookEmbed } = require('../../classes/embed/rembed.class.js')
-const shell = require('shelljs')
-const fs = require('fs')
 const scheduleNicknameChange = require('../../utils/scheduleNicknameChange');
 
 module.exports = async (client) => {

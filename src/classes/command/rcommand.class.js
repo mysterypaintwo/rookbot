@@ -1,11 +1,11 @@
 // @ts-check
 
-const { Client, Message, TextChannel } = require('discord.js');
-const { RookEmbed } = require('../embed/rembed.class');
-const { SlimEmbed } = require('../embed/rslimbed.class');
+const { Client, Message, TextChannel } = require('discord.js')
+const { RookEmbed } = require('../embed/rembed.class')
+const { SlimEmbed } = require('../embed/rslimbed.class')
 
-const { Pagination } = require('pagination.djs');
-const fs = require('fs');
+const { Pagination } = require('pagination.djs')
+const fs = require('fs')
 
 /**
  * @class
@@ -21,6 +21,7 @@ class RookCommand {
   name;     // Command Name
   category; // Command Category
   options;  // Command Options
+  access;   // Command Access
   permissionsRequired;  // Required User Permissions
   botPermissions;       // Required Bot Permissions
   /**
@@ -102,6 +103,7 @@ class RookCommand {
     this.category = comprops?.category ? comprops.category.toLowerCase() : "unknown"
     this.description = comprops?.description ? comprops.description : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
     this.options = comprops?.options ? comprops.options : []
+    this.access = comprops?.access ? comprops.access : "unset"
     this.permissionsRequired = comprops?.permissionsRequired ? comprops.permissionsRequired : []
     this.botPermissions = comprops?.botPermissions ? comprops.botPermissions : []
 
@@ -359,10 +361,10 @@ class RookCommand {
 
     // If the ID is not a number, search for a named channel
     if (typeof channelID == "string") {
-      channel = await message.guild.channels.cache.find(c => c.name === channelID);
+      channel = await message.guild.channels.cache.find(c => c.name === channelID)
     } else {
       // Else, search for a numbered channel
-      channel = await message.guild.channels.cache.find(c => c.id === channelID);
+      channel = await message.guild.channels.cache.find(c => c.id === channelID)
     }
 
     return channel
@@ -386,7 +388,7 @@ class RookCommand {
     let cachedEmoji = await emojis.cache.find(emoji => emoji.name === emojiName)
     if (cachedEmoji?.available) {
       foundEmoji = true
-      ret += `${cachedEmoji}`;
+      ret += `${cachedEmoji}`
     }
 
     if (!foundEmoji) {
@@ -570,25 +572,25 @@ class RookCommand {
     // Errors based on Invalid Source
     if (foundHandles?.invalid && foundHandles.invalid != "") {
       this.error = true
-      foundHandles.title = { text: "Error" };
+      foundHandles.title = { text: "Error" }
       switch (foundHandles.invalid) {
         case "user":
-          foundHandles.description = this.errors.cantActionSelf.join("\n");
-          break;
+          foundHandles.description = this.errors.cantActionSelf.join("\n")
+          break
         case "target":
-          foundHandles.description = this.errors.cantActionOthers.join("\n");
-          break;
+          foundHandles.description = this.errors.cantActionOthers.join("\n")
+          break
         case "bot":
-          foundHandles.description = this.errors.cantActionBot.join("\n");
-          break;
+          foundHandles.description = this.errors.cantActionBot.join("\n")
+          break
         case "mention":
-          foundHandles.description = this.errors.cantActionMention.join("\n");
-          break;
+          foundHandles.description = this.errors.cantActionMention.join("\n")
+          break
         case "search":
-          foundHandles.description = this.errors.cantActionSearch.join("\n");
-          break;
+          foundHandles.description = this.errors.cantActionSearch.join("\n")
+          break
         default:
-          break;
+          break
       }
     }
 
@@ -788,4 +790,4 @@ class RookCommand {
   }
 }
 
-exports.RookCommand = RookCommand;
+exports.RookCommand = RookCommand

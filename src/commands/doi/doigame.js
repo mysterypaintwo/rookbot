@@ -1,10 +1,10 @@
-const { serverGameName_base64encoded } = require('../../../config.json');
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { serverGameName_base64encoded } = require('../../../config.json')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class DOIGameCommand extends RookCommand {
   constructor() {
     // Decode the base64 string
-    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8')
     let comprops = {
       name: "doigame",
       category: "doi",
@@ -19,14 +19,11 @@ module.exports = class DOIGameCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    // Ensure the command is properly deferred and acknowledged
-
-
     // Decode the base64 string
-    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8');
+    const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8')
 
-    const guildID = interaction.guild.id;
-    const guildMeta = require(`../../dbs/${guildID}/meta.json`);
+    const guildID = interaction.guild.id
+    const guildMeta = require(`../../dbs/${guildID}/meta.json`)
 
     try {
       // Create an embed message
@@ -45,7 +42,5 @@ module.exports = class DOIGameCommand extends RookCommand {
       this.error = true
       this.props.description = "There was an error posting the download information."
     }
-
-
   }
-};
+}

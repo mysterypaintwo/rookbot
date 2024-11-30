@@ -1,18 +1,18 @@
-const getLocalCommands = require('../../utils/getLocalCommands');
+const getLocalCommands = require('../../utils/getLocalCommands')
 
 module.exports = async (client, interaction) => {
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isChatInputCommand()) return
 
-  const roles = require('../../dbs/roles.json');
-  const userIDs = require('../../dbs/userids.json');
-  const guildIDs = require('../../dbs/guilds.json');
+  const roles = require('../../dbs/roles.json')
+  const userIDs = require('../../dbs/userids.json')
+  const guildIDs = require('../../dbs/guilds.json')
 
-  const localCommands = getLocalCommands();
+  const localCommands = getLocalCommands()
 
   try {
     const commandObject = localCommands.find(
       (cmd) => cmd.name === interaction.commandName
-    );
+    )
 
     if (!commandObject) return;
 
@@ -29,25 +29,25 @@ module.exports = async (client, interaction) => {
       if (!roleUserIDs.includes(interaction.member.id)) {
         interaction.reply({
           content: 'Only developers are allowed to run this command.',
-          ephemeral: true,
-        });
-        return;
+          ephemeral: true
+        })
+        return
       }
     }
 
     if (commandObject.testOnly) {
-      let testGuilds = [];
+      let testGuilds = []
       for (let [guildID, guildName] of Object.entries(guildIDs)) {
         if (guildName.includes("Test")) {
-          testGuilds.push(guildID);
+          testGuilds.push(guildID)
         }
       }
       if (!(testGuilds.includes(interaction.guild.id))) {
         interaction.reply({
           content: 'This command cannot be ran here.',
-          ephemeral: true,
-        });
-        return;
+          ephemeral: true
+        })
+        return
       }
     }
 
@@ -56,23 +56,23 @@ module.exports = async (client, interaction) => {
         if (!interaction.member.permissions.has(permission)) {
           interaction.reply({
             content: 'Not enough permissions.',
-            ephemeral: true,
-          });
-          return;
+            ephemeral: true
+          })
+          return
         }
       }
     }
 
     if (commandObject.botPermissions?.length) {
       for (const permission of commandObject.botPermissions) {
-        const bot = interaction.guild.members.me;
+        const bot = interaction.guild.members.me
 
         if (!bot.permissions.has(permission)) {
           interaction.reply({
             content: "I don't have enough permissions.",
-            ephemeral: true,
-          });
-          return;
+            ephemeral: true
+          })
+          return
         }
       }
     }
@@ -81,4 +81,4 @@ module.exports = async (client, interaction) => {
   } catch (error) {
     console.log(`There was an error running this command: ${error.stack}`);
   }
-};
+}

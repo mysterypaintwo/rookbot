@@ -1,6 +1,6 @@
-const { Client, Interaction } = require('discord.js');
-const path = require('path');
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { Client, Interaction } = require('discord.js')
+const path = require('path')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class MothCommand extends RookCommand {
   constructor() {
@@ -23,18 +23,18 @@ module.exports = class MothCommand extends RookCommand {
    */
   async action(client, interaction) {
     // Path to the local video file
-    const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4');
+    const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4')
 
     try {
       // Send the video to the channel the command was sent in
-      await interaction.channel.send({
-        files: [videoPath],
-      });
+      await interaction.editReply({
+        files: [videoPath]
+      })
       this.null = true
     } catch (error) {
       this.error = true
       this.props.description = "There was an error uploading the video."
-      console.log(`There was an error when uploading the video: ${error.stack}`);
+      console.log(`There was an error when uploading the video: ${error.stack}`)
     }
   }
-};
+}

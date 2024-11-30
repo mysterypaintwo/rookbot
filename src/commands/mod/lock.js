@@ -1,9 +1,9 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
-module.exports = class LockCommand extends RookCommand {
+module.exports = class LockCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "lock",
@@ -14,11 +14,11 @@ module.exports = class LockCommand extends RookCommand {
           name: "channel",
           description: "The channel to lock.",
           type: ApplicationCommandOptionType.Channel,
-          required: true,
+          required: true
         },
       ],
-      permissionsRequired: [PermissionFlagsBits.ManageChannels],
-      botPermissions: [PermissionFlagsBits.ManageChannels],
+      // permissionsRequired: [PermissionFlagsBits.ManageChannels],
+      // botPermissions: [PermissionFlagsBits.ManageChannels],
     }
     let props = {}
 
@@ -33,34 +33,34 @@ module.exports = class LockCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const guildID = interaction.guild.id;
-    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const channel = interaction.options.getChannel('channel');
+    const guildID = interaction.guild.id
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`)
+    const channel = interaction.options.getChannel('channel')
 
     try {
       if (!this.DEV) {
         // Lock the channel by denying SEND_MESSAGES for @everyone
         await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
           SendMessages: false,
-        });
+        })
       }
 
       // Send public confirmation in the channel
       const embedProps = {
         color: colors["bad"],
-        title: { text: 'Channel Locked!' },
+        title: { text: '[ModPost] Channel Locked!', emoji: '🟠' },
         description: (this.DEV ? "DEV: " : "") + `<#${channel.id}> has been **locked**.`,
-      };
-      const embed = new RookEmbed(embedProps);
-      channel.send({ embeds: [embed] });
+      }
+      const embed = new RookEmbed(embedProps)
+      channel.send({ embeds: [embed] })
 
       // Log the action in the logs channel (private)
-      const logs = client.channels.cache.get(guildChannels["logging"]);
+      const logs = client.channels.cache.get(guildChannels["logging"])
       if (logs && !this.DEV) {
         let props = {
           color: colors["bad"],
           title: {
-            text: "🔒 Channel Locked"
+            text: "🔒 [Log] Channel Locked"
           },
           fields: [
             { name: 'Channel Locked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
@@ -70,7 +70,7 @@ module.exports = class LockCommand extends RookCommand {
         const embed = new RookEmbed(props)
         logs.send({ embeds: [ embed ] });
       } else {
-        console.log("Logs channel not found.");
+        console.log("Logs channel not found.")
       }
 
       // Complete the interaction with a private success message
@@ -82,4 +82,4 @@ module.exports = class LockCommand extends RookCommand {
       this.props.description = `I couldn't lock <#${channel.id}>.`
     }
   }
-};
+}

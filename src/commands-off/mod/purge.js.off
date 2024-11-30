@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 
 module.exports = {
   /**
@@ -8,10 +8,7 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const PROFILE = require('../../PROFILE.json');
-    const guildIDs = require('../../dbs/guilds.json');
-
-    const messagesToDelete = interaction.options.get('amount').value;
+    const messagesToDelete = interaction.options.get('amount').value
 
     // Validate the number of messages to delete
     if (messagesToDelete < 1 || messagesToDelete > 100) {
@@ -21,9 +18,9 @@ module.exports = {
           text: "Error"
         },
         description: "Please specify a number between 1 and 100."
-      };
+      }
       const embed = new RookEmbed(props);
-      await interaction.editReply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed], ephemeral: true })
       return;
     }
 
@@ -33,25 +30,25 @@ module.exports = {
 
       // Log the action in the logs channel if DEV_MODE is off
       if (!this.DEV) {
-        const guildID = interaction.guild.id;
-        const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-        const logs = client.channels.cache.get(guildChannels["logging"]);
+        const guildID = interaction.guild.id
+        const guildChannels = require(`../../dbs/${guildID}/channels.json`)
+        const logs = client.channels.cache.get(guildChannels["logging"])
         if (logs) {
           let props = {
             color: "#FF8C00",
             title: {
-              text: "🧹 Messages Purged"
+              text: "🧹 [Log] Messages Purged"
             },
             fields: [
               { name: 'Channel', value: `${interaction.channel}`, inline: true },
               { name: 'Purged By', value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
               { name: 'Amount', value: `${deletedMessages.size}`, inline: false }
             ]
-          };
-          const embed = new RookEmbed(props);
-          logs.send({ embeds: [embed] });
+          }
+          const embed = new RookEmbed(props)
+          logs.send({ embeds: [embed] })
         } else {
-          console.log("Logs channel not found.");
+          console.log("Logs channel not found.")
         }
       }
 
@@ -59,23 +56,23 @@ module.exports = {
       let props2 = {
         color: "#00FF00",
         title: {
-          text: "Purged"
+          text: "[ModPost] Purged"
         },
         description: `Successfully purged ${deletedMessages.size} messages in this channel.`
-      };
-      const embed2 = new RookEmbed(props2);
-      await interaction.followUp({ embeds: [embed2], ephemeral: true });
+      }
+      const embed2 = new RookEmbed(props2)
+      await interaction.followUp({ embeds: [embed2], ephemeral: true })
     } catch (error) {
-      console.log(`There was an error when purging messages: ${error.stack}`);
+      console.log(`There was an error when purging messages: ${error.stack}`)
       let props = {
         color: "#FF0000",
         title: {
           text: "Error"
         },
         description: "I couldn't delete those messages. Make sure they're not older than 14 days."
-      };
+      }
       const embed = new RookEmbed(props);
-      await interaction.editReply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed], ephemeral: true })
     }
   },
 
@@ -90,5 +87,5 @@ module.exports = {
     }
   ],
   permissionsRequired: [PermissionFlagsBits.ManageMessages],
-  botPermissions: [PermissionFlagsBits.ManageMessages],
-};
+  botPermissions: [PermissionFlagsBits.ManageMessages]
+}

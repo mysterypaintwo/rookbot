@@ -27,7 +27,7 @@ module.exports = class NLCommand extends RookCommand {
 
       // Optionally end the interaction without a visible message
     } catch (error) {
-      console.error('Error handling /nl command:', error);
+      console.error('Error handling /nl command:', error)
 
       let props = []
       props.description = "An error occurred while posting the rainbow line. Pleas try again later."
@@ -37,4 +37,4 @@ module.exports = class NLCommand extends RookCommand {
     }
     interaction.deleteReply()
   }
-};
+}

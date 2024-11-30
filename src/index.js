@@ -1,9 +1,9 @@
-require('dotenv').config();
-const { Client, IntentsBitField } = require('discord.js');
-const fs = require('fs');
-const eventHandler = require('./handlers/eventHandler');
+require('dotenv').config()
+const { Client, IntentsBitField } = require('discord.js')
+const fs = require('fs')
+const eventHandler = require('./handlers/eventHandler')
 
-const DEFAULTS = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"));
+const DEFAULTS = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
 
 // Bail if we fail to get server profile information
 if (!DEFAULTS) {
@@ -16,9 +16,9 @@ const client = new Client({
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
-  ],
-});
+    IntentsBitField.Flags.MessageContent
+  ]
+})
 
 process.on('exit', function() {
 });
@@ -27,13 +27,13 @@ process.on('exit', function() {
   // Create Client Object
   if (process.env.NODE_ENV === 'development') {
     // Run the development bot logic
-    await client.login(process.env.TOKEN_DEV);
+    await client.login(process.env.TOKEN_DEV)
   } else {
     // Run the main bot logic
-    await client.login(process.env.TOKEN);
+    await client.login(process.env.TOKEN)
   }
 
   // Register Events
   console.log("---")
-  await eventHandler(client);
-})();
+  await eventHandler(client)
+})()

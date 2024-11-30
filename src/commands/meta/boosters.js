@@ -25,15 +25,12 @@ module.exports = class BoostersCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    // Defer the reply to give the bot time to process the request
-
-
     try {
       // Get the number of boosts in the server
-      const boosts = interaction.guild.premiumSubscriptionCount;
+      const boosts = interaction.guild.premiumSubscriptionCount
 
       // Get the server's boost level
-      const boostLevel = interaction.guild.premiumTier;
+      const boostLevel = interaction.guild.premiumTier
 
       // Prepare a message to show the boost information
       this.props.fields = [
@@ -47,11 +44,9 @@ module.exports = class BoostersCommand extends RookCommand {
         }
       ]
     } catch(error) {
-      console.log(`Error fetching boost info: ${error.stack}`);
+      console.log(`Error fetching boost info: ${error.stack}`)
       this.error = true
       this.props.description = "There was an error fetching the server's boost information."
     }
-
-
   }
-};
+}

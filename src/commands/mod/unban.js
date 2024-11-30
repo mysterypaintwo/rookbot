@@ -1,9 +1,9 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
-module.exports = class UnbanCommand extends RookCommand {
+module.exports = class UnbanCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "unban",
@@ -23,8 +23,8 @@ module.exports = class UnbanCommand extends RookCommand {
           required: false,
         }
       ],
-      permissionsRequired: [PermissionFlagsBits.BanMembers],
-      botPermissions: [PermissionFlagsBits.BanMembers],
+      // permissionsRequired: [PermissionFlagsBits.BanMembers],
+      // botPermissions: [PermissionFlagsBits.BanMembers],
     }
     let props = {}
 
@@ -73,73 +73,99 @@ module.exports = class UnbanCommand extends RookCommand {
 
       // Reply publicly in the channel to confirm the unban
       this.props.color = colors["success"]
-      this.props.title = { text: "Success!" }
-      this.props.description = `User **${targetUserName}** has been **unbanned**. (${reason})`
+      this.props.title = {
+        text: "[ModPost] Success!",
+        emoji: "🟢"
+      }
+      this.props.description = [
+        (this.DEV ? "DEV: " : "") +
+        `User **${targetUserName}** has been **unbanned**.`,
+        `(ID: \`${targetUserId}\`; ${reason})`
+      ]
+
+      let props = {
+        public: this.props,
+        dm: null,
+        mod: null,
+        log: null
+      }
+      let embeds = {
+        public: new RookEmbed(props.public),
+        dm: null,
+        mod: null,
+        log: null
+      }
 
       if (!this.DEV) {
         // Try to DM the user about the unban (private)
         try {
-          let props = {
-            color: colors["success"],
+          props.dm = {
+            color: colors["good"],
             title: {
-              text: "Unbanned"
+              text: (this.DEV ? "[DM] " : "") + "Unanned"
             },
-            description: `You have been unbanned from the ${interaction.guild.name} server.`
+            description: `You have been unbanned from the ${interaction.guild.name} server. (${reason})`
           }
-          const dm_embed = new RookEmbed(props);
-          await targetUser.send({ embeds: [ dm_embed ] });
+          embeds.dm = new RookEmbed(props.dm)
+          await targetUser.send({ embeds: [ embeds.dm ] })
 
-          props = {
+          props.mod = {
             color: colors["success"],
             title: {
-              text: "Success!"
+              text: "[ModPost] Success!",
+              emoji: "🟢"
             },
-            description: `✅ User **${targetUserName}** successfully unbanned via DMs! Message: ${props.description}`
+            description: [
+              `✅ User **${targetUserName}** successfully unbanned via DMs!`,
+              "",
+              `Message: ${props.dm.description}`
+            ]
           }
-          const mod_embed = new RookEmbed(props);
+          embeds.mod = new RookEmbed(props.mod)
           await interaction.followUp(
             {
-              embeds: [ mod_embed ],
+              embeds: [ embeds.mod ],
               ephemeral: true
             }
-          );
+          )
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
-          let props = {
+          props.mod = {
             color: colors["red"],
             title: {
               text: "Error"
             },
-            description: `I couldn't send the DM to the user (ID: ${targetUserId}). They might have DMs disabled.`
+            description: [
+              `I couldn't send the DM to the user (ID: ${targetUserId}).`,
+              `They might have DMs disabled.`
+            ]
           }
-          const mod_embed = new RookEmbed(props)
+          embeds.mod = new RookEmbed(props.mod)
           await interaction.followUp(
             {
-              embeds: [ mod_embed ],
+              embeds: [ embeds.mod ],
               ephemeral: true
             }
-          );
+          )
         }
-      } else {
-        this.props.description = (this.DEV ? "DEV: " : "") + this.props.description
       }
 
       if (!this.DEV) {
         // Log the action in the logs channel (private)
         const logs = client.channels.cache.get(guildChannels["logging"]);
         if (logs) {
-          let props = {
-            color: colors["bad"],
+          props.log = {
+            color: colors["good"],
             title: {
-              text: "🔨 User Unbanned"
+              text: "🔨 [Log] User Unbanned"
             },
             fields: [
-              { name: 'User Unbanned',  value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
-              { name: 'Unbanned By',    value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
+              { name: 'User Unbanned', value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
+              { name: 'Unbanned By',   value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
             ]
           }
-          const embed = new RookEmbed(props)
-          logs.send({ embeds: [ embed ] });
+          embeds.log = new RookEmbed(props.log)
+          logs.send({ embeds: [ embeds.log ] });
         } else {
           console.log("Logs channel not found.");
         }
@@ -151,4 +177,4 @@ module.exports = class UnbanCommand extends RookCommand {
       this.props.description = `I couldn't unban that user (ID: ${$targetUserId}).`
     }
   }
-};
+}

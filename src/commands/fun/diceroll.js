@@ -1,5 +1,5 @@
-const { Client, Intents, ApplicationCommandOptionType } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { ApplicationCommandOptionType } = require('discord.js')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class DiceRollCommand extends RookCommand {
   constructor() {
@@ -34,16 +34,14 @@ module.exports = class DiceRollCommand extends RookCommand {
   }
 
     async action(client, interaction) {
-
-
-      const count = interaction.options.getInteger('count');
-      const sides = interaction.options.getInteger('sides') ?? 6;
+      const count = interaction.options.getInteger('count')
+      const sides = interaction.options.getInteger('sides') ?? 6
 
       // Roll the dice and collect results
-      const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
-      let total = 0;
+      const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1)
+      let total = 0
       for (let roll of rolls) {
-        total += roll;
+        total += roll
       }
 
       this.props = {
@@ -52,8 +50,5 @@ module.exports = class DiceRollCommand extends RookCommand {
         },
         description: `🎲You got ${rolls.join(', ')} for a total of ${total}`
       }
-
-      // Respond with the result
-
     }
-  };
+  }

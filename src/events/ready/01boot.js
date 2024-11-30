@@ -1,5 +1,5 @@
-const fs = require('fs');
-const manageCommands = require('../../utils/manageCommands.js');
+const fs = require('fs')
+const manageCommands = require('../../utils/manageCommands.js')
 
 module.exports = async (client) => {
   let profileName = "default"
@@ -60,8 +60,8 @@ module.exports = async (client) => {
       GLOBALS.name,
       process.env.DISCORD_CLIENT_ID,
       process.env.TOKEN
-    );
+    )
   } else {
-    console.log('  🟢 Command deletion is disabled.');
+    console.log('  🟢 Command deletion is disabled.')
   }
-};
+}

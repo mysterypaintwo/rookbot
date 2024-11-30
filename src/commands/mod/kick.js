@@ -1,9 +1,9 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { ApplicationCommandOptionType } = require('discord.js');
+const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
-module.exports = class KickCommand extends RookCommand {
+module.exports = class KickCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "kick",
@@ -14,17 +14,15 @@ module.exports = class KickCommand extends RookCommand {
           name: "user-id",
           description: "The ID of the user you want to kick.",
           type: ApplicationCommandOptionType.String,
-          required: true,
+          required: true
         },
         {
           name: "reason",
           description: "The reason for kicking the user.",
           type: ApplicationCommandOptionType.String,
-          required: false,
-        },
-      ],
-      permissionsRequired: [PermissionFlagsBits.KickMembers],
-      botPermissions: [PermissionFlagsBits.KickMembers],
+          required: false
+        }
+      ]
     }
     let props = {}
 
@@ -39,7 +37,6 @@ module.exports = class KickCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const PROFILE = require('../../PROFILE.json');
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
@@ -78,54 +75,91 @@ module.exports = class KickCommand extends RookCommand {
 
       // Reply publicly in the channel to confirm the kick
       this.props.color = colors["success"]
-      this.props.title = { text: "Success!" }
-      this.props.description = `User **${targetUserName}** has been **kicked**. (${reason})`
+      this.props.title = {
+        text: "[ModPost] Success!",
+        emoji: "🟢"
+      }
+      this.props.description = [
+        (this.DEV ? "DEV: " : "") +
+        `User **${targetUserName}** has been **kicked**.`,
+        `(ID: \`${targetUserId}\`; ${reason})`
+      ]
+
+      let props = {
+        public: this.props,
+        dm: null,
+        mod: null,
+        log: null
+      }
+      let embeds = {
+        public: new RookEmbed(props.public),
+        dm: null,
+        mod: null,
+        log: null
+      }
 
       if (!this.DEV) {
         // Try to DM the user about the kick (private)
         try {
-          let props = {
+          props.dm = {
             color: colors["bad"],
             title: {
-              text: "Kicked"
+              text: (this.DEV ? "[DM] " : "") + "Kicked"
             },
             description: `You have been kicked from the ${interaction.guild.name} server. (${reason})`
           }
-          const dm_embed = new RookEmbed(props)
-          await targetUser.send({ embeds: [ dm_embed ] })
+          embeds.dm = new RookEmbed(props.dm)
+          await targetUser.send({ embeds: [ embeds.dm ] })
 
-          props = {
-            color: color["success"],
+          props.mod = {
+            color: colors["success"],
             title: {
-              text: "Kicked"
+              text: "[ModPost] Success!",
+              emoji: "🟢"
             },
-            description: `✅ User **${targetUserName}** successfully kicked via DMs! Message: ${props.description}`
+            description: [
+              `✅ User **${targetUserName}** successfully kicked via DMs!`,
+              "",
+              `Message: ${props.dm.description}`
+            ]
           }
-          const mod_embed = new RookEmbed(props);
-          interaction.reply(
+          embeds.mod = new RookEmbed(props.mod)
+          await interaction.followUp(
             {
-              embeds: [ mod_embed ],
+              embeds: [ embeds.mod ],
               ephemeral: true
             }
           )
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
-          this.error = true
-          this.ephemeral = true
-          this.props.description = `I couldn't send the DM to the user (ID ${targetUserId}). They might have DMs disabled.`
+          props.mod = {
+            color: colors["red"],
+            title: {
+              text: "Error"
+            },
+            description: [
+              `I couldn't send the DM to the user (ID: ${targetUserId}).`,
+              `They might have DMs disabled.`
+            ]
+          }
+          embeds.mod = new RookEmbed(props.mod)
+          await interaction.followUp(
+            {
+              embeds: [ embeds.mod ],
+              ephemeral: true
+            }
+          )
         }
-      } else {
-        this.props.description = (this.DEV ? "DEV: " : "") + this.props.description
       }
 
       if (!this.DEV) {
         // Log the action in the logs channel (private)
         const logs = client.channels.cache.get(guildChannels["logging"]);
         if (logs) {
-          let log_props = {
+          props.log = {
             color: colors["bad"],
             title: {
-              text: "👟💥🏃‍♂️ User Kicked"
+              text: "👟💥🏃‍♂️ [Log] User Kicked"
             },
             fields: [
               { name: 'User Kicked',  value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
@@ -133,8 +167,8 @@ module.exports = class KickCommand extends RookCommand {
               { name: 'Reason',       value: reason,                                             inline: false }
             ]
           }
-          const log_embed = new RookEmbed(log_props)
-          logs.send(log_embed)
+          embeds.log = new RookEmbed(props.log)
+          logs.send({ embeds: [ embeds.log ] });
         } else {
           console.log("Logs channel not found.");
         }
@@ -146,4 +180,4 @@ module.exports = class KickCommand extends RookCommand {
       this.props.description = `I couldn't kick that user (ID: ${targetUserId}).`
     }
   }
-};
+}

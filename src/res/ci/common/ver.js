@@ -73,16 +73,16 @@ for(let [module, mData] of Object.entries(data)) {
 }
 console.log(Table.toString())
 
-Table = new AsciiTable("Functionality", {})
-let djs = data["discord.js"]
-for (let func of ["Pagination","Collectors"]) {
-  let validVer = false;
-  if (djs && djs.current) {
-    validVer = semver.lt(djs.current, "13.0.0")
-  }
-  Table.addRow(
-    func,
-    validVer ? "🟩" : "🟥"
-  )
-}
-console.log(Table.toString())
+// Table = new AsciiTable("Functionality", {})
+// let djs = data["discord.js"]
+// for (let func of ["Pagination","Collectors"]) {
+//   let validVer = false
+//   if (djs && djs.current) {
+//     validVer = semver.lt(djs.current, "13.0.0")
+//   }
+//   Table.addRow(
+//     func,
+//     validVer ? "🟩" : "🟥"
+//   )
+// }
+// console.log(Table.toString())

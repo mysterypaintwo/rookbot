@@ -43,7 +43,7 @@ module.exports = {
 
       const embed = new RookEmbed({
         color: '#00FF00',
-        title: { text: 'Success!' },
+        title: { text: '[ModPost] Success!', emoji: "🟢" },
         description: `User **${targetUserName}** has been **muted** for 1 hour. (${reason})`,
       });
       await interaction.channel.send({ embeds: [embed] });
@@ -54,7 +54,7 @@ module.exports = {
         if (logs) {
           const logEmbed = new RookEmbed({
             color: '#FF8C00',
-            title: { text: '🔇 User Muted' },
+            title: { text: '🔇 [Log] User Muted' },
             fields: [
               { name: 'User Muted', value: `${guildMember}\n(ID: ${targetUserId})`, inline: true },
               { name: 'Muted By', value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
@@ -84,15 +84,15 @@ module.exports = {
       name: 'user-id',
       description: 'The ID of the user you want to mute.',
       type: ApplicationCommandOptionType.String,
-      required: true,
+      required: true
     },
     {
       name: 'reason',
       description: 'The reason for muting the user.',
       type: ApplicationCommandOptionType.String,
-      required: false,
+      required: false
     },
   ],
   permissionsRequired: [PermissionFlagsBits.ModerateMembers],
-  botPermissions: [PermissionFlagsBits.ModerateMembers],
-};
+  botPermissions: [PermissionFlagsBits.ModerateMembers]
+}

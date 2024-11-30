@@ -1,9 +1,9 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
-module.exports = class UnlockCommand extends RookCommand {
+module.exports = class UnlockCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "unlock",
@@ -17,8 +17,8 @@ module.exports = class UnlockCommand extends RookCommand {
           required: true,
         },
       ],
-      permissionsRequired: [PermissionFlagsBits.ManageChannels],
-      botPermissions: [PermissionFlagsBits.ManageChannels],
+      // permissionsRequired: [PermissionFlagsBits.ManageChannels],
+      // botPermissions: [PermissionFlagsBits.ManageChannels],
     }
     let props = {}
 
@@ -48,9 +48,9 @@ module.exports = class UnlockCommand extends RookCommand {
       // Send public confirmation in the channel
       const embedProps = {
         color: colors["success"],
-        title: { text: 'Channel Unlocked!' },
+        title: { text: '[ModPost] Channel Unlocked!', emoji: '🟡' },
         description: (this.DEV ? "DEV: " : "") + `<#${channel.id}> has been **unlocked**.`,
-      };
+      }
       const embed = new RookEmbed(embedProps);
       channel.send({ embeds: [embed] });
 
@@ -60,7 +60,7 @@ module.exports = class UnlockCommand extends RookCommand {
         let props = {
           color: colors["success"],
           title: {
-            text: "🔓 Channel Unlocked"
+            text: "🔓 [Log] Channel Unlocked"
           },
           fields: [
             { name: 'Channel Unlocked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
@@ -82,4 +82,4 @@ module.exports = class UnlockCommand extends RookCommand {
       this.props.description = `I couldn't unlock <#${channel.id}>.`
     }
   }
-};
+}

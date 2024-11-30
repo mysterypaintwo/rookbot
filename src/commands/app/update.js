@@ -1,16 +1,15 @@
-const { PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const { BotDevCommand } = require('../../classes/command/botdevcommand.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = class UpdateCommand extends RookCommand {
+module.exports = class UpdateCommand extends BotDevCommand {
   constructor() {
     let comprops = {
       name: "update",
       category: "app",
       description: "Update from Main",
-      permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
-      botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+      // permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
+      // botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
     }
     let props = {
       caption: { text: "Update", emoji: "⏫" },
@@ -197,7 +196,5 @@ module.exports = class UpdateCommand extends RookCommand {
       user: entities.user,
       target: entities.bot
     }
-
-
   }
 }

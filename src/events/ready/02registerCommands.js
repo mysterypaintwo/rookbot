@@ -1,40 +1,48 @@
-const areCommandsDifferent = require('../../utils/areCommandsDifferent');
-const getLocalCommands = require('../../utils/getLocalCommands');
+const areCommandsDifferent = require('../../utils/areCommandsDifferent')
+const getLocalCommands = require('../../utils/getLocalCommands')
 const fs = require('fs/promises')
 
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 module.exports = async (client) => {
   let help = {}
   try {
-    const PROFILE = require('../../PROFILE.json');
-    const testGuildID = PROFILE.profiles[PROFILE.selectedprofile]?.targetserver;
-    const localCommands = getLocalCommands();
+    const PROFILE = require('../../PROFILE.json')
+    const testGuildID = PROFILE.profiles[PROFILE.selectedprofile]?.targetserver
+    const localCommands = getLocalCommands()
 
     // Determine if we are in development or production mode
-    let isDevelopment = process.env.NODE_ENV === 'development';
+    let isDevelopment = process.env.NODE_ENV === 'development'
     if (!isDevelopment) {
-      isDevelopment = PROFILE.profiles[PROFILE.selectedprofile]?.DEV;
+      isDevelopment = PROFILE.profiles[PROFILE.selectedprofile]?.DEV
     }
-    let commandsManager = null;
+    let commandsManager = null
 
     if (isDevelopment) {
-      const testGuild = client.guilds.cache.get(testGuildID);
+      const testGuild = client.guilds.cache.get(testGuildID)
       if (!testGuild) {
-        console.error(`❌ Test guild not found: ${testGuildID}`);
-        return;
+        console.error(`❌ Test guild not found: ${testGuildID}`)
+        return
       }
-      console.log(`🛠 Running in development mode. Using test server: ${testGuildID}`);
-      commandsManager = testGuild.commands;
+      console.log(`🛠 Running in development mode. Using test server: ${testGuildID}`)
+      commandsManager = testGuild.commands
     } else {
-      console.log('🌐 Running in production mode. Registering global commands.');
-      commandsManager = client.application.commands;
+      console.log('🌐 Running in production mode. Registering global commands.')
+      commandsManager = client.application.commands
     }
 
-    const applicationCommands = await commandsManager.fetch();
+    const applicationCommands = await commandsManager.fetch()
 
     for (const localCommand of localCommands) {
-      let { name, category, description, options = [], autocomplete = null, deleted } = localCommand;
+      let {
+        name,
+        category,
+        description,
+        options = [],
+        access,
+        autocomplete = null,
+        deleted
+      } = localCommand
       let slimoptions = []
       for(let option of options) {
         slimoptions.push(
@@ -53,42 +61,43 @@ module.exports = async (client) => {
         category: category,
         description: description,
         options: slimoptions,
+        access: access,
         segment: "local"
       }
 
-      const existingCommand = applicationCommands.find(cmd => cmd.name === name);
+      const existingCommand = applicationCommands.find(cmd => cmd.name === name)
 
       if (existingCommand) {
         if (deleted) {
-          console.log(`🗑 Deleting: "${name}"`);
+          console.log(`🗑 Deleting: "${name}"`)
           try {
-            await commandsManager.delete(existingCommand.id);
+            await commandsManager.delete(existingCommand.id)
           } catch (error) {
-            console.error(`❌ Failed to delete: "${name}":`, error.message);
+            console.error(`❌ Failed to delete: "${name}":`, error.message)
           }
           continue;
         }
 
         if (areCommandsDifferent(existingCommand, localCommand)) {
-          console.log(`🔁 Updating: "${name}"`);
+          console.log(`🔁 Updating: "${name}"`)
           try {
-            await commandsManager.edit(existingCommand.id, { description, options, autocomplete });
+            await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
           } catch (error) {
             if (error.code === 429) {
-              console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`);
-              await wait(error.retry_after || 1000);
-              await commandsManager.edit(existingCommand.id, { description, options, autocomplete });
+              console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
+              await wait(error.retry_after || 1000)
+              await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
             } else {
-              console.error(`❌ Failed to edit: "${name}":`, error.message);
+              console.error(`❌ Failed to edit: "${name}":`, error.message)
             }
           }
         } else {
-          console.log(`✅ Current: "${name}"`);
+          console.log(`✅ Current: "${name}"`)
         }
       } else {
         if (deleted) {
-          console.log(`⏩ Skipping deleted: "${name}"`);
-          continue;
+          console.log(`⏩ Skipping deleted: "${name}"`)
+          continue
         }
 
         if (name.indexOf("Command") > -1) {
@@ -97,10 +106,11 @@ module.exports = async (client) => {
           category = cmd.category
           description = cmd.description
           options = cmd.options
+          access = cmd.access
           autocomplete = cmd?.autocomplete ? cmd.autocomplete : null
         }
 
-        console.log(`👍 Registering new: "${name}"`);
+        console.log(`👍 Registering new: "${name}"`)
         try {
           let slimoptions = []
           for(let option of options) {
@@ -120,16 +130,17 @@ module.exports = async (client) => {
             category: category,
             description: description,
             options: slimoptions,
+            access: access,
             segment: "new"
           }
-          await commandsManager.create({ name, description, options, autocomplete });
+          await commandsManager.create({ name, description, options, autocomplete })
         } catch (error) {
           if (error.code === 429) {
-            console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`);
-            await wait(error.retry_after || 1000);
-            await commandsManager.create({ name, description, options, autocomplete });
+            console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
+            await wait(error.retry_after || 1000)
+            await commandsManager.create({ name, description, options, autocomplete })
           } else {
-            console.error(`❌ Failed to register: "${name}":`, error.message);
+            console.error(`❌ Failed to register: "${name}":`, error.message)
           }
         }
       }
@@ -148,6 +159,6 @@ module.exports = async (client) => {
       ).replace(/\n/g, "\r\n")
     )
   } catch (error) {
-    console.error(`❌ Registration error: ${error.stack}`);
+    console.error(`❌ Registration error: ${error.stack}`)
   }
-};
+}

@@ -1,4 +1,4 @@
-const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js');
+const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class ProfilePicCommand extends RookCommand {
@@ -28,19 +28,19 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const targetUserInput = interaction.options.get('target-user').value;
+    const targetUserInput = interaction.options.get('target-user').value
 
     // Extract user ID from mention (if it's a mention)
-    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '')  // Remove <@>, <@!>, and >
 
     // Fetch the GuildMember object to access server-specific info
-    const targetMember = await interaction.guild.members.fetch(targetUserId);
+    const targetMember = await interaction.guild.members.fetch(targetUserId)
 
     // Access the server nickname, fallback to username if null
-    const targetUserName = targetMember.nickname || targetMember.user.displayName || targetMember.user.tag || targetMember.user.username;
+    const targetUserName = targetMember.nickname || targetMember.user.displayName || targetMember.user.tag || targetMember.user.username
 
     // Get the user's avatar URL
-    const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 });
+    const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 })
 
     this.props = {
       title: {
@@ -49,7 +49,5 @@ module.exports = class ProfilePicCommand extends RookCommand {
       },
       image: avatarURL
     }
-
-
   }
-};
+}

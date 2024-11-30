@@ -1,4 +1,4 @@
-const { RookCommand } = require("../../classes/command/rcommand.class");
+const { RookCommand } = require("../../classes/command/rcommand.class")
 
 module.exports = class CoinFlipCommand extends RookCommand {
   constructor() {
@@ -20,13 +20,9 @@ module.exports = class CoinFlipCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-
-
     // Randomly choose between "Heads" and "Tails"
-    const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
+    const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails'
 
     this.props.description = `The coin landed on **${outcome}**!`
-
-
   }
-};
+}

@@ -5,6 +5,7 @@
       "category": "app",
       "description": "Exit rookbot",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "hello": {
@@ -12,6 +13,7 @@
       "category": "app",
       "description": "Hello",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "help": {
@@ -28,6 +30,7 @@
           "description": "Command Name"
         }
       ],
+      "access": "unset",
       "segment": "local"
     },
     "install": {
@@ -35,6 +38,7 @@
       "category": "app",
       "description": "Install Node Modules",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "shutdown": {
@@ -42,6 +46,7 @@
       "category": "app",
       "description": "Shutdown (and restart if pm2) rookbot",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "update": {
@@ -49,6 +54,7 @@
       "category": "app",
       "description": "Update from Main",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "uptime": {
@@ -56,6 +62,7 @@
       "category": "app",
       "description": "Uptime",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -82,23 +89,6 @@
       "description": "Pronunciation tutorial",
       "options": [],
       "segment": "local"
-    },
-    "lockdown": {
-      "name": "lockdown",
-      "description": "Locks or unlocks all channels for the @everyone role.",
-      "options": [
-        {
-          "name": "action",
-          "description": "Specify whether to lock or unlock all channels.",
-          "required": true
-        },
-        {
-          "name": "confirm",
-          "description": "Boolean to confirm the action and avoid accidental execution.",
-          "required": true
-        }
-      ],
-      "segment": "local"
     }
   },
   "bot": {
@@ -112,6 +102,7 @@
           "description": "Locale"
         }
       ],
+      "access": "unset",
       "segment": "local"
     },
     "botsrc": {
@@ -119,6 +110,7 @@
       "category": "bot",
       "description": "Links to the GitHub repository of rookbot",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "guildstatus": {
@@ -126,6 +118,7 @@
       "category": "bot",
       "description": "Guild Status",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -135,6 +128,7 @@
       "category": "diagnostic",
       "description": "Pong!",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "test": {
@@ -142,6 +136,7 @@
       "category": "diagnostic",
       "description": "Test",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -151,6 +146,7 @@
       "category": "doi",
       "description": "Immediately triggers a nickname change for castle, to a random castle-esque name",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "doigame": {
@@ -158,6 +154,7 @@
       "category": "doi",
       "description": "Sends a message with download info for *The Legend of Zelda - Dungeons of Infinity*.",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "justin": {
@@ -165,6 +162,7 @@
       "category": "doi",
       "description": "Displays an embed showcasing the developer's video games from their portfolio.",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "moth": {
@@ -172,6 +170,7 @@
       "category": "doi",
       "description": "Hear it from the legend himself",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -181,6 +180,7 @@
       "category": "fun",
       "description": "Flips a coin and return either Heads of Tails",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "diceroll": {
@@ -198,6 +198,7 @@
           "description": "Number of sides on each die (2-9999)"
         }
       ],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -213,6 +214,7 @@
           "required": true
         }
       ],
+      "access": "unset",
       "segment": "local"
     },
     "color": {
@@ -226,6 +228,7 @@
           "required": true
         }
       ],
+      "access": "unset",
       "segment": "local"
     },
     "time": {
@@ -233,6 +236,7 @@
       "category": "info",
       "description": "Time",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -242,6 +246,7 @@
       "category": "meta",
       "description": "Displays the number of boosters and the server boost level",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "membercount": {
@@ -249,6 +254,7 @@
       "category": "meta",
       "description": "Displays the total number of registered members on the server.",
       "options": [],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -258,6 +264,7 @@
       "category": "misc",
       "description": "Sends an embed with predefined content",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "nl": {
@@ -265,6 +272,7 @@
       "category": "misc",
       "description": "Posts a rainbow divider line",
       "options": [],
+      "access": "unset",
       "segment": "local"
     },
     "pfp": {
@@ -278,6 +286,7 @@
           "required": true
         }
       ],
+      "access": "unset",
       "segment": "local"
     }
   },
@@ -298,6 +307,7 @@
           "required": false
         }
       ],
+      "access": "Admin",
       "segment": "local"
     },
     "clear": {
@@ -305,6 +315,7 @@
       "category": "mod",
       "description": "Clear Messages",
       "options": [],
+      "access": "Admin",
       "segment": "local"
     },
     "kick": {
@@ -323,6 +334,7 @@
           "required": false
         }
       ],
+      "access": "Admin",
       "segment": "local"
     },
     "lock": {
@@ -336,6 +348,26 @@
           "required": true
         }
       ],
+      "access": "Admin",
+      "segment": "local"
+    },
+    "lockdown": {
+      "name": "lockdown",
+      "category": "mod",
+      "description": "Locks or unlocks all channels for the @everyone role.",
+      "options": [
+        {
+          "name": "action",
+          "description": "Specify whether to lock or unlock all channels.",
+          "required": true
+        },
+        {
+          "name": "confirm",
+          "description": "Boolean to confirm the action and avoid accidental execution.",
+          "required": true
+        }
+      ],
+      "access": "Admin",
       "segment": "local"
     },
     "timeout": {
@@ -359,6 +391,7 @@
           "required": false
         }
       ],
+      "access": "Admin",
       "segment": "local"
     },
     "unban": {
@@ -377,6 +410,7 @@
           "required": false
         }
       ],
+      "access": "Admin",
       "segment": "local"
     },
     "unlock": {
@@ -390,6 +424,7 @@
           "required": true
         }
       ],
+      "access": "Admin",
       "segment": "local"
     },
     "warn": {
@@ -408,6 +443,7 @@
           "required": false
         }
       ],
+      "access": "Admin",
       "segment": "local"
     }
   },
@@ -426,6 +462,7 @@
           "description": "Slug ID to call"
         }
       ],
+      "access": "unset",
       "segment": "local"
     },
     "smz3": {
@@ -449,6 +486,7 @@
           "required": false
         }
       ],
+      "access": "unset",
       "segment": "local"
     }
   }

@@ -60,4 +60,4 @@ class SlimEmbed extends RookEmbed {
   }
 }
 
-exports.SlimEmbed = SlimEmbed;
+exports.SlimEmbed = SlimEmbed

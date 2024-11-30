@@ -1,7 +1,7 @@
-const { Client, EmbedBuilder, GuildMember } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { Client, GuildMember } = require('discord.js')
+const fs = require('fs')
+const path = require('path')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 const colors = require('../../dbs/colors.json')
 
 /**
@@ -14,21 +14,23 @@ module.exports = async (client, oldMember, newMember) => {
   try {
     // Check if the nickname has changed
     if (oldMember.nickname === newMember.nickname) {
-      console.warn('No nickname change detected.');
-      return;
+      console.warn('No nickname change detected.')
+      return
     }
 
     // Ensure the member is in a guild
     if (!newMember.guild) {
-      console.warn('GuildMemberUpdate occurred outside of a guild:', newMember);
-      return;
+      console.warn('GuildMemberUpdate occurred outside of a guild:', newMember)
+      return
     }
 
     // Prepare the log embed
+    let oldNick = oldMember.nickname ?? "No nickname"
+    let newNick = newMember.nickname ?? newMember.user.displayName
     const embed = new RookEmbed({
       color: colors["info"], // Gold color for nickname changes
       title: {
-        text: '✏️ Nickname Changed',
+        text: '✏️ [Log] Nickname Changed'
       },
       players: {
         user: {
@@ -43,38 +45,38 @@ module.exports = async (client, oldMember, newMember) => {
       fields: [
         {
           name: 'User',
-          value: `<@${newMember.user.id}> (ID: ${newMember.user.id})`,
+          value: `<@${newMember.user.id}> (ID: \`${newMember.user.id}\`)`
         },
         {
           name: 'Old Nickname',
-          value: oldMember.nickname ?? 'No nickname',
+          value: oldNick
         },
         {
           name: 'New Nickname',
-          value: newMember.nickname ?? newMember.user.displayName, // Use username if nickname is undefined
+          value: newNick // Use username if nickname is undefined
         },
         {
           name: 'Guild',
-          value: `${newMember.guild.name} (ID: ${newMember.guild.id})`,
-        },
+          value: `${newMember.guild.name} (ID: ${newMember.guild.id})`
+        }
       ],
       footer: {
-        msg: `User ID: ${newMember.user.id}`,
+        msg: `User ID: ${newMember.user.id}`
       },
-      timestamp: true,
+      timestamp: true
     });
 
 
     // Fetch the log channel using its ID
-    const guildID = newMember.guild.id;
-    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const logChannelObject = newMember.guild.channels.cache.get(guildChannels["logging"]);
+    const guildID = newMember.guild.id
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`)
+    const logChannelObject = newMember.guild.channels.cache.get(guildChannels["logging"])
 
     // Send the embed to the log channel, if found and valid
     if (logChannelObject?.isTextBased()) {
-      await logChannelObject.send({ embeds: [embed] });
+      await logChannelObject.send({ embeds: [embed] })
     } else {
-      console.warn('Log channel not found or not a text-based channel.');
+      console.warn('Log channel not found or not a text-based channel.')
     }
 
     // Optional: Save the nickname change to a log file
@@ -84,19 +86,19 @@ module.exports = async (client, oldMember, newMember) => {
       '..',
       'botlogs',
       'nicknameChanges.log'
-    );
+    )
     const logEntry = [
       `[${new Date().toISOString()}]`,
       `User: ${newMember.user.tag} (ID: ${newMember.user.id})`,
       `Guild: ${newMember.guild.name} (ID: ${newMember.guild.id})`,
-      `Old Nickname: ${oldMember.nickname ?? 'No nickname'}`,
-      `New Nickname: ${newMember.nickname ?? newMember.user.displayName}`, // Use username if nickname is undefined
-      `User ID: ${newMember.user.id}`,
-    ].join('\n') + '\n\n';
+      `Old Nickname: ${oldNick}`,
+      `New Nickname: ${newNick}`, // Use username if nickname is undefined
+      `User ID: ${newMember.user.id}`
+    ].join('\n') + '\n\n'
 
     // Append the log entry to the file
-    fs.appendFileSync(logFilePath, logEntry, 'utf8');
+    fs.appendFileSync(logFilePath, logEntry, 'utf8')
   } catch (error) {
-    console.error('Error in logNameChange handler:', error);
+    console.error('Error in logNameChange handler:', error)
   }
-};
+}

@@ -1,19 +1,18 @@
-const { PermissionFlagsBits } = require('discord.js')
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const unready = require('../../events/unready/exit')
 const colors = require('../../dbs/colors.json')
 
 // Multiple messages
 
-module.exports = class ShutdownCommand extends RookCommand {
+module.exports = class ShutdownCommand extends BotDevCommand {
   constructor() {
     let comprops = {
       name: "shutdown",
       category: "app",
       description: "Shutdown (and restart if pm2) rookbot",
-      permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
-      botPermissions: [PermissionFlagsBits.SendMessages] // Ensure bot can send messages
+      // permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
+      // botPermissions: [PermissionFlagsBits.SendMessages] // Ensure bot can send messages
     }
     let props = {
       title: { text: "Bot Shutdown", emoji: "⏹️" },
@@ -78,8 +77,6 @@ module.exports = class ShutdownCommand extends RookCommand {
         user: entities.user,
         target: entities.bot
       }
-
-
 
       this.props.description = `${action} <@${client.user.id}>`
       this.send(interaction, new RookEmbed(this.props))

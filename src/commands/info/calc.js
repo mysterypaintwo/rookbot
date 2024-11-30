@@ -1,6 +1,6 @@
-const { ApplicationCommandOptionType } = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
-const { evaluate } = require('mathjs');
+const { evaluate } = require('mathjs')
 
 module.exports = class CalcCommand extends RookCommand {
   constructor() {
@@ -30,11 +30,11 @@ module.exports = class CalcCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    const expression = interaction.options.getString('expression');
+    const expression = interaction.options.getString('expression')
 
     try {
       // Evaluate the math expression
-      const result = evaluate(expression);
+      const result = evaluate(expression)
 
       // Create and send the embed
       this.props.fields = [
@@ -42,13 +42,11 @@ module.exports = class CalcCommand extends RookCommand {
         { name: "Result",     value: `\`${result}\``,     inline: false }
       ]
     } catch (error) {
-      console.error('Error evaluating expression:', error);
-
-      this.error = true
+      console.error('Error evaluating expression:', error)
 
       // Send an error embed if the math expression is invalid
+      this.error = true
       this.props.description = "Invalid math expression. Please try again."
     }
-
   }
-};
+}

@@ -252,4 +252,4 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       this.props.description = "An error occurred while setting up the SMZ3 game. Please try again later."
     }
   }
-};
+}

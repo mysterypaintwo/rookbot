@@ -192,7 +192,5 @@ module.exports = class HelloCommand extends RookCommand {
             console_output[7]
       }
     ]
-
-
   }
 }

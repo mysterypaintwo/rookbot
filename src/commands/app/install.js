@@ -1,16 +1,15 @@
-const { PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const { BotDevCommand } = require('../../classes/command/botdevcommand.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = class InstallCommand extends RookCommand {
+module.exports = class InstallCommand extends BotDevCommand {
   constructor() {
     let comprops = {
       name: "install",
       category: "app",
       description: "Install Node Modules",
-      permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
-      botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
+      // permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
+      // botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
     }
     let props = {}
 
@@ -44,8 +43,6 @@ module.exports = class InstallCommand extends RookCommand {
       console.log("🔴Install Script: PROFILE manifest not found!")
       process.exit(1)
     }
-
-    let PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
 
     let node_install = null
     try {

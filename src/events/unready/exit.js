@@ -256,10 +256,10 @@ module.exports = async (client) => {
         }
       }
 
-      let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`);
-      let channelID = channelIDs["bot-console"];
-      let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"]);
-      let channel = await guild.channels.cache.find(c => c.id === channelID);
+      let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`)
+      let channelID = channelIDs["bot-console"]
+      let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"])
+      let channel = await guild.channels.cache.find(c => c.id === channelID)
       let embed = new RookEmbed(props)
       await channel.send({ embeds: [ embed ] })
     }

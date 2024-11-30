@@ -17,11 +17,9 @@ module.exports = class PingCommand extends RookCommand {
   }
 
   async action(client, interaction, cmd) {
+    const reply = await interaction.fetchReply()
 
-
-    const reply = await interaction.fetchReply();
-
-    const ping = reply.createdTimestamp - interaction.createdTimestamp;
+    const ping = reply.createdTimestamp - interaction.createdTimestamp
 
     // Entities
     let entities = {
@@ -45,11 +43,9 @@ module.exports = class PingCommand extends RookCommand {
         value: `${client.ws.ping}ms`
       }
     ]
-
-
   }
 
   async test(client, message, args) {
     await this.execute(client, message, args, null, "")
   }
-};
+}

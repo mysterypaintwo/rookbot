@@ -71,6 +71,14 @@ module.exports = class HelpCommand extends RookCommand {
             }
           ]
         }
+        if (cmd?.access && cmd.access.toLowerCase() != "unset") {
+          props.fields.push(
+            {
+              name: "Access",
+              value: cmd.access
+            }
+          )
+        }
         if(cmd?.options && cmd.options.length > 0) {
           for(let [optionID, option] of Object.entries(cmd.options)) {
             if (option && option?.name) {

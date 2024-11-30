@@ -1,15 +1,15 @@
-const { PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
-const fs = require('fs');
+const { PermissionFlagsBits } = require('discord.js')
+const { ModCommand } = require('../../classes/command/modcommand.class')
+const fs = require('fs')
 
-module.exports = class ClearCommand extends RookCommand {
+module.exports = class ClearCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "clear",
       category: "mod",
       description: "Clear Messages",
-      permissionsRequired: [PermissionFlagsBits.ManageMessages],
-      botPermissions: [PermissionFlagsBits.ManageMessages],
+      // permissionsRequired: [PermissionFlagsBits.ManageMessages],
+      // botPermissions: [PermissionFlagsBits.ManageMessages],
     }
     let props = {}
 

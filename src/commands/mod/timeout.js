@@ -1,9 +1,9 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js')
+const { ModCommand } = require('../../classes/command/modcommand.class')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 const colors = require('../../dbs/colors.json')
 
-module.exports = class TimeoutCommand extends RookCommand {
+module.exports = class TimeoutCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "timeout",
@@ -14,23 +14,23 @@ module.exports = class TimeoutCommand extends RookCommand {
           name: "user-id",
           description: "The ID of the user you want to timeout.",
           type: ApplicationCommandOptionType.String,
-          required: true,
+          required: true
         },
         {
           name: "duration-seconds",
           description: "The duration of the timeout (in seconds).",
           type: ApplicationCommandOptionType.Integer,
-          required: true,
+          required: true
         },
         {
           name: "reason",
           description: "The reason for the timeout.",
           type: ApplicationCommandOptionType.String,
-          required: false,
-        },
+          required: false
+        }
       ],
-      permissionsRequired: [PermissionFlagsBits.ModerateMembers],
-      botPermissions: [PermissionFlagsBits.ModerateMembers],
+      // permissionsRequired: [PermissionFlagsBits.ModerateMembers],
+      // botPermissions: [PermissionFlagsBits.ModerateMembers],
     }
     let props = {}
 
@@ -45,60 +45,57 @@ module.exports = class TimeoutCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const PROFILE = require('../../PROFILE.json');
-    const guildID = interaction.guild.id;
-    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const targetUserInput = interaction.options.get('user-id').value;
-    const timeoutDurationSeconds = Math.abs(interaction.options.get('duration-seconds').value); // Duration in seconds
-    const reason = interaction.options.get('reason')?.value || 'No reason provided';
+    const guildID = interaction.guild.id
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`)
+    const targetUserInput = interaction.options.get('user-id').value
+    const timeoutDurationSeconds = Math.abs(interaction.options.get('duration-seconds').value) // Duration in seconds
+    const reason = interaction.options.get('reason')?.value || 'No reason provided'
 
     // Extract user ID from mention (if it's a mention)
-    const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '')  // Remove <@>, <@!>, and >
 
     // Get the user to be timed out
-    let targetUser;
+    let targetUser
     try {
-      targetUser = await client.users.fetch(targetUserId);
+      targetUser = await client.users.fetch(targetUserId)
     } catch (error) {
       this.error = true
       this.props.description = "User not found."
-      return;
+      return
     }
 
     // Get the guild member (to fetch nickname if present)
-    const guildMember = interaction.guild.members.cache.get(targetUserId);
+    const guildMember = interaction.guild.members.cache.get(targetUserId)
 
     try {
       // Convert the timeout duration from seconds to milliseconds
-      const timeoutDurationMilliseconds = timeoutDurationSeconds * 1000;
+      const timeoutDurationMilliseconds = timeoutDurationSeconds * 1000
 
       if (guildMember && !this.DEV) {
         // Set the timeout (mute and prevent interactions)
-        await guildMember.timeout(timeoutDurationMilliseconds, reason);
+        await guildMember.timeout(timeoutDurationMilliseconds, reason)
       }
 
       // Determine the name to display (use nickname if available, otherwise default to tag or username)
-      const targetUserName = guildMember?.nickname || targetUser.username;
+      const targetUserName = guildMember?.nickname || targetUser.username
 
       // Reply publicly in the channel to confirm the timeout
       let plural = "second" + (timeoutDurationSeconds != 1 ? "s" : "")
 
       this.props = {
         color: colors["success"],
-        title: {
-          text: "Success!"
-        },
-        description: `User **${targetUserName}** has been **timed out** for ${timeoutDurationSeconds} ${plural}. (${reason})`
+        title: { text: "[ModPost] Success!", emoji: "🟢" },
+        description: (this.DEV ? "DEV: " : "") + `User **${targetUserName}** has been **timed out** for ${timeoutDurationSeconds} ${plural}. (ID: \`${targetUserId}\`; ${reason})`
       }
 
       if (!this.DEV) {
         // Log the action in the logs channel (private)
-        const logs = client.channels.cache.get(guildChannels["logging"]);
+        const logs = client.channels.cache.get(guildChannels["logging"])
         if (logs) {
           let props = {
             color: colors["info"],
             title: {
-              text: "⏰ User Timeout"
+              text: "⏰ [Log] User Timeout"
             },
             fields: [
               { name: 'User',             value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
@@ -109,19 +106,19 @@ module.exports = class TimeoutCommand extends RookCommand {
           }
           const embed = new RookEmbed(props)
 
-          logs.send({ embeds: [ embed ] });
+          logs.send({ embeds: [ embed ] })
         } else {
-          console.log("Logs channel not found.");
+          console.log("Logs channel not found.")
         }
       }
 
       // Delete the deferred private reply to avoid it being left pending
 
     } catch (error) {
-      console.log(`There was an error when timing out the user: ${error.stack}`);
+      console.log(`There was an error when timing out the user: ${error.stack}`)
       this.error = true
       this.ephemeral = true
       this.props.description = `I couldn't timeout that user (ID: ${targetUserId}).`
     }
   }
-};
+}

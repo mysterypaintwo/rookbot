@@ -3,13 +3,13 @@ const { ApplicationCommandOptionType } = require('discord.js')
 const AsciiTable = require('ascii-table')
 
 function ksort(obj){
-  let keys = Object.keys(obj).sort(), sortedObj = {};
+  let keys = Object.keys(obj).sort(), sortedObj = {}
 
   for(let i in keys) {
-    sortedObj[keys[i]] = obj[keys[i]];
+    sortedObj[keys[i]] = obj[keys[i]]
   }
 
-  return sortedObj;
+  return sortedObj
 }
 
 module.exports = class BotGuildsCommand extends RookCommand {
@@ -75,20 +75,22 @@ module.exports = class BotGuildsCommand extends RookCommand {
     const Table = new AsciiTable("", {})
       .setHeading("Type","Name","ID")
     for (let [guildID, guildData] of Object.entries(ksort(sorted))) {
-      let tier = guildData.guild.premiumTier
-      if (!tier) { tier = 0 }
-      Table.addRow("Guild",guildData.guild.name,`(ID:\'${guildData.guild.id}\')`)
-        .addRow("Owner",`\'${guildData.owner.username}#${guildData.owner.discriminator}\'`,`(ID:\'${guildData.owner.id}\')`)
-        .addRow("Added",guildData.added)
-        .addRow("Tier",tier)
-        .addRow("")
-      this.props.description.push(
-        `**Guild:** ${guildData.guild.name} (ID:\`${guildData.guild.id}\`)`,
-        `**Owner:** \`${guildData.owner.username}#${guildData.owner.discriminator}\` (ID:\`${guildData.owner.id}\`, <@${guildData.owner.id}>)`,
-        `**Added:** ${guildData.added}`,
-        `**Tier:** ${tier}`,
-        ""
-      )
+      if (guildData?.guild) {
+        let tier = guildData.guild.premiumTier
+        if (!tier) { tier = 0 }
+        Table.addRow("Guild",guildData.guild.name,`(ID:\'${guildData.guild.id}\')`)
+          .addRow("Owner",`\'${guildData.owner.username}#${guildData.owner.discriminator}\'`,`(ID:\'${guildData.owner.id}\')`)
+          .addRow("Added",guildData.added)
+          .addRow("Tier",tier)
+          .addRow("")
+        this.props.description.push(
+          `**Guild:** ${guildData.guild.name} (ID:\`${guildData.guild.id}\`)`,
+          `**Owner:** \`${guildData.owner.username}#${guildData.owner.discriminator}\` (ID:\`${guildData.owner.id}\`, <@${guildData.owner.id}>)`,
+          `**Added:** ${guildData.added}`,
+          `**Tier:** ${tier}`,
+          ""
+        )
+      }
     }
     console.log(Table.toString())
 
@@ -100,7 +102,5 @@ module.exports = class BotGuildsCommand extends RookCommand {
     this.props.players = {
       user: entities.bot
     }
-
-
   }
 }

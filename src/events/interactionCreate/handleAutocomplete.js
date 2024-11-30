@@ -10,10 +10,10 @@ async function get_url(in_url) {
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
+  var rest = this.slice((to || from) + 1 || this.length)
+  this.length = from < 0 ? this.length + from : from
+  return this.push.apply(this, rest)
+}
 
 module.exports = async (client, interaction) => {
   if(interaction.isAutocomplete()) {

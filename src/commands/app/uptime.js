@@ -17,11 +17,11 @@ module.exports = class UptimeCommand extends RookCommand {
   }
   async action(client, interaction) {
     function timeConversion(duration = 0) {
-      const portions = [];
-      const msInSec = 1000;
-      const msInMin = msInSec * 60;
-      const msInHour = msInMin * 60;
-      const msInDay = msInHour * 24;
+      const portions = []
+      const msInSec = 1000
+      const msInMin = msInSec * 60
+      const msInHour = msInMin * 60
+      const msInDay = msInHour * 24
 
       const days = Math.trunc(duration / msInDay)
       if (days > 0) {
@@ -48,21 +48,10 @@ module.exports = class UptimeCommand extends RookCommand {
       return portions.join(' ')
     }
 
-    // Entities
-    let entities = {
-      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username }
-    }
-    // Players
-    this.props.players = {
-      user: entities.bot
-    }
-
     const uptime = await client.uptime
     this.props.description = [
         `<@${client.user.id}> has been online for:`,
         await timeConversion(uptime)
     ]
-
-
   }
 }

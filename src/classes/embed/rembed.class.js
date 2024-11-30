@@ -125,11 +125,11 @@ class RookEmbed extends EmbedBuilder {
     if ((!(props?.color)) || (props?.color && props.color.trim() == "")) {
       switch (props.color) {
         default:
-          props.color = this.defaults.stripe;
-          break;
+          props.color = this.defaults.stripe
+          break
       }
     // } else {
-    //   props.color = this.defaults.stripe;
+    //   props.color = this.defaults.stripe
     }
 
     // Inbound footer message
@@ -297,4 +297,4 @@ class RookEmbed extends EmbedBuilder {
   }
 }
 
-exports.RookEmbed = RookEmbed;
+exports.RookEmbed = RookEmbed

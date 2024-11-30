@@ -35,4 +35,4 @@ module.exports = {
 
   name: 'fugetaboutit',
   description: 'Pronunciation tutorial',
-};
+}

@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { ApplicationCommandOptionType } = require('discord.js')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 async function get_url(in_url) {
   try {
@@ -164,4 +164,4 @@ module.exports = class HolyImageCommand extends RookCommand {
       this.props.description = "Holy Image not found!"
     }
   }
-};
+}

@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { ApplicationCommandOptionType } = require('discord.js')
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class ColorCommand extends RookCommand {
   constructor() {
@@ -25,10 +25,10 @@ module.exports = class ColorCommand extends RookCommand {
   }
 
   async action(client, interaction) {
-    const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase();
+    const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase()
 
     // Validate hex string
-    const hexRegex = /^[0-9A-F]{6}$/;
+    const hexRegex = /^[0-9A-F]{6}$/
     if (!hexRegex.test(hexInput)) {
       this.error = true
       this.props.description = "Invalid hex color code. Please provide a valid 6-character hexadecimal string (e.g., #FF5733 or FF5733)."
@@ -36,9 +36,9 @@ module.exports = class ColorCommand extends RookCommand {
     }
 
     // Convert hex to RGB
-    const r = parseInt(hexInput.substring(0, 2), 16);
-    const g = parseInt(hexInput.substring(2, 4), 16);
-    const b = parseInt(hexInput.substring(4, 6), 16);
+    const r = parseInt(hexInput.substring(0, 2), 16)
+    const g = parseInt(hexInput.substring(2, 4), 16)
+    const b = parseInt(hexInput.substring(4, 6), 16)
 
     // Create the embed
     this.props = {
@@ -48,8 +48,8 @@ module.exports = class ColorCommand extends RookCommand {
       },
       fields: [
         { name: 'Hex', value: `\`#${hexInput}\``,   inline: true },
-        { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true },
+        { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true }
       ]
     }
   }
-};
+}

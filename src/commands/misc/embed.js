@@ -1,6 +1,6 @@
-const { RookCommand } = require('../../classes/command/rcommand.class');
+const { AdminCommand } = require('../../classes/command/admincommand.class')
 
-module.exports = class EmbedCommand extends RookCommand {
+module.exports = class EmbedCommand extends AdminCommand {
   constructor() {
     let comprops = {
       name: "embed",
@@ -50,11 +50,6 @@ module.exports = class EmbedCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    // Acknowledge the interaction immediately without sending a reply yet
-     // This avoids the bot "waiting for a response"
-
     // all done in constructor
-
-
   }
-};
+}

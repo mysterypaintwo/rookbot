@@ -1,9 +1,9 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookCommand } = require('../../classes/command/rcommand.class')
+const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
-module.exports = class WarnCommand extends RookCommand {
+module.exports = class WarnCommand extends ModCommand {
   constructor() {
     let comprops = {
       name: "warn",
@@ -23,8 +23,8 @@ module.exports = class WarnCommand extends RookCommand {
           required: false,
         },
       ],
-      permissionsRequired: [PermissionFlagsBits.ManageMessages],
-      botPermissions: [PermissionFlagsBits.ManageMessages],
+      // permissionsRequired: [PermissionFlagsBits.ManageMessages],
+      // botPermissions: [PermissionFlagsBits.ManageMessages],
     }
     let props = {}
 
@@ -71,63 +71,106 @@ module.exports = class WarnCommand extends RookCommand {
       // Determine the name to display
       const targetUserName = guildMember?.nickname || targetUser.username;
 
-      // Reply publicly in the channel to confirm the warning
-      let props = {
-        color: colors["success"],
-        title: {
-          text: "Success!"
-        },
-        description: (this.DEV ? "DEV: " : "") + `User **${targetUserName}** has been **warned**. (${reason})`
+      // Reply publicly in the channel to confirm the warn
+      this.props.color = colors["success"]
+      this.props.title = {
+        text: "[ModPost] Success!",
+        emoji: "🟢"
       }
-      const embed = new RookEmbed(props)
-      interaction.channel.send({ embeds: [ embed ] });
+      this.props.description = [
+        (this.DEV ? "DEV: " : "") +
+        `User **${targetUserName}** has been **warned**.`,
+        `(ID: \`${targetUserId}\`; ${reason})`
+      ]
+
+      let props = {
+        public: this.props,
+        dm: null,
+        mod: null,
+        log: null
+      }
+      let embeds = {
+        public: new RookEmbed(props.public),
+        dm: null,
+        mod: null,
+        log: null
+      }
 
       if (!this.DEV) {
-        // Try to DM the user about the warning (private)
+        // Try to DM the user about the warn (private)
         try {
-          props = {
-            color: colors["warning"],
+          props.dm = {
+            color: colors["bad"],
             title: {
-              text: "Warned"
+              text: (this.DEV ? "[DM] " : "") + "Warned"
             },
-            description: `⚠️ You have been warned in the ${interaction.guild.name} server. (${reason})`
+            description: `⚠️You have been warned in the ${interaction.guild.name} server. (${reason})`
           }
-          const embed = new RookEmbed(props)
-          await targetUser.send({ embeds: [ embed ] });
-          this.props.description = `User successfully warned via DMs! Message: ${props.description}`
+          embeds.dm = new RookEmbed(props.dm)
+          await targetUser.send({ embeds: [ embeds.dm ] })
+
+          props.mod = {
+            color: colors["success"],
+            title: {
+              text: "[ModPost] Success!",
+              emoji: "🟢"
+            },
+            description: [
+              `✅ User **${targetUserName}** successfully warned via DMs!`,
+              "",
+              `Message: ${props.dm.description}`
+            ]
+          }
+          embeds.mod = new RookEmbed(props.mod)
+          await interaction.followUp(
+            {
+              embeds: [ embeds.mod ],
+              ephemeral: true
+            }
+          )
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
-          this.error = true
-          this.props.description = `I couldn't send the DM to the user (ID: ${targetUserId}). They might have DMs disabled.`
+          props.mod = {
+            color: colors["red"],
+            title: {
+              text: "Error"
+            },
+            description: [
+              `I couldn't send the DM to the user (ID: ${targetUserId}).`,
+              `They might have DMs disabled.`
+            ]
+          }
+          embeds.mod = new RookEmbed(props.mod)
+          await interaction.followUp(
+            {
+              embeds: [ embeds.mod ],
+              ephemeral: true
+            }
+          )
         }
-      } else {
-        this.props.description = (this.DEV ? "DEV: " : "") + this.props.description
       }
 
       if (!this.DEV) {
         // Log the action in the logs channel (private)
         const logs = client.channels.cache.get(guildChannels["logging"]);
         if (logs) {
-          let props = {
-            color: colors["warning"],
+          props.log = {
+            color: colors["bad"],
             title: {
-              text: "⚠️ User Warned"
+              text: "⚠️ [Log] User Warned"
             },
             fields: [
               { name: 'User Warned',  value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
               { name: 'Warned By',    value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
-              { name: 'Reason',       value: reason,                                              inline: false }
+              { name: 'Reason',       value: reason,                                             inline: false }
             ]
           }
-          const embed = new RookEmbed(props)
-
-          logs.send({ embeds: [ embed ] });
+          embeds.log = new RookEmbed(props.log)
+          logs.send({ embeds: [ embeds.log ] });
         } else {
           console.log("Logs channel not found.");
         }
       }
-      // Complete the interaction with a private success message
-      this.props.description = (this.DEV ? "DEV: " : "") + `<@${targetUserId}> has been successfully **warned** (${reason})!`
     } catch (error) {
       console.log(`There was an error when warning: ${error.stack}`);
       this.error = true
@@ -135,4 +178,4 @@ module.exports = class WarnCommand extends RookCommand {
       this.description = `I couldn't warn that user (ID: ${targetUserId}).`
     }
   }
-};
+}

@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
-const { RookEmbed } = require('../../classes/embed/rembed.class');
+const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 
 module.exports = {
   /**
@@ -8,70 +8,68 @@ module.exports = {
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
-    const PROFILE = require('../../PROFILE.json');
-    const guildIDs = require('../../dbs/guilds.json');
-    const guildID = interaction.guild.id;
-    const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const targetUserInput = interaction.options.get('user-id').value;
+    const guildID = interaction.guild.id
+    const guildChannels = require(`../../dbs/${guildID}/channels.json`)
+    const targetUserInput = interaction.options.get('user-id').value
 
     // Extract user ID from mention (if it's a mention)
-    const targetUserId = targetUserInput.replace(/[<@!>]/g, ''); // Remove <@>, <@!>, and >
+    const targetUserId = targetUserInput.replace(/[<@!>]/g, '') // Remove <@>, <@!>, and >
 
     // Get the user to be unmuted
-    let guildMember;
+    let guildMember
     try {
-      guildMember = interaction.guild.members.cache.get(targetUserId);
-      if (!guildMember) throw new Error('User not found in guild.');
+      guildMember = interaction.guild.members.cache.get(targetUserId)
+      if (!guildMember) throw new Error('User not found in guild.')
     } catch (error) {
       const embed = new RookEmbed({
         color: '#FF0000',
         title: { text: 'Error' },
-        description: 'User not found or not in the server.',
-      });
-      await interaction.editReply({ embeds: [embed], ephemeral: true });
-      return;
+        description: 'User not found or not in the server.'
+      })
+      await interaction.editReply({ embeds: [embed], ephemeral: true })
+      return
     }
 
     // Attempt to unmute the user
     try {
       if (!this.DEV) {
-        await guildMember.timeout(null); // Remove timeout
+        await guildMember.timeout(null) // Remove timeout
       }
 
-      const targetUserName = guildMember.nickname || guildMember.user.username;
+      const targetUserName = guildMember.nickname || guildMember.user.username
 
       const embed = new RookEmbed({
         color: '#00FF00',
-        title: { text: 'Success!' },
+        title: { text: '[ModPost] Success!', emoji: "🟢" },
         description: `User **${targetUserName}** has been **unmuted**.`,
       });
-      await interaction.channel.send({ embeds: [embed] });
+      await interaction.channel.send({ embeds: [embed] })
 
       if (!this.DEV) {
         // Log the action in the logs channel (private)
-        const logs = client.channels.cache.get(guildChannels['logging']);
+        const logs = client.channels.cache.get(guildChannels['logging'])
         if (logs) {
           const logEmbed = new RookEmbed({
             color: '#00FF00',
-            title: { text: '🔊 User Unmuted' },
+            title: { text: '🔊 [Log] User Unmuted' },
             fields: [
               { name: 'User Unmuted', value: `${guildMember}\n(ID: ${targetUserId})`, inline: true },
-              { name: 'Unmuted By', value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
+              { name: 'Unmuted By', value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
             ]
           });
-          logs.send({ embeds: [logEmbed] });
+          logs.send({ embeds: [logEmbed] })
         } else {
-          console.log('Logs channel not found.');
+          console.log('Logs channel not found.')
         }
       }
     } catch (error) {
-      console.log(`Error unmuting user: ${error.stack}`);
+      console.log(`Error unmuting user: ${error.stack}`)
       const embed = new RookEmbed({
         color: '#FF0000',
         title: { text: 'Error' },
         description: 'I couldn’t unmute that user.',
       });
-      await interaction.editReply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed], ephemeral: true })
     }
   },
 
@@ -82,9 +80,9 @@ module.exports = {
       name: 'user-id',
       description: 'The ID of the user you want to unmute.',
       type: ApplicationCommandOptionType.String,
-      required: true,
-    },
+      required: true
+    }
   ],
   permissionsRequired: [PermissionFlagsBits.ModerateMembers],
-  botPermissions: [PermissionFlagsBits.ModerateMembers],
-};
+  botPermissions: [PermissionFlagsBits.ModerateMembers]
+}

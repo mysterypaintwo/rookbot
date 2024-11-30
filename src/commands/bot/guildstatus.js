@@ -45,7 +45,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
       this.props.fields.push(
         {
           name: "Owner",
-          value: `<@${interaction.guild.ownerId}>`
+          value: `<@${interaction.guild.ownerId}> (\`ID: ${interaction.guild.ownerId}\`)`
         }
       )
     }
@@ -86,7 +86,5 @@ module.exports = class GuildStatusCommand extends RookCommand {
         value: `<t:${Math.floor(interaction.guild.createdTimestamp / 1000)}:f>`,
       }
     )
-
-
   }
 }
