@@ -55,7 +55,8 @@ module.exports = async (client, deletedMessage) => {
       fields: [
         {
           name: 'Author',
-          value: `<@${deletedMessage.author.id}> (ID: ${deletedMessage.author.id})`
+          value: `<@${deletedMessage.author.id}>` + " " +
+            `(ID: \`${deletedMessage.author.id}\`)`
         },
         {
           name: 'Channel',
@@ -86,9 +87,9 @@ module.exports = async (client, deletedMessage) => {
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `Author: ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,
-      `Channel: #${deletedMessage.channel.name}`,
-      `Content: ${deletedMessage.content}`,
+      `Author:     ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,
+      `Channel:    #${deletedMessage.channel.name}`,
+      `Content:    ${deletedMessage.content}`,
       `Message ID: ${deletedMessage.id}`
     ].join('\n') + '\n\n'
 

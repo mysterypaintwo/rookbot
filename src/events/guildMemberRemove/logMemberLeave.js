@@ -44,8 +44,10 @@ module.exports = async (client, oldMember) => {
       },
       fields: [
         {
-          name: 'Left Member',
-          value: `[${oldMember.user.tag}](https://discord.com/users/${oldMember.user.id}) (ID: \`${oldMember.user.id}\`)`
+          name: 'Member Left',
+          value: `[${oldMember.user.tag}]` +
+            `(https://discord.com/users/${oldMember.user.id})` + " " +
+            `(ID: \`${oldMember.user.id}\`)`
         },
         {
           name: 'Left At',
@@ -53,7 +55,8 @@ module.exports = async (client, oldMember) => {
         },
         {
           name: 'Guild',
-          value: `${oldMember.guild.name} (ID: \`${oldMember.guild.id}\`)`
+          value: oldMember.guild.name + " " +
+            `(ID: \`${oldMember.guild.id}\`)`
         }
       ],
       footer: {
@@ -75,9 +78,9 @@ module.exports = async (client, oldMember) => {
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `User: ${oldMember.user.tag} (ID: ${oldMember.user.id})`,
-      `Guild: ${oldMember.guild.name} (ID: ${oldMember.guild.id})`,
-      `Event: Member Left`,
+      `User:    ${oldMember.user.tag} (ID: ${oldMember.user.id})`,
+      `Guild:   ${oldMember.guild.name} (ID: ${oldMember.guild.id})`,
+      `Event:   Member Left`,
       `User ID: ${oldMember.user.id}`
     ].join('\n') + '\n\n'
 

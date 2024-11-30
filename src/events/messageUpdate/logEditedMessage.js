@@ -84,11 +84,12 @@ module.exports = async (client, oldMessage, newMessage) => {
       fields: [
         {
           name: 'Author',
-          value: `<@${newMessage.author.id}> (ID: ${newMessage.author.id})`
+          value: `<@${newMessage.author.id}>` + " " +
+            `(ID: \`${newMessage.author.id}\`)`
         },
         {
           name: 'Message',
-          value: `${newMessage.url} (ID: ${newMessage.id})`
+          value: `${newMessage.url} (ID: \`${newMessage.id}\`)`
         },
         {
           name: 'Old Content',
@@ -122,11 +123,11 @@ module.exports = async (client, oldMessage, newMessage) => {
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `Author: ${newMessage.author.tag} (ID: ${newMessage.author.id})`,
-      `Channel: #${newMessage.channel.name}`,
+      `Author:      ${newMessage.author.tag} (ID: ${newMessage.author.id})`,
+      `Channel:     #${newMessage.channel.name}`,
       `Old Content: ${oldContent}`,
       `New Content: ${newContent}`,
-      `Message ID: ${newMessage.id}`
+      `Message ID:  ${newMessage.id}`
     ].join('\n') + '\n\n'
 
     // Append the log entry to the file

@@ -33,7 +33,7 @@ module.exports = async (client, newMember) => {
     const logEmbed = new RookEmbed({
       color: colors["good"], // Green for new members joining
       title: {
-        text: '👋 [Log] New Member Joined'
+        text: '👋 [Log] Member Joined'
       },
       players: {
         user: {
@@ -47,8 +47,10 @@ module.exports = async (client, newMember) => {
       },
       fields: [
         {
-          name: 'New Member',
-          value: `[${fetchedMember.user.tag}](https://discord.com/users/${fetchedMember.user.id}) (ID: \`${fetchedMember.user.id}\`)`
+          name: 'Member Joined',
+          value: `[${fetchedMember.user.tag}]` +
+            `(https://discord.com/users/${fetchedMember.user.id})` + " " +
+            `(ID: \`${fetchedMember.user.id}\`)`
         },
         {
           name: 'Joined At',
@@ -58,7 +60,8 @@ module.exports = async (client, newMember) => {
         },
         {
           name: 'Guild',
-          value: `${fetchedMember.guild.name} (ID: \`${fetchedMember.guild.id}\`)`
+          value: fetchedMember.guild.name + " " +
+            `(ID: \`${fetchedMember.guild.id}\`)`
         }
       ],
       footer: {
@@ -80,9 +83,9 @@ module.exports = async (client, newMember) => {
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `User: ${fetchedMember.user.tag} (ID: ${fetchedMember.user.id})`,
-      `Guild: ${fetchedMember.guild.name} (ID: ${fetchedMember.guild.id})`,
-      `Event: Member Joined`,
+      `User:    ${fetchedMember.user.tag} (ID: ${fetchedMember.user.id})`,
+      `Guild:   ${fetchedMember.guild.name} (ID: ${fetchedMember.guild.id})`,
+      `Event:   Member Joined`,
       `User ID: ${fetchedMember.user.id}`
     ].join('\n') + '\n\n'
 

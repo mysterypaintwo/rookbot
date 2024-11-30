@@ -2,6 +2,8 @@ const { PermissionFlagsBits } = require('discord.js')
 const { AdminCommand } = require('./admincommand.class')
 const { RookEmbed } = require('../embed/rembed.class')
 const colors = require('../../dbs/colors.json')
+const path = require('path')
+const fs = require('fs')
 
 String.prototype.ucfirst = function() {
   return this.charAt(0).toUpperCase() + this.slice(1)
@@ -89,6 +91,7 @@ class ModCommand extends AdminCommand {
 
     // Get the guild member (to fetch nickname if present)
     const guildMember = interaction.guild.members.cache.get(targetUserId);
+    const user = guildMember || targetUser
 
     // Attempt to ACTION the user
     try {
@@ -206,7 +209,7 @@ class ModCommand extends AdminCommand {
             emoji = "[DEV]" + emoji
           }
           props.log = {
-            color: colors["bad"],
+            color: this.name == "unban" ? colors["good"] : colors["bad"],
             title: {
               text: "[Log] User " + tenses.past.ucfirst(),
               emoji: emoji
@@ -228,6 +231,22 @@ class ModCommand extends AdminCommand {
           embeds.log = new RookEmbed(props.log)
           logs.send({ embeds: [ embeds.log ] })
           console.log(`/${this.name}: LogPost`)
+          let logFilePath = path.join(
+            __dirname,
+            "..",
+            "..",
+            "botlogs",
+            "member" + this.name.ucfirst() + "s.log"
+          )
+          let logEntry = [
+            `[${new Date().toISOString()}]`,
+            `User:    ${user.tag} (ID: ${user.id})`,
+            `Guild:   ${interaction.guild.name} (ID: ${interaction.guild.id})`,
+            `User ID: ${user.id}`,
+            '--------------------------------'
+          ].join("\n") + "\n"
+          fs.appendFileSync(logFilePath, logEntry, "utf8")
+          console.log(`/${this.name}: LogFile`)
         } else {
           console.log("Logs channel not found.")
         }
@@ -236,7 +255,7 @@ class ModCommand extends AdminCommand {
       console.log(`There was an error when banning: ${error.stack}`)
       this.error = true
       this.ephemeral = true
-      this.props.description = `I couldn't ${tenses.present} that user (ID: ${targetUserId}).`
+      this.props.description = `I couldn't ${tenses.present} that user (ID: \`${targetUserId}\`).`
     }
   }
 }

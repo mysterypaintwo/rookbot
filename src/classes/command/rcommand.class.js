@@ -778,7 +778,11 @@ class RookCommand {
     // this.null is to be set if we've already sent the page(s) somewhere else
     // Not setting this.null after sending the page(s) will send the page(s) again
     if ((!(this?.null)) || (this?.null && (!(this.null)))) {
-      await this.send(message, this.pages)
+      try {
+        await this.send(message, this.pages)
+      } catch(e) {
+        // do nothing
+      }
     }
 
     try {

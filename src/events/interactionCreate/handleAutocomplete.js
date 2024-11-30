@@ -17,10 +17,28 @@ Array.prototype.remove = function(from, to) {
 
 module.exports = async (client, interaction) => {
   if(interaction.isAutocomplete()) {
-    return
-
     let focused = await interaction.options.getFocused(true)
+
+    // Help
+    if(focused.name == "section-name") {
+      let options = [
+        { name: "Application Commands", value: "app" },
+        { name: "Bot Commands",         value: "bot" },
+        { name: "Diagnostics",          value: "diagnostic" },
+        { name: "Dungeons of Infinity", value: "doi" },
+        { name: "Fun",                  value: "fun" },
+        { name: "Information",          value: "info" },
+        { name: "Meta",                 value: "meta" },
+        { name: "Miscellaneous",        value: "misc" },
+        { name: "Moderation",           value: "mod" },
+        { name: "Randomizers",          value: "rando" }
+      ]
+      interaction.respond(options)
+    }
+
+    // Holy Image
     if(focused.name == "game-id") {
+      return
       let gameIDsPlus = await get_url(`http://alttp.mymm1.com/holyimage/metadata.php?mode=gameIDs&expand=1`)
       let options = gameIDsPlus["games"]
       let newoptions = []

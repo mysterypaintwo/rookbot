@@ -45,7 +45,8 @@ module.exports = async (client, oldMember, newMember) => {
       fields: [
         {
           name: 'User',
-          value: `<@${newMember.user.id}> (ID: \`${newMember.user.id}\`)`
+          value: `<@${newMember.user.id}>` + " " +
+            `(ID: \`${newMember.user.id}\`)`
         },
         {
           name: 'Old Nickname',
@@ -57,7 +58,8 @@ module.exports = async (client, oldMember, newMember) => {
         },
         {
           name: 'Guild',
-          value: `${newMember.guild.name} (ID: \`${newMember.guild.id}\`)`
+          value: newMember.guild.name + " " +
+            `(ID: \`${newMember.guild.id}\`)`
         }
       ],
       footer: {
@@ -94,11 +96,11 @@ module.exports = async (client, oldMember, newMember) => {
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,
-      `User: ${newMember.user.tag} (ID: ${newMember.user.id})`,
-      `Guild: ${newMember.guild.name} (ID: ${newMember.guild.id})`,
+      `User:         ${newMember.user.tag} (ID: ${newMember.user.id})`,
+      `Guild:        ${newMember.guild.name} (ID: ${newMember.guild.id})`,
       `Old Nickname: ${oldNick}`,
       `New Nickname: ${newNick}`, // Use username if nickname is undefined
-      `User ID: ${newMember.user.id}`
+      `User ID:      ${newMember.user.id}`
     ].join('\n') + '\n\n'
 
     // Append the log entry to the file

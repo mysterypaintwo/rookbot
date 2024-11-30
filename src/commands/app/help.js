@@ -12,7 +12,8 @@ module.exports = class HelpCommand extends RookCommand {
         {
           name: "section-name",
           description: "Section Name",
-          type: ApplicationCommandOptionType.String
+          type: ApplicationCommandOptionType.String,
+          autocomplete: true
         },
         {
           name: "command-name",
@@ -59,15 +60,18 @@ module.exports = class HelpCommand extends RookCommand {
           fields: [
             {
               name: "Name",
-              value: `\`/${cmd.name}\``
+              value: `\`/${cmd.name}\``,
+              inline: true
             },
             {
               name: "Category",
-              value: `\`${cmd.category}\``
+              value: `\`${cmd.category}\``,
+              inline: true
             },
             {
               name: "Description",
-              value: cmd.description
+              value: cmd.description,
+              inline: false
             }
           ]
         }
@@ -75,7 +79,8 @@ module.exports = class HelpCommand extends RookCommand {
           props.fields.push(
             {
               name: "Access",
-              value: cmd.access
+              value: cmd.access,
+              inline: false
             }
           )
         }
@@ -89,7 +94,8 @@ module.exports = class HelpCommand extends RookCommand {
               props.fields.push(
                 {
                   name: optionName,
-                  value: option.description
+                  value: option.description,
+                  inline: false
                 }
               )
             }
