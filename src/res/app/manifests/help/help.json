@@ -272,6 +272,24 @@
       "options": [],
       "access": "unset",
       "segment": "local"
+    },
+    "mention": {
+      "name": "mention",
+      "category": "meta",
+      "description": "Give code to post a mention in chat",
+      "options": [
+        {
+          "name": "target-id",
+          "description": "ID of target",
+          "required": true
+        },
+        {
+          "name": "target-type",
+          "description": "Mention Type"
+        }
+      ],
+      "access": "unset",
+      "segment": "local"
     }
   },
   "misc": {
