@@ -24,7 +24,12 @@ module.exports = async (client, deletedMessage) => {
     // Fetch the log channel using the deletedMessage's guild ID
     const guildID = deletedMessage.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const logChannel = client.channels.cache.get(guildChannels["logging"])
+    let log_type = "logging"
+    let log_check = "logging-messages"
+    if (log_check in guildChannels) {
+      log_type = log_check
+    }
+    const logChannel = client.channels.cache.get(guildChannels[log_type])
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.')

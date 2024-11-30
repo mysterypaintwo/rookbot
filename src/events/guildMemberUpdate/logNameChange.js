@@ -57,7 +57,7 @@ module.exports = async (client, oldMember, newMember) => {
         },
         {
           name: 'Guild',
-          value: `${newMember.guild.name} (ID: ${newMember.guild.id})`
+          value: `${newMember.guild.name} (ID: \`${newMember.guild.id}\`)`
         }
       ],
       footer: {
@@ -70,11 +70,16 @@ module.exports = async (client, oldMember, newMember) => {
     // Fetch the log channel using its ID
     const guildID = newMember.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const logChannelObject = newMember.guild.channels.cache.get(guildChannels["logging"])
+    let log_type = "logging"
+    let log_check = "logging-names"
+    if (log_check in guildChannels) {
+      log_type = log_check
+    }
+    const logChannel = client.channels.cache.get(guildChannels[log_type])
 
     // Send the embed to the log channel, if found and valid
-    if (logChannelObject?.isTextBased()) {
-      await logChannelObject.send({ embeds: [embed] })
+    if (logChannel?.isTextBased()) {
+      await logChannel.send({ embeds: [embed] })
     } else {
       console.warn('Log channel not found or not a text-based channel.')
     }

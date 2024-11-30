@@ -14,7 +14,12 @@ module.exports = async (client, oldMember) => {
     // Fetch the log channel using the oldMember's guild ID
     const guildID = oldMember.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const logChannel = client.channels.cache.get(guildChannels["logging-members"])
+    let log_type = "logging"
+    let log_check = "logging-members"
+    if (log_check in guildChannels) {
+      log_type = log_check
+    }
+    const logChannel = client.channels.cache.get(guildChannels[log_type])
 
     if (!logChannel || !logChannel.isTextBased()) {
       console.warn('Log channel not found or is not text-based.')
@@ -40,7 +45,7 @@ module.exports = async (client, oldMember) => {
       fields: [
         {
           name: 'Left Member',
-          value: `[${oldMember.user.tag}](https://discord.com/users/${oldMember.user.id}) (ID: ${oldMember.user.id})`
+          value: `[${oldMember.user.tag}](https://discord.com/users/${oldMember.user.id}) (ID: \`${oldMember.user.id}\`)`
         },
         {
           name: 'Left At',
@@ -48,7 +53,7 @@ module.exports = async (client, oldMember) => {
         },
         {
           name: 'Guild',
-          value: oldMember.guild.name
+          value: `${oldMember.guild.name} (ID: \`${oldMember.guild.id}\`)`
         }
       ],
       footer: {

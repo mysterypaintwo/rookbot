@@ -660,7 +660,7 @@ class RookCommand {
     if (Array.isArray(pages)) {
       // If it's just one and we're not forcing pages, just send the embed
       if ((pages.length <= 1) && !forcepages) {
-        console.log("Sending an embed")
+        console.log(`/${this.name}: Sending an embed`)
         // @ts-ignore
         return message.editReply(
           {
@@ -699,7 +699,7 @@ class RookCommand {
         // })
         these_pages.setEmbeds(pages)
         these_pages.render()
-        console.log("Sending pages")
+        console.log(`/${this.name}: Sending pages`)
         // @ts-ignore
         return message.editReply(
           {
@@ -710,7 +710,7 @@ class RookCommand {
         )
       }
     } else {
-      console.log("Sending one embed page")
+      console.log(`/${this.name}: Sending one embed page`)
       // Else, it's just an embed, send it
       // @ts-ignore
       return message.editReply(
@@ -787,6 +787,10 @@ class RookCommand {
     } catch(err) {
       console.log(err.stack)
     }
+  }
+
+  async test(client, message, args, cmd) {
+    console.log(`/${this.name}: Test`)
   }
 }
 

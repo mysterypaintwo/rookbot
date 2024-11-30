@@ -91,6 +91,22 @@
       "segment": "local"
     }
   },
+  "botdev": {
+    "testsuite": {
+      "name": "testsuite",
+      "category": "botdev",
+      "description": "Runs a test suite for a command",
+      "options": [
+        {
+          "name": "command-name",
+          "description": "The name of the command to test.",
+          "required": true
+        }
+      ],
+      "access": "Admin",
+      "segment": "new"
+    }
+  },
   "bot": {
     "botguilds": {
       "name": "botguilds",

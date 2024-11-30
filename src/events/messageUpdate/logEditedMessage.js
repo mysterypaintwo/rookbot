@@ -60,7 +60,12 @@ module.exports = async (client, oldMessage, newMessage) => {
     // Fetch the log channel using its ID
     const guildID = newMessage.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const logChannelObject = newMessage.guild.channels.cache.get(guildChannels["logging"])
+    let log_type = "logging"
+    let log_check = "logging-messages"
+    if (log_check in guildChannels) {
+      log_type = log_check
+    }
+    const logChannel = client.channels.cache.get(guildChannels[log_type])
 
     const embed = new RookEmbed({
       color: colors["info"], // Orange for message updates
@@ -101,8 +106,8 @@ module.exports = async (client, oldMessage, newMessage) => {
     });
 
     // Send the embed to the log channel, if found and valid
-    if (logChannelObject?.isTextBased()) {
-      await logChannelObject.send({ embeds: [embed] })
+    if (logChannel?.isTextBased()) {
+      await logChannel.send({ embeds: [embed] })
     } else {
       console.warn('Log channel not found or not a text-based channel.')
     }
