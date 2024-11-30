@@ -43,7 +43,7 @@ module.exports = class ExitCommand extends BotDevCommand {
       target: entities.bot
     }
 
-    this.send(interaction, new RookEmbed(this.props))
+    interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
 
     await unready(client)
 

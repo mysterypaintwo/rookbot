@@ -29,9 +29,6 @@ module.exports = class ShutdownCommand extends BotDevCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction) {
-    interaction.deferReply()
-    interaction.deleteReply()
-
     let action = "Shutting Down"
 
     console.log(`!!! Bot Shutdown by: ${interaction.member.user.tag} !!!`)
@@ -79,7 +76,7 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       }
 
       this.props.description = `${action} <@${client.user.id}>`
-      this.send(interaction, new RookEmbed(this.props))
+      interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
 
       console.log(`!!! SHUTDOWN`)
 
