@@ -8,17 +8,17 @@
     "url": "https://github.com/mysterypaintwo/rookbot/releases/tag/<LATEST_TAG>"
   },
   {
-    "title": "Master Build Status",
+    "title": "Main Build Status",
     "keyword": "github/actions/workflow/status",
-    "query": "newci.yml?branch=master",
-    "left": "master build",
+    "query": "push.yml?branch=main",
+    "left": "main build",
     "logo": "github",
-    "url": "https://github.com/mysterypaintwo/rookbot/tree/master"
+    "url": "https://github.com/mysterypaintwo/rookbot/tree/main"
   },
   {
     "title": "Stable Build Status",
     "keyword": "github/actions/workflow/status",
-    "query": "newci.yml?branch=stable",
+    "query": "push.yml?branch=stable",
     "left": "stable build",
     "logo": "github",
     "url": "https://github.com/mysterypaintwo/rookbot/tree/stable"
@@ -29,6 +29,6 @@
     "query": "<LATEST_TAG>/stable",
     "left": "commits to stable since <LATEST_TAG>",
     "logo": "github",
-    "url": "https://github.com/mysterypaintwo/rookbot/compare/master..stable"
+    "url": "https://github.com/mysterypaintwo/rookbot/compare/main..stable"
   }
 ]

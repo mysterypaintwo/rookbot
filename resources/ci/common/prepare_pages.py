@@ -35,6 +35,11 @@ def prepare_pages():
         os.path.join(".", "package.json"),
         os.path.join("..", "pages", "resources", "app", "meta", "manifests")
     )
+    # copy help file over
+    copy(
+        os.path.join(".", "src", "res", "app", "manifests", "help", "help.json")
+        os.path.join("..", "pages", "resources", "app", "meta", "manifests")
+    )
 
     with(open(os.path.join(".","package.json"),"r")) as PACKAGE:
         PACKAGE_JSON = json.load(PACKAGE)
