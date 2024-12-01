@@ -134,6 +134,7 @@ jobs:
         shell: bash
         run: |
           tar xvf artifact.tar
+          rm artifact.tar
       # Prepare Differences
       - name: 📝Prepare Differences
         shell: bash
@@ -144,6 +145,11 @@ jobs:
         shell: bash
         run: |
           git diff --name-status --cached
+      # List commit message
+      - name: 📝List Commit Message
+        shell: bash
+        run: |
+          cat commit.txt
       # Push to GH-Pages
       - name: 🚀Push to GH-Pages
         uses: actions/deploy-pages@v4.0.5
