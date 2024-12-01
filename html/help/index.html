@@ -2,9 +2,9 @@
 <head>
 <link rel="stylesheet" href="../resources/app/css/global.css" type="text/css" />
 <script
-    src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-    crossorigin="anonymous"
+  src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+  integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+  crossorigin="anonymous"
 ></script>
 <script>
 async function get_json(url) {
@@ -21,46 +21,47 @@ async function load() {
   for(let [sectionName, sectionData] of Object.entries(help)) {
     let sectionLink = $("#sectionLink").clone().contents()
     sectionLink
-        .find("a")
-        .attr("href", `./?section=${sectionName}`)
-        .text(sectionName)
+      .find("a")
+      .attr("href", `./?section=${sectionName}`)
+      .text(sectionName)
     $("#sections").append(sectionLink)
   }
 
-  for(let [commandName, cmd] of Object.entries(help[section])) {
-    let listing = $("#cmdListing").clone().contents()
-    listing
+  if(section in help) {
+    for(let [commandName, cmd] of Object.entries(help[section])) {
+      let listing = $("#cmdListing").clone().contents()
+      listing
         .append($("#cmdTitle").clone().contents())
-    listing
+      listing
         .find("code")
         .text("/" + commandName)
-    listing
+      listing
         .append($("#cmdDescription").clone().contents())
-    listing
+      listing
         .find("dd")
         .text(cmd.description)
-    listing
+      listing
         .append($("#cmdOptions").clone().contents())
-    for(let [optionID, option] of Object.entries(cmd.options)) {
+      for(let [optionID, option] of Object.entries(cmd.options)) {
         let cmdOption = $("#cmdOption").clone().contents()
         cmdOption
-            .find("code")
-            .text(option.name)
+          .find("code")
+          .text(option.name)
         if (option.required) {
-            cmdOption.find("dt")
-                .append(
-                    $("<span>")
-                    .html(" - <em>required</em>")
-                )
+          cmdOption.find("dt")
+            .append(
+              $("<span>")
+              .html(" - <em>required</em>")
+            )
         }
         cmdOption.find("dd")
-            .text(option.description)
+          .text(option.description)
         listing.find("ul")
-            .append(cmdOption)
+          .append(cmdOption)
+      }
+      $("#section").append(listing)
     }
-    $("#section").append(listing)
   }
-  console.log(help[section])
 }
 </script>
 </head>
