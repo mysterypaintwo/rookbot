@@ -168,7 +168,12 @@ class RookEmbed extends EmbedBuilder {
       if (!(props.footer.msg.includes(this.PACKAGE.version))) {
         props.footer.msg += ` [v${this.PACKAGE.version}]`
       }
-      this.setFooter({ text: props.footer.msg, iconURL: props.footer.image })
+      this.setFooter(
+        {
+          text: props.footer.msg,
+          iconURL: props.footer.image
+        }
+      )
     }
 
     // ERROR

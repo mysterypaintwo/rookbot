@@ -1,8 +1,8 @@
 const { PermissionFlagsBits, ApplicationCommandOptionType } = require('discord.js')
 const { ModCommand } = require('../../classes/command/modcommand.class')
+const { RookEmbed } = require('../../classes/embed/rembed.class')
 const path = require('path')
 const fs = require('fs')
-const { RookEmbed } = require('../../classes/embed/rembed.class')
 
 module.exports = class SearchCommand extends ModCommand {
   constructor() {
@@ -10,6 +10,7 @@ module.exports = class SearchCommand extends ModCommand {
       name: "search",
       category: "mod",
       description: "Search Logs",
+      flags: { target: "required" },
       options: [
         {
           name: "search-type",

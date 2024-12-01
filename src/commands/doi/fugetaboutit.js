@@ -1,6 +1,6 @@
 const { Client, Interaction } = require('discord.js');
-const path = require('path');
 const { RookEmbed } = require('../../classes/embed/rembed.class');
+const path = require('path');
 
 module.exports = {
   /**

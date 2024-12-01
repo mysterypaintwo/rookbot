@@ -1,5 +1,5 @@
-const { RookCommand } = require('../../classes/command/rcommand.class')
 const { changeNickname } = require('../../utils/changeNickname')  // Import the changeNickname function
+const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class CastleNameCommand extends RookCommand {
   constructor() {

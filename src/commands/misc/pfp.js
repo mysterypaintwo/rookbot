@@ -7,6 +7,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
       name: "pfp",
       category: "misc",
       description: "Displays the profile picture of the mentioned user",
+      flags: { target: "required" },
       options: [
         {
           name: "target-user",
@@ -43,7 +44,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
     const avatarURL = targetMember.user.displayAvatarURL({ size: 1024 })
 
     this.props = {
-      title: {
+      caption: {
         text: `${targetUserName}'s Avatar`,
         url: avatarURL
       },

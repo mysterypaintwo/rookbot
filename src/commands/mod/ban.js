@@ -7,6 +7,7 @@ module.exports = class BanCommand extends ModCommand {
       name: "ban",
       category: "mod",
       description: "Bans a user from the server",
+      flags: { target: "required" },
       options: [
         {
           name: "user-id",

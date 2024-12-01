@@ -1,10 +1,9 @@
 // @ts-check
 
 const { Client, Message, MessageFlags, TextChannel } = require('discord.js')
+const { Pagination } = require('pagination.djs')
 const { RookEmbed } = require('../embed/rembed.class')
 const { SlimEmbed } = require('../embed/rslimbed.class')
-
-const { Pagination } = require('pagination.djs')
 const fs = require('fs')
 
 /**
@@ -420,12 +419,70 @@ class RookCommand {
    * @param {Object.<string, string>} flags Flags for user management
    */
   async processArgs(message, args, flags = { user: "default", target: "invalid", bot: "invalid", search: "valid" }) {
-    let foundHandles = { players: {}, invalid: "", flags: flags }
+    let foundHandles  = { players: {}, invalid: "", flags: flags }
+    let user          = null
+    let mention       = null
+    let search        = null
+    let loaded        = null
 
-    let user = message?.author ? message.author : null
-    let mention = message?.mentions ? message?.mentions?.members?.first() : null
-    let search = (args && (args.length > 0) && (!(mention))) ? await message?.guild?.members.fetch({ query: args.join(" "), limit: 1 }) : undefined
-    let loaded = undefined
+    let entities = {}
+
+    entities.discord = {
+      id: "0",
+      name: "Discord",
+      avatar: "https://cdn.iconscout.com/icon/free/png-512/free-discord-logo-icon-download-in-svg-png-gif-file-formats--social-media-pack-logos-icons-3073764.png?f=webp&w=256",
+      username: "discord",
+      discriminator: "0"
+    }
+
+    let client_user = await message?.guild?.members.fetch(message.client.user.id)
+    entities.bot = {
+      id:             message.client.user.id,
+      name:           client_user?.nickname || message.client.user.displayName,
+      avatar:         message.client.user.displayAvatarURL(),
+      username:       message.client.user.id,
+      discriminator:  message.client.user.discriminator
+    }
+
+    // {Message} message
+    if (message?.author) {
+      user = message.author
+    }
+    // {Interaction} message
+    // @ts-ignore
+    if (message?.user) {
+      // @ts-ignore
+      user = message.user
+    }
+    // @ts-ignore
+    user = await message?.guild?.members.fetch(user.id)
+
+    if (user) {
+      entities.author = {
+        id:             user.id,
+        name:           user?.nickname            || user?.displayName,
+        avatar:         user?.displayAvatarURL()  || user?.user.displayAvatarURL(),
+        username:       user?.user.username,
+        discriminator:  user?.user.discriminator
+      }
+    }
+
+    if (message?.mentions) {
+      mention = message?.mentions?.members?.first()
+      if (mention) {
+        mention = await message?.guild?.members.fetch(mention.id)
+        if (mention) {
+          entities.mention = {
+            id:             mention.id,
+            name:           mention?.nickname           || mention?.displayName,
+            avatar:         mention?.displayAvatarURL() || mention?.user.displayAvatarURL(),
+            username:       mention?.user.username,
+            discriminator:  mention?.user.discriminator
+          }
+        }
+      }
+    }
+
     let padding = 9
     let debugout = [ `Flags:`.padEnd(padding) + JSON.stringify(flags) ]
 
@@ -433,13 +490,10 @@ class RookCommand {
     if (user) {
       // Load the User as the Target
       // Set the User Player
-      loaded = user
+      loaded = entities.author
       foundHandles.user = loaded
       foundHandles.loadedType = "user"
-      foundHandles.players.user = {
-        name: loaded.username,
-        avatar: loaded.displayAvatarURL()
-      }
+      foundHandles.players.user = loaded
       // debugout.push(`User:`.padEnd(padding) + `<@${loaded.id}>`)
       debugout.push(`User:`.padEnd(padding) + `${loaded.username}`)
     }
@@ -447,7 +501,7 @@ class RookCommand {
     // If we have a Mention
     if (mention) {
       // Load the Mention as the Target
-      loaded = mention.user
+      loaded = entities.mention
       foundHandles.mention = loaded
       foundHandles.loadedType = "mention"
       // debugout.push(`Mention:`.padEnd(padding) + `<@${loaded.id}>`)
@@ -466,11 +520,6 @@ class RookCommand {
         if (loaded?.nickname) {
           // @ts-ignore
           debugout.push(`Terms:`.padEnd(padding) + `[Nick:${loaded.nickname}] [UName:${loaded.user.username}]`)
-        }
-        // @ts-ignore
-        if (loaded?.user) {
-          // @ts-ignore
-          loaded = loaded.user
         }
         foundHandles.search = loaded
         foundHandles.loadedType = "search"
@@ -520,10 +569,7 @@ class RookCommand {
 
       // Set Loaded as Target Player
       if (foundHandles.invalid == "") {
-        foundHandles.players.target = {
-          name: loaded.username,
-          avatar: loaded.displayAvatarURL({ format: "png", dynamic: true })
-        }
+        foundHandles.players.target = loaded
       }
       // debugout.push(`Loaded:`.padEnd(padding) + `<@${loaded.id}>`)
       debugout.push(`Loaded:`.padEnd(padding) + `${loaded.username}`)
@@ -597,10 +643,13 @@ class RookCommand {
       }
     }
 
-    this.inputData = foundHandles
-    this.props.players = foundHandles.players
-    this.props.title = foundHandles?.title ? foundHandles.title : this.props.title
-    this.props.description = foundHandles?.description ? foundHandles.description : this.props.description
+    this.inputData          = foundHandles
+    this.props.entities     = entities
+    this.props.players      = foundHandles.players
+    this.props.title        = foundHandles?.title ? foundHandles.title : this.props.title
+    this.props.description  = foundHandles?.description ? foundHandles.description : this.props.description
+
+    // console.log(this.props)
   }
 
   /**

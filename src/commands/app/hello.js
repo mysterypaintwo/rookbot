@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class')
+const colors = require('../../dbs/colors.json')
 const shell = require('shelljs')
 const fs = require('fs')
-const colors = require('../../dbs/colors.json')
 
 module.exports = class HelloCommand extends RookCommand {
   constructor() {

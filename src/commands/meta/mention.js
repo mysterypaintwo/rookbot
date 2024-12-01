@@ -7,6 +7,7 @@ module.exports = class MentionCommand extends RookCommand {
       name: "mention",
       category: "meta",
       description: "Give code to post a mention in chat",
+      flags: { target: "required" },
       options: [
         {
           name: "target-id",

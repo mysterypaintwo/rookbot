@@ -1,6 +1,6 @@
 const { Client, Interaction } = require('discord.js')
-const path = require('path')
 const { RookCommand } = require('../../classes/command/rcommand.class')
+const path = require('path')
 
 module.exports = class MothCommand extends RookCommand {
   constructor() {

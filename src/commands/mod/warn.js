@@ -1,7 +1,5 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
 const { ModCommand } = require('../../classes/command/modcommand.class')
-const { RookEmbed } = require('../../classes/embed/rembed.class');
-const colors = require('../../dbs/colors.json')
 
 module.exports = class WarnCommand extends ModCommand {
   constructor() {
@@ -9,6 +7,7 @@ module.exports = class WarnCommand extends ModCommand {
       name: "warn",
       category: "mod",
       description: "Warns a user in the server.",
+      flags: { target: "required" },
       options: [
         {
           name: "user-id",

@@ -9,6 +9,7 @@ module.exports = class TimeoutCommand extends ModCommand {
       name: "timeout",
       category: "mod",
       description: "Times out a user for a specified duration.",
+      flags: { target: "required" },
       options: [
         {
           name: "user-id",

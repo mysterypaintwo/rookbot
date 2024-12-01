@@ -3,6 +3,8 @@ const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 const colors = require('../../dbs/colors.json')
 
+// Multiple messages
+
 module.exports = class LockCommand extends ModCommand {
   constructor() {
     let comprops = {

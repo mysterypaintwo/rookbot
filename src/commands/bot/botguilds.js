@@ -1,5 +1,5 @@
-const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const { ApplicationCommandOptionType } = require('discord.js')
+const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const AsciiTable = require('ascii-table')
 
 function ksort(obj){

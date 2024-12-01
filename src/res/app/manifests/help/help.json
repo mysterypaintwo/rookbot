@@ -108,6 +108,20 @@
     }
   },
   "bot": {
+    "botavatar": {
+      "name": "botavatar",
+      "category": "bot",
+      "description": "Set rookbot's Avatar",
+      "options": [
+        {
+          "name": "avatar-url",
+          "description": "Avatar URL",
+          "required": true
+        }
+      ],
+      "access": "BotDev",
+      "segment": "local"
+    },
     "botguilds": {
       "name": "botguilds",
       "category": "bot",
@@ -119,6 +133,20 @@
         }
       ],
       "access": "unset",
+      "segment": "local"
+    },
+    "botnickname": {
+      "name": "botnickname",
+      "category": "bot",
+      "description": "Set rookbot's Nickname",
+      "options": [
+        {
+          "name": "bot-nickname",
+          "description": "Bot Nickname",
+          "required": true
+        }
+      ],
+      "access": "BotDev",
       "segment": "local"
     },
     "botsrc": {

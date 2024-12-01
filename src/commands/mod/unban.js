@@ -1,7 +1,5 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
 const { ModCommand } = require('../../classes/command/modcommand.class')
-const { RookEmbed } = require('../../classes/embed/rembed.class');
-const colors = require('../../dbs/colors.json')
 
 module.exports = class UnbanCommand extends ModCommand {
   constructor() {
@@ -9,6 +7,7 @@ module.exports = class UnbanCommand extends ModCommand {
       name: "unban",
       category: "mod",
       description: "Unbans a user from the server.",
+      flags: { target: "required" },
       options: [
         {
           name: "user-id",

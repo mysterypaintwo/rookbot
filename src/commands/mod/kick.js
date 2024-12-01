@@ -1,7 +1,5 @@
 const { ApplicationCommandOptionType } = require('discord.js');
 const { ModCommand } = require('../../classes/command/modcommand.class')
-const { RookEmbed } = require('../../classes/embed/rembed.class');
-const colors = require('../../dbs/colors.json')
 
 module.exports = class KickCommand extends ModCommand {
   constructor() {
@@ -9,6 +7,7 @@ module.exports = class KickCommand extends ModCommand {
       name: "kick",
       category: "mod",
       description: "Kicks a user from the server.",
+      flags: { target: "required" },
       options: [
         {
           name: "user-id",
