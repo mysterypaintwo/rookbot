@@ -110,7 +110,7 @@ module.exports = class HelloCommand extends RookCommand {
       id: this.GLOBALS?.targetserver ? this.GLOBALS.targetserver : "?"
     }
     if (server.id != "?") {
-      server.name = await client.guilds.cache.find(g => g.id == server.id).name
+      server.name = await client.guilds.cache.find(g => g.id == server.id)?.name || "?"
     }
     this.props.fields = [
       {
@@ -147,7 +147,7 @@ module.exports = class HelloCommand extends RookCommand {
       },
       {
         name: "Server ID",
-        value: server.id,
+        value: `\`${server.id}\``,
         inline: true
       },
       {

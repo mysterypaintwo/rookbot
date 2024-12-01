@@ -149,7 +149,7 @@ module.exports = async (client) => {
     id: GLOBALS?.targetserver ? GLOBALS.targetserver : "?"
   }
   if (server.id != "?") {
-    server.name = await client.guilds.cache.find(g => g.id == server.id).name
+    server.name = await client.guilds.cache.find(g => g.id == server.id)?.name || "?"
   }
   props.fields = [
     {
@@ -186,7 +186,7 @@ module.exports = async (client) => {
     },
     {
       name: "Server ID",
-      value: server.id,
+      value: `\`${server.id}\``,
       inline: true
     },
     {
@@ -263,9 +263,11 @@ module.exports = async (client) => {
       let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`)
       let channelID = channelIDs["bot-console"]
       let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"])
-      let channel = await guild.channels.cache.find(c => c.id === channelID)
-      let embed = new RookEmbed(props)
-      await channel.send({ embeds: [ embed ] })
+      if (guild) {
+        let channel = await guild.channels.cache.find(c => c.id === channelID)
+        let embed = new RookEmbed(props)
+        await channel.send({ embeds: [ embed ] })
+      }
     }
   }
 }
