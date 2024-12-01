@@ -129,6 +129,11 @@ jobs:
         with:
           name: pages-${{ matrix.os-name }}
           path: ./
+      # extract pages artifact
+      - name: 📂Extract Pages Artifact
+        shell: bash
+        run: |
+          tar xvf artifact.tar
       # Prepare Differences
       - name: 📝Prepare Differences
         shell: bash
