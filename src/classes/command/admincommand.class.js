@@ -12,7 +12,7 @@ class AdminCommand extends RookCommand {
   constructor(comprops, props) {
     comprops.permissionsRequired = [PermissionFlagsBits.Administrator]
     comprops.botPermssions = [PermissionFlagsBits.Administrator]
-    comprops.access = "Admin"
+    comprops.access = comprops?.access ? comprops.access : "Admin"
 
     super(
       {...comprops},

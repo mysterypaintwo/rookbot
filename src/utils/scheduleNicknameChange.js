@@ -1,7 +1,7 @@
 const schedule = require('node-schedule')
 const { changeNickname } = require('../utils/changeNickname')  // Import the changeNickname function
 
-function scheduleNicknameChange(client, member, isDoI) {
+function scheduleNicknameChange(client, member, guildID) {
   if (!member || !member.user)
     return
   const midnightPacific = { hour: 0, minute: 0, tz: "America/Los_Angeles" }
@@ -11,11 +11,11 @@ function scheduleNicknameChange(client, member, isDoI) {
     try {
 
       // Call the changeNickname function to change the nickname
-      const result = await changeNickname(client, member, isDoI)
+      const result = await changeNickname(client, member)
 
       // Check the result and log accordingly
       if (result.success) {
-        console.log(`Changed nickname of ${member.user.tag} to "${result.message}".`)
+        console.log(`Changed nickname of ${member.user.tag}: ${result.message}`)
       } else {
         console.error(`Error changing nickname for ${member.user.tag}: ${result.message}`)
       }

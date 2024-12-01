@@ -243,12 +243,20 @@ class RookEmbed extends EmbedBuilder {
     // Stripe
     this.setColor(props.color)
 
+    if(props?.ephemeral && props.ephemeral) {
+      this.ephemeral = props.ephemeral
+    }
+
     // Title
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
-      if (props.title?.emoji) {
-        props.title.text = `${props.title.emoji} ${props.title.text}`
+      if(props?.ephemeral && props.ephemeral) {
+        props.title.emoji = "🤫😶"
       }
-      this.setTitle(props.title.text)
+      this.setTitle(
+        (props.title?.emoji ? (props.title.emoji + " ") : "") +
+        ((props?.ephemeral && props.ephemeral) ? "[YouPost] " : "") +
+        props.title.text
+      )
       if (props?.title?.url && props.title.url.trim() != "") {
         this.setURL(props.title.url.trim())
       }

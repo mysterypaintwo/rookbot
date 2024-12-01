@@ -127,7 +127,8 @@ module.exports = async (client, oldMessage, newMessage) => {
       `Channel:     #${newMessage.channel.name}`,
       `Old Content: ${oldContent}`,
       `New Content: ${newContent}`,
-      `Message ID:  ${newMessage.id}`
+      `Message ID:  ${newMessage.id}`,
+      '--------------------------------'
     ].join('\n') + '\n\n'
 
     // Append the log entry to the file

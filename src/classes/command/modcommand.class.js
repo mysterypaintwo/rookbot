@@ -1,4 +1,4 @@
-const { PermissionFlagsBits } = require('discord.js')
+const { MessageFlags, PermissionFlagsBits } = require('discord.js')
 const { AdminCommand } = require('./admincommand.class')
 const { RookEmbed } = require('../embed/rembed.class')
 const colors = require('../../dbs/colors.json')
@@ -24,7 +24,7 @@ class ModCommand extends AdminCommand {
     if (!comprops?.permissionsRequired) {
       comprops.botPermssions = [PermissionFlagsBits.KickMembers]
     }
-    comprops.access = "Mod"
+    comprops.access = comprops?.access ? comprops.access : "Mod"
 
     super(
       {...comprops},
@@ -37,6 +37,19 @@ class ModCommand extends AdminCommand {
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const targetUserInput = interaction.options.get('user-id').value;
     const reason = interaction.options.get('reason')?.value || 'No reason provided';
+
+    let props = {
+      public: {},
+      dm:     {},
+      mod:    {},
+      log:    {}
+    }
+    let embeds = {
+      public: null,
+      dm:     null,
+      mod:    null,
+      log:    null
+    }
 
     // EMOJI for the action
     let emoji = ""
@@ -70,28 +83,31 @@ class ModCommand extends AdminCommand {
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
     if(["ban","kick","unban"].includes(this.name)) {
       if(targetUserInput != targetUserId) {
-        this.error = true
-        this.props.description = [
+        props.mod.error = true
+        props.mod.ephemeral = true
+        props.mod.description = [
           `Can't **${this.name}** a mention! Must use user ID!`,
           `ID: \`${targetUserId}\``
         ]
+        this.props = props.mod
         return
       }
     }
 
-    // Get the user to be banned
+    // Get the user to be ACTIONed
     let targetUser;
     try {
       targetUser = await client.users.fetch(targetUserId);
     } catch (error) {
-      this.error = true
-      this.props.description = "User not found."
+      props.mod.error = true
+      props.mod.description = "User not found."
+      this.props = props.mod
       return
     }
 
     // Get the guild member (to fetch nickname if present)
     const guildMember = interaction.guild.members.cache.get(targetUserId);
-    const user = guildMember || targetUser
+    const user = guildMember?.user || targetUser
 
     // Attempt to ACTION the user
     try {
@@ -117,80 +133,89 @@ class ModCommand extends AdminCommand {
       const targetUserName = guildMember?.nickname || targetUser.username;
 
       // Reply publicly in the channel to confirm the ACTION
-      this.props.color = colors["success"]
-      this.props.title = {
-        text: "[ModPost] Success!",
-        emoji: "🟢"
+      props.public.color = colors["success"]
+      props.public.title = {
+        emoji: "🟢",
+        text: "[ModPost] Success!"
       }
-      this.props.description = [
+      props.public.description = [
         (this.DEV ? "DEV: " : "") +
         `User **${targetUserName}** has been **${tenses.past}**.`,
-        `(ID: \`${targetUserId}\`; ${reason})`
+        "(" +
+        // `ID: \`${targetUserId}\`; ` +  // Don't add userID to ModPost
+        reason +
+        ")"
       ]
+      embeds.public = new RookEmbed(props.public)
+      interaction.editReply(
+        {
+          embeds: [ embeds.public ]
+        }
+      )
+      this.null = true
+      this.props.null = true
+      console.log(`/${this.name}: ModPost`)
 
-      let props = {
-        public: this.props,
-        dm: null,
-        mod: null,
-        log: null
-      }
-      let embeds = {
-        public: new RookEmbed(props.public),
-        dm: null,
-        mod: null,
-        log: null
-      }
       if (!this.DEV) {
         // Try to DM the user about the ACTION (private)
         try {
+          let dm_desc = `You have been ${tenses.past} from the ${interaction.guild.name} server. (${reason})`
+          if (this.name == "warn") {
+            dm_desc = dm_desc.replace(" from ", " by staff in ")
+          }
           props.dm = {
             color: colors["bad"],
             title: {
+              emoji: "⚠️",
               text: (this.DEV ? "[DM] " : "") + this.name.ucfirst()
             },
-            description: `You have been ${tenses.past} from the ${interaction.guild.name} server. (${reason})`
+            description: dm_desc
           }
           embeds.dm = new RookEmbed(props.dm)
-          await targetUser.send({ embeds: [ embeds.dm ] })
-          console.log(`/${this.name}: DM action`)
+          await targetUser.send(
+            {
+              embeds: [ embeds.dm ]
+            }
+          )
+          console.log(`/${this.name}: DM Post`)
 
           props.mod = {
             color: colors["success"],
             title: {
-              text: "[ModPost] Success!",
-              emoji: "🟢"
+              emoji: "🟢",
+              text: "Success!"
             },
             description: [
               `✅ User **${targetUserName}** successfully ${tenses.past} via DMs!`,
               "",
               `Message: ${props.dm.description}`
-            ]
+            ],
+            ephemeral: true
           }
           embeds.mod = new RookEmbed(props.mod)
-          await interaction.followUp(
+          interaction.followUp(
             {
               embeds: [ embeds.mod ],
-              ephemeral: true
+              flags: MessageFlags.Ephemeral
             }
           )
-          console.log(`/${this.name}: ModPost`)
+          console.log(`/${this.name}: YouPost`)
         } catch (dmError) {
           console.log(`Failed to DM user: ${dmError.message}`);
           props.mod = {
             color: colors["red"],
-            title: {
-              text: "Error"
-            },
+            title: { text: "Error" },
             description: [
               `I couldn't send the DM to the user (ID: ${targetUserId}).`,
               `They might have DMs disabled.`
-            ]
+            ],
+            ephemeral: true
           }
           embeds.mod = new RookEmbed(props.mod)
-          await interaction.followUp(
+          interaction.followUp(
             {
               embeds: [ embeds.mod ],
-              ephemeral: true
+              flags: MessageFlags.Ephemeral
             }
           )
         }
@@ -211,8 +236,8 @@ class ModCommand extends AdminCommand {
           props.log = {
             color: this.name == "unban" ? colors["good"] : colors["bad"],
             title: {
-              text: "[Log] User " + tenses.past.ucfirst(),
-              emoji: emoji
+              emoji: emoji,
+              text: "[Log] User " + tenses.past.ucfirst()
             },
             fields: [
               { name: 'User ' + tenses.past.ucfirst(),  value: `${targetUser}\n(ID: \`${targetUserId}\`)`,              inline: true },
@@ -231,31 +256,39 @@ class ModCommand extends AdminCommand {
           embeds.log = new RookEmbed(props.log)
           logs.send({ embeds: [ embeds.log ] })
           console.log(`/${this.name}: LogPost`)
-          let logFilePath = path.join(
-            __dirname,
-            "..",
-            "..",
-            "botlogs",
-            "member" + this.name.ucfirst() + "s.log"
-          )
-          let logEntry = [
-            `[${new Date().toISOString()}]`,
-            `User:    ${user.tag} (ID: ${user.id})`,
-            `Guild:   ${interaction.guild.name} (ID: ${interaction.guild.id})`,
-            `User ID: ${user.id}`,
-            '--------------------------------'
-          ].join("\n") + "\n"
-          fs.appendFileSync(logFilePath, logEntry, "utf8")
-          console.log(`/${this.name}: LogFile`)
         } else {
           console.log("Logs channel not found.")
         }
+        let logFilePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "botlogs",
+          "member" + this.name.ucfirst() + "s.log"
+        )
+        let logEntry = [
+          `[${new Date().toISOString()}]`,
+          `User:    ${user.tag} (ID: ${user.id})`,
+          `Action:  ${tenses.past.ucfirst()}`,
+          `Guild:   ${interaction.guild.name} (ID: ${interaction.guild.id})`,
+          `Reason:  ${reason}`,
+          '--------------------------------'
+        ].join("\n") + "\n"
+        fs.appendFileSync(logFilePath, logEntry, "utf8")
+        console.log(`/${this.name}: LogFile`)
       }
     } catch (error) {
-      console.log(`There was an error when banning: ${error.stack}`)
-      this.error = true
-      this.ephemeral = true
-      this.props.description = `I couldn't ${tenses.present} that user (ID: \`${targetUserId}\`).`
+      console.log(`There was an error when ${tenses.active}: ${error.stack}`)
+      props.mod.error = true
+      props.mod.ephemeral = true
+      props.mod.description = `I couldn't ${tenses.present} that user (ID: \`${targetUserId}\`).`
+      embeds.mod = new RookEmbed(props.mod)
+      interaction.followUp(
+        {
+          embeds: [ embeds.mod ],
+          flags: MessageFlags.Ephemeral
+        }
+      )
     }
   }
 }

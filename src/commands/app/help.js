@@ -13,7 +13,19 @@ module.exports = class HelpCommand extends RookCommand {
           name: "section-name",
           description: "Section Name",
           type: ApplicationCommandOptionType.String,
-          autocomplete: true
+          choices: [
+            { name: "Application",  value: "app" },
+            { name: "Bot",          value: "bot" },
+            { name: "Diagnostics",  value: "diagnostic" },
+            { name: "Zelda: Dungeons of Infinity", value: "doi" },
+            { name: "Fun",          value: "fun" },
+            { name: "Information",  value: "info" },
+            { name: "Meta",         value: "meta" },
+            { name: "Miscellaneous",value: "misc" },
+            { name: "Moderation",   value: "mod" },
+            { name: "Randomizers",  value: "rando" },
+            { name: "Unsorted",     value: "undefined" }
+          ]
         },
         {
           name: "command-name",

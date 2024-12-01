@@ -81,7 +81,8 @@ module.exports = async (client, oldMember) => {
       `User:    ${oldMember.user.tag} (ID: ${oldMember.user.id})`,
       `Guild:   ${oldMember.guild.name} (ID: ${oldMember.guild.id})`,
       `Event:   Member Left`,
-      `User ID: ${oldMember.user.id}`
+      `User ID: ${oldMember.user.id}`,
+      '--------------------------------'
     ].join('\n') + '\n\n'
 
     // Append the log entry to the file

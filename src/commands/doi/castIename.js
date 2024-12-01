@@ -18,12 +18,8 @@ module.exports = class CastleNameCommand extends RookCommand {
   async action(client, interaction) {
     // Get this Guild ID
     // Set Castle's User ID
-    // Set DoI Guild ID
-    // Determine if we're in DoI
     const guildID = interaction.guild.id
     const userID = "1111517386588307536"
-    const doiGuildID = "1282788953052676177"
-    const isDoI = interaction.guild.id === parseInt(doiGuildID)
 
     try {
       // Get this guild
@@ -47,7 +43,7 @@ module.exports = class CastleNameCommand extends RookCommand {
       }
 
       // Call the utility function to change the nickname
-      const result = await changeNickname(client, member, isDoI)
+      const result = await changeNickname(client, member)
 
       if (result.success) {
         this.props.players.target = {

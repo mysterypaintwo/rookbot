@@ -175,5 +175,9 @@
     "cavalcade",
     "cavalier",
     "kestrel"
-  ]
+  ],
+  "prefixes": {
+    "1282788953052676177": "[Admin] ",
+    "745409743593406634": "DEV | "
+  }
 }

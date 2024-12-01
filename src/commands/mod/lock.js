@@ -63,8 +63,8 @@ module.exports = class LockCommand extends ModCommand {
             text: "🔒 [Log] Channel Locked"
           },
           fields: [
-            { name: 'Channel Locked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
-            { name: 'Locked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
+            { name: 'Channel Locked', value: `<#${channel.id}>\n(ID: \`${channel.id}\`)`,    inline: true },
+            { name: 'Locked By',      value: `${interaction.user}\n(ID: \`${interaction.user.id}\`)`, inline: true }
           ]
         }
         const embed = new RookEmbed(props)

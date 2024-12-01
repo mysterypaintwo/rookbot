@@ -100,7 +100,8 @@ module.exports = async (client, oldMember, newMember) => {
       `Guild:        ${newMember.guild.name} (ID: ${newMember.guild.id})`,
       `Old Nickname: ${oldNick}`,
       `New Nickname: ${newNick}`, // Use username if nickname is undefined
-      `User ID:      ${newMember.user.id}`
+      `User ID:      ${newMember.user.id}`,
+      '--------------------------------'
     ].join('\n') + '\n\n'
 
     // Append the log entry to the file

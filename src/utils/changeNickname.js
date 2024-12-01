@@ -6,7 +6,7 @@ module.exports = (client, member, isDoI) => {
 }
 
 // Function to change a member's nickname
-async function changeNickname(client, member, isDoI) {
+async function changeNickname(client, member) {
   try {
     if (client?.guilds) {
       for (let [ guildID, guildData ] of client.guilds.cache) {
@@ -26,15 +26,14 @@ async function changeNickname(client, member, isDoI) {
           }
 
           /// Change castIe's nickname
-          // If we're specifically on the DoI server, prepend [Admin] to the start of the username
-          if (isDoI) {
-            randomWord = `[Admin] ${randomWord}`
+          if (guildID in nicknames.prefixes) {
+            randomWord = `${nicknames.prefixes[guildID]}${randomWord}`
           }
           await castleMember.setNickname(randomWord)
 
           return {
             success: true,
-            message: `Changed nickname to "${randomWord}".`
+            message: `Changed nickname of '${castleMember.user.tag}' in '${guildData.name}' to '${randomWord}'.`
           }
         }
       }

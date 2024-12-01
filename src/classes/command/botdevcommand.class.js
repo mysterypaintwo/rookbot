@@ -12,7 +12,7 @@ class BotDevCommand extends AdminCommand {
   constructor(comprops, props) {
     comprops.permissionsRequired = [PermissionFlagsBits.Administrator]
     comprops.botPermssions = [PermissionFlagsBits.Administrator]
-    comprops.access = "BotDev"
+    comprops.access = comprops?.access ? comprops.access : "BotDev"
 
     super(
       {...comprops},

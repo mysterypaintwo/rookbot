@@ -5,7 +5,7 @@
       "category": "app",
       "description": "Exit rookbot",
       "options": [],
-      "access": "Admin",
+      "access": "BotDev",
       "segment": "local"
     },
     "hello": {
@@ -38,7 +38,7 @@
       "category": "app",
       "description": "Install Node Modules",
       "options": [],
-      "access": "Admin",
+      "access": "BotDev",
       "segment": "local"
     },
     "shutdown": {
@@ -46,7 +46,7 @@
       "category": "app",
       "description": "Shutdown (and restart if pm2) rookbot",
       "options": [],
-      "access": "Admin",
+      "access": "BotDev",
       "segment": "local"
     },
     "update": {
@@ -54,7 +54,7 @@
       "category": "app",
       "description": "Update from Main",
       "options": [],
-      "access": "Admin",
+      "access": "BotDev",
       "segment": "local"
     },
     "uptime": {
@@ -103,7 +103,7 @@
           "required": true
         }
       ],
-      "access": "Admin",
+      "access": "BotDev",
       "segment": "local"
     }
   },
@@ -341,7 +341,7 @@
           "required": false
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "clear": {
@@ -349,7 +349,7 @@
       "category": "mod",
       "description": "Clear Messages",
       "options": [],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "kick": {
@@ -368,7 +368,7 @@
           "required": false
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "lock": {
@@ -382,7 +382,7 @@
           "required": true
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "lockdown": {
@@ -401,7 +401,26 @@
           "required": true
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
+      "segment": "local"
+    },
+    "search": {
+      "name": "search",
+      "category": "mod",
+      "description": "Search Logs",
+      "options": [
+        {
+          "name": "search-type",
+          "description": "Search Type",
+          "required": true
+        },
+        {
+          "name": "target-id",
+          "description": "User ID to search for",
+          "required": true
+        }
+      ],
+      "access": "Mod",
       "segment": "local"
     },
     "timeout": {
@@ -425,7 +444,7 @@
           "required": false
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "unban": {
@@ -444,7 +463,7 @@
           "required": false
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "unlock": {
@@ -458,7 +477,7 @@
           "required": true
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     },
     "warn": {
@@ -477,7 +496,7 @@
           "required": false
         }
       ],
-      "access": "Admin",
+      "access": "Mod",
       "segment": "local"
     }
   },

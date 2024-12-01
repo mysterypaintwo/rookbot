@@ -1,6 +1,6 @@
 // @ts-check
 
-const { Client, Message, TextChannel } = require('discord.js')
+const { Client, Message, MessageFlags, TextChannel } = require('discord.js')
 const { RookEmbed } = require('../embed/rembed.class')
 const { SlimEmbed } = require('../embed/rslimbed.class')
 
@@ -375,7 +375,7 @@ class RookCommand {
    * @param {string} emojiKey
    * @returns {Promise.<string>}
    */
-  async getEmoji(emojiKey, emojis) {
+  async getEmoji(emojiKey, emojis=null) {
     let ret = ""
 
     let emojiName = emojiKey
@@ -385,10 +385,13 @@ class RookCommand {
 
     let foundEmoji = false
 
-    let cachedEmoji = await emojis.cache.find(emoji => emoji.name === emojiName)
-    if (cachedEmoji?.available) {
-      foundEmoji = true
-      ret += `${cachedEmoji}`
+    if (emojis) {
+      // @ts-ignore
+      let cachedEmoji = await emojis.cache.find(emoji => emoji.name === emojiName)
+      if (cachedEmoji?.available) {
+        foundEmoji = true
+        ret += `${cachedEmoji}`
+      }
     }
 
     if (!foundEmoji) {
@@ -655,19 +658,32 @@ class RookCommand {
       emojis  = []
       timeout = 600000
     }
+    let flags = 0
+    if (this.ephemeral) {
+      flags = MessageFlags.Ephemeral
+    }
 
     // If we have an array of page(s)
     if (Array.isArray(pages)) {
       // If it's just one and we're not forcing pages, just send the embed
       if ((pages.length <= 1) && !forcepages) {
-        console.log(`/${this.name}: Sending an embed`)
-        // @ts-ignore
-        return message.editReply(
-          {
-            content: "",
-            embeds: [ pages[0] ]
-          }
-        )
+        if (pages[0].ephemeral) {
+          flags = MessageFlags.Ephemeral
+        }
+        let this_page = {
+          content:  "",
+          embeds:   [ pages[0] ],
+          flags:    flags
+        }
+        if (flags == 0) {
+          console.log(`/${this.name}: Editing an embed`)
+          // @ts-ignore
+          return message.editReply(this_page)
+        } else {
+          console.log(`/${this.name}: Sending an embed`)
+          // @ts-ignore
+          return message.followUp(this_page)
+        }
       } else {
         // Else, set up for pagination
         // Sanity check for emoji pageturners
@@ -687,39 +703,66 @@ class RookCommand {
         // return await pagination(message, pages, emojis, timeout) // discord.js v13
         //FIXME: discord-pagination doesn't support discord.js v13 yet
         //TODO: Check on discord-pagination and see if it supports discord.js v13 yet
-        let these_pages = await new Pagination(message)
-        these_pages.setOptions(
-          { idle: timeout }
-        )
+        let these_pagination = await new Pagination(message)
+        these_pagination.setOptions( { idle: timeout } )
         // these_pages.setEmojis({
         //   firstEmoji: emojis[0],
         //   prevEmoji:  emojis[1],
         //   nextEmoji:  emojis[2],
         //   lastEmoji:  emojis[3]
         // })
-        these_pages.setEmbeds(pages)
-        these_pages.render()
-        console.log(`/${this.name}: Sending pages`)
-        // @ts-ignore
-        return message.editReply(
-          {
-            content: "",
-            embeds: [ these_pages ],
-            ephemeral: this.ephemeral
+        these_pagination.setEmbeds(
+          pages,
+          (page, index, array) => {
+            let footer_text = page.toJSON()?.footer?.text
+            if(footer_text) {
+              footer_text = " • " + footer_text
+            }
+            return page.setFooter(
+              {
+                text: `Page: ${index + 1}/${array.length}${footer_text}`
+              }
+            )
           }
         )
+        these_pagination.render()
+        if (these_pagination[0].ephemeral) {
+          flags = MessageFlags.Ephemeral
+        }
+        let these_pages = {
+          content:  "",
+          embeds:   [ these_pagination ],
+          flags:    flags
+        }
+        if (flags == 0) {
+          console.log(`/${this.name}: Editing pages`)
+          // @ts-ignore
+          return message.editReply(these_pages)
+        } else {
+          console.log(`/${this.name}: Sending pages`)
+          // @ts-ignore
+          return message.followUp(these_pages)
+        }
       }
     } else {
-      console.log(`/${this.name}: Sending one embed page`)
       // Else, it's just an embed, send it
-      // @ts-ignore
-      return message.editReply(
-        {
-          content: "",
-          embeds: [ pages ],
-          ephemeral: this.ephemeral
-        }
-      )
+      if (pages[0].ephemeral) {
+        flags = MessageFlags.Ephemeral
+      }
+      let this_embed = {
+        content:  "",
+        embeds:   [ pages ],
+        flags:    flags
+      }
+      if (flags == 0) {
+        console.log(`/${this.name}: Editing one embed page`)
+        // @ts-ignore
+        return message.editReply(this_embed)
+      } else {
+        console.log(`/${this.name}: Sending one embed page`)
+        // @ts-ignore
+        return message.followUp(this_embed)
+      }
     }
   }
 
