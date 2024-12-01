@@ -26,10 +26,14 @@ def prepare_pages():
     if os.path.isfile(readmePath):
         os.remove(readmePath)
 
-    # make dir to put build version in
-    checkdir = os.path.join("..", "pages", "resources", "app", "meta", "manifests")
-    if not os.path.isdir(checkdir):
-        os.makedirs(checkdir)
+    # make dirs for resources
+    for checkdir in [
+        os.path.join("..", "pages", "resources", "app", "media"),
+        os.path.join("..", "pages", "resources", "app", "meta", "manifests")
+    ]:
+        if not os.path.isdir(checkdir):
+            os.makedirs(checkdir)
+
     # copy app_version over
     copy(
         os.path.join(".", "package.json"),
@@ -39,6 +43,11 @@ def prepare_pages():
     copy(
         os.path.join(".", "src", "res", "app", "manifests", "help", "help.json"),
         os.path.join("..", "pages", "resources", "app", "meta", "manifests")
+    )
+    # copy bot image over
+    copy(
+        os.path.join(".", "src", "res", "media", "rookbotIcon.png"),
+        os.path.join("..", "pages", "resources", "app", "media")
     )
 
     with(open(os.path.join(".","package.json"),"r")) as PACKAGE:
