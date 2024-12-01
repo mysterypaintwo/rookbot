@@ -79,7 +79,6 @@ jobs:
     strategy:
       matrix:
         os-name: [ ubuntu-latest ]
-        python-version: [ "3.12" ]
 
     steps:
       # checkout commit
@@ -107,6 +106,10 @@ jobs:
     name: 🌎->🚀
     runs-on: ${{ matrix.os-name }}
     needs: [pages-prepare]
+
+    strategy:
+      matrix:
+        os-name: [ ubuntu-latest ]
 
     permissions:
       pages: write
