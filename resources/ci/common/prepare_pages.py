@@ -37,7 +37,7 @@ def prepare_pages():
     )
     # copy help file over
     copy(
-        os.path.join(".", "src", "res", "app", "manifests", "help", "help.json")
+        os.path.join(".", "src", "res", "app", "manifests", "help", "help.json"),
         os.path.join("..", "pages", "resources", "app", "meta", "manifests")
     )
 
