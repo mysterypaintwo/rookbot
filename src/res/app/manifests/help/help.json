@@ -194,7 +194,7 @@
     "coinflip": {
       "name": "coinflip",
       "category": "fun",
-      "description": "Flips a coin and return either Heads of Tails",
+      "description": "Flips a coin and return either Heads or Tails",
       "options": [],
       "access": "unset",
       "segment": "local"

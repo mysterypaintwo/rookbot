@@ -5,7 +5,7 @@ module.exports = class CoinFlipCommand extends RookCommand {
     let comprops = {
       name: "coinflip",
       category: "fun",
-      description: "Flips a coin and return either Heads of Tails"
+      description: "Flips a coin and return either Heads or Tails"
     }
     let props = {
       title: {
