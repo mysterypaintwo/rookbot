@@ -8,8 +8,7 @@
       "footer": {
         "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true",
         "msg": "This bot is being Tested by rook"
-      },
-      "targetserver": "745409743593406634"
+      }
     }
   }
 }

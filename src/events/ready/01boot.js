@@ -56,9 +56,9 @@ module.exports = async (client) => {
   if (GLOBALS.deleteCommands) {
     await manageCommands(
       GLOBALS.deleteCommands,
-      GLOBALS.targetserver,
+      process.env.GUILD_ID,
       GLOBALS.name,
-      process.env.DISCORD_CLIENT_ID,
+      process.env.CLIENT_ID,
       process.env.TOKEN
     )
   } else {

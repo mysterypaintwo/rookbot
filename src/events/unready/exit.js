@@ -86,7 +86,7 @@ module.exports = async (client) => {
     console.log(err)
   }
 
-  let DEV = GLOBALS.DEV
+  let DEV = process.env.ENV_ACTIVE === "development"
 
   let props = {}
   let user = client?.user
@@ -142,7 +142,7 @@ module.exports = async (client) => {
       "🟥"
     )
   let server = {
-    id: GLOBALS?.targetserver ? GLOBALS.targetserver : "?"
+    id: process.env.GUILD_ID
   }
   if (server.id != "?") {
     server.name = await client.guilds.cache.find(g => g.id == server.id).name
@@ -182,7 +182,7 @@ module.exports = async (client) => {
     },
     {
       name: "Server ID",
-      value: server.id,
+      value: `\`${server.id}\``,
       inline: true
     },
     {
@@ -256,9 +256,9 @@ module.exports = async (client) => {
         }
       }
 
-      let channelIDs = require(`../../dbs/${GLOBALS['targetserver']}/channels.json`)
+      let channelIDs = require(`../../dbs/${process.env.GUILD_ID}/channels.json`)
       let channelID = channelIDs["bot-console"]
-      let guild = await client.guilds.cache.find(g => g.id === GLOBALS["targetserver"])
+      let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
       let channel = await guild.channels.cache.find(c => c.id === channelID)
       let embed = new RookEmbed(props)
       await channel.send({ embeds: [ embed ] })

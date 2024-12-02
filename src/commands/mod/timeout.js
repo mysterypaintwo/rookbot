@@ -52,9 +52,9 @@ module.exports = class TimeoutCommand extends ModCommand {
   async action(client, interaction) {
     const guildID = interaction.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const targetUserInput = interaction.options.get('user-id').value
-    const timeoutDurationSeconds = Math.abs(interaction.options.get('duration-seconds').value) // Duration in seconds
-    const reason = interaction.options.get('reason')?.value || 'No reason provided'
+    const targetUserInput = interaction.options.getString("target-id")
+    const timeoutDurationSeconds = Math.abs(interaction.options.getInteger("duration-seconds")) // Duration in seconds
+    const reason = interaction.options.getString("reason") || 'No reason provided'
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '')  // Remove <@>, <@!>, and >

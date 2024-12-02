@@ -144,9 +144,9 @@ class ModCommand extends AdminCommand {
     // Get Guild Channels
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     // Get User Input
-    const targetUserInput = interaction.options.get('user-id').value;
+    const targetUserInput = interaction.options.getString("target-id");
     // Get Reason
-    const reason = interaction.options.get('reason')?.value || 'No reason provided';
+    const reason = interaction.options.getString("reason") || 'No reason provided';
 
     let props = {
       public: {},

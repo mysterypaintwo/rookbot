@@ -113,10 +113,8 @@ module.exports = class HelloCommand extends RookCommand {
         "🟧"
       )
     let server = {
-      id: this.GLOBALS?.targetserver ? this.GLOBALS.targetserver : "?"
-    }
-    if (server.id != "?") {
-      server.name = await client.guilds.cache.find(g => g.id == server.id)?.name || "?"
+      name: await interaction.guild.name,
+      id: await interaction.guild.id
     }
     this.props.fields = [
       {

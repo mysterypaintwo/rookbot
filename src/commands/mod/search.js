@@ -1,4 +1,4 @@
-const { PermissionFlagsBits, ApplicationCommandOptionType } = require('discord.js')
+const { PermissionFlagsBits, ApplicationCommandOptionType, time, TimestampStyles } = require('discord.js')
 const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const path = require('path')
@@ -126,10 +126,12 @@ module.exports = class SearchCommand extends ModCommand {
             }
           )
         } else if(logLine.indexOf("Z]") > -1) {
+          let timestamp = Date.parse(logLine.replace("[","").replace("]",""))
+          let timestr = time(parseInt(timestamp / 1000), TimestampStyles.LongDateTime)
           this_props.fields.push(
             {
               name: "Time",
-              value: logLine
+              value: timestr
             }
           )
         }

@@ -124,7 +124,7 @@ class RookEmbed extends EmbedBuilder {
      * Development Mode?
      * @type {boolean}
      */
-    this.DEV = this.GLOBALS?.DEV && this.GLOBALS.DEV
+    this.DEV = process.env.ENV_ACTIVE === "development"
 
     if ((!(props?.color)) || (props?.color && props.color.trim() == "")) {
       switch (props.color) {

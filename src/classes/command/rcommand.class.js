@@ -328,7 +328,7 @@ class RookCommand {
       process.exit(1)
     }
 
-    this.DEV = this.GLOBALS?.DEV && this.GLOBALS.DEV
+    this.DEV = process.env.ENV_ACTIVE === "development"
 
     // Bail if we fail to get server profile information
     if (!this.GLOBALS) {
@@ -842,7 +842,8 @@ class RookCommand {
       // @ts-ignore
       await message.deferReply()
     } catch(err) {
-      console.log(err.stack)
+      console.log(`/${this.name}: Failed to defer reply?`)
+      // console.log(err.stack)
     }
 
     // Load profile

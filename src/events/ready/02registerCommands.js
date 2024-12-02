@@ -8,14 +8,11 @@ module.exports = async (client) => {
   let help = {}
   try {
     const PROFILE = require('../../PROFILE.json')
-    const testGuildID = PROFILE.profiles[PROFILE.selectedprofile]?.targetserver
+    const testGuildID = process.env.GUILD_ID
     const localCommands = getLocalCommands()
 
     // Determine if we are in development or production mode
-    let isDevelopment = process.env.NODE_ENV === 'development'
-    if (!isDevelopment) {
-      isDevelopment = PROFILE.profiles[PROFILE.selectedprofile]?.DEV
-    }
+    let isDevelopment = process.env.ENV_ACTIVE === 'development'
     let commandsManager = null
 
     if (isDevelopment) {
