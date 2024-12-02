@@ -7,10 +7,14 @@ module.exports = class KickCommand extends ModCommand {
       name: "kick",
       category: "mod",
       description: "Kicks a user from the server.",
-      flags: { target: "required" },
+      flags: {
+        bot: "optional",
+        user: "invalid",
+        target: "required"
+      },
       options: [
         {
-          name: "user-id",
+          name: "target-id",
           description: "The ID of the user you want to kick.",
           type: ApplicationCommandOptionType.String,
           required: true

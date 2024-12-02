@@ -9,10 +9,14 @@ module.exports = class TimeoutCommand extends ModCommand {
       name: "timeout",
       category: "mod",
       description: "Times out a user for a specified duration.",
-      flags: { target: "required" },
+      flags: {
+        bot: "optional",
+        user: "invalid",
+        target: "required"
+      },
       options: [
         {
-          name: "user-id",
+          name: "target-id",
           description: "The ID of the user you want to timeout.",
           type: ApplicationCommandOptionType.String,
           required: true

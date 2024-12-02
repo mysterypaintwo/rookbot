@@ -42,18 +42,20 @@ class SlimEmbed extends RookEmbed {
    * @param {(EmbedProps | Object.<any>)} props Local list of command properties
    */
   constructor(props = {}) {
+    // If we've got no title, set default
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
       if(!(props?.description)) {
         props.description = ""
       }
+      // If the description is an array, join it with newlines
       if(Array.isArray(props.description)) {
         props.description = props.description.join("\n")
       }
       props.description = `***${props.title.text}***\n${props.description}`
     }
-    props.title = { text: "<NONE>" }
+    props.title     = { text: "<NONE>" }
     props.thumbnail = "<NONE>"
-    props.footer = { msg: "<NONE>" }
+    props.footer    = { msg: "<NONE>" }
     props.timestamp = false
 
     super(props)

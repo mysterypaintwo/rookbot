@@ -30,7 +30,7 @@ module.exports = class HolyImageCommand extends RookCommand {
           autocomplete: false
         },
         {
-          name: "slug",
+          name: "slug-id",
           description: "Slug ID to call",
           type: ApplicationCommandOptionType.String,
           autocomplete: false
@@ -52,7 +52,7 @@ module.exports = class HolyImageCommand extends RookCommand {
    */
   async action(client, interaction) {
     let gameID = interaction.options.getString('game-id') ?? "z3r"
-    let slugID = interaction.options.getString('slug') ?? "verify"
+    let slugID = interaction.options.getString('slug-id') ?? "verify"
 
     let gameNames = await get_url(`http://alttp.mymm1.com/holyimage/metadata.php?mode=gameIDs&expand=1`)
     let gameName = gameNames["games"][gameID]

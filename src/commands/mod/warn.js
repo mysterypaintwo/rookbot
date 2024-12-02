@@ -7,10 +7,14 @@ module.exports = class WarnCommand extends ModCommand {
       name: "warn",
       category: "mod",
       description: "Warns a user in the server.",
-      flags: { target: "required" },
+      flags: {
+        bot: "optional",
+        user: "invalid",
+        target: "required"
+      },
       options: [
         {
-          name: "user-id",
+          name: "target-id",
           description: "The ID of the user you want to warn.",
           type: ApplicationCommandOptionType.String,
           required: true,

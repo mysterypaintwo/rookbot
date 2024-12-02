@@ -1,20 +1,18 @@
 {
-  "admin":  [
+  "admin": [
     "Admin"
   ],
   "botdev": [
-    "BotDev"
+    "rookbot dev",
+    "rookbot steward"
   ],
   "mod": [
     "Mod"
-  ],
-  "access": [
-    "Accepted Values"
   ],
   "member": [
     "Member"
   ],
   "muted": [
-    "Muted"
+    "Brad"
   ]
 }

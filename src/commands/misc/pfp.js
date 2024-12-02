@@ -10,7 +10,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
       flags: { target: "required" },
       options: [
         {
-          name: "target-user",
+          name: "target-id",
           description: "The user whose profile picture you want to see",
           type: ApplicationCommandOptionType.String,
           required: true
@@ -29,7 +29,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction) {
-    const targetUserInput = interaction.options.get('target-user').value
+    const targetUserInput = interaction.options.get('target-id').value
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '')  // Remove <@>, <@!>, and >

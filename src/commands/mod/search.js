@@ -10,7 +10,10 @@ module.exports = class SearchCommand extends ModCommand {
       name: "search",
       category: "mod",
       description: "Search Logs",
-      flags: { target: "required" },
+      flags: {
+        bot: "optional",
+        target: "required"
+      },
       options: [
         {
           name: "search-type",
@@ -18,9 +21,11 @@ module.exports = class SearchCommand extends ModCommand {
           type: ApplicationCommandOptionType.String,
           required: true,
           choices: [
-            { name: "Membership", value: "Change"},
+            { name: "Membership", value: "Change" },
             { name: "Bans",       value: "Ban" },
+            { name: "Mutes",      value: "Mute" },
             { name: "Unbans",     value: "Unban" },
+            { name: "Unmutes",    value: "Unmute" },
             { name: "Warns",      value: "Warn" }
           ]
         },

@@ -1,12 +1,12 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
 const { ModCommand } = require('../../classes/command/modcommand.class.js')
 
-module.exports = class BanCommand extends ModCommand {
+module.exports = class MuteCommand extends ModCommand {
   constructor() {
     let comprops = {
-      name: "ban",
+      name: "mute",
       category: "mod",
-      description: "Bans a user from the server",
+      description: "Mutes a user in the server",
       flags: {
         bot: "optional",
         user: "invalid",
@@ -18,6 +18,16 @@ module.exports = class BanCommand extends ModCommand {
           description: "The ID of the user you want to ban.",
           type: ApplicationCommandOptionType.String,
           required: true
+        },
+        {
+          name: "member-role-id",
+          description: "The ID of the Member Role you want to remove",
+          type: ApplicationCommandOptionType.String
+        },
+        {
+          name: "muted-role-id",
+          description: "The ID of the Muted Role you want to add",
+          type: ApplicationCommandOptionType.String
         },
         {
           name: "reason",

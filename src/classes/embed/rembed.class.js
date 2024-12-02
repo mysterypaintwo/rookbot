@@ -42,6 +42,7 @@ class RookEmbed extends EmbedBuilder {
    * @param {(EmbedProps | Object.<any>)} props Local list of command properties
    */
   constructor(props = {}) {
+    // If we've got no title, set default
     if (
       (
         (!(props?.title?.text)) ||
@@ -51,9 +52,12 @@ class RookEmbed extends EmbedBuilder {
     ) {
       props.title.text = "Source"
     }
+    // If the description is an array, join it with newlines
     if (props?.description && Array.isArray(props.description)) {
       props.description = props.description.join("\n")
     }
+    // Get description figured out
+    // All Hail the Bold Space
     let noDesc = (!(props?.description))
     let undefDesc = (typeof props.description === "undefined")
     let nullDesc = (!(noDesc || undefDesc)) && (! props?.description)
@@ -237,6 +241,8 @@ class RookEmbed extends EmbedBuilder {
       }
     }
 
+    // Easter Eggs
+    // Set stripe based on user
     let eggs = require('../../dbs/eggs.json')
 
     if (props?.players?.user?.username) {
@@ -248,6 +254,7 @@ class RookEmbed extends EmbedBuilder {
     // Stripe
     this.setColor(props.color)
 
+    // Ephemeral
     if(props?.ephemeral && props.ephemeral) {
       this.ephemeral = props.ephemeral
     }

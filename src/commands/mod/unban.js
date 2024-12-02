@@ -7,10 +7,14 @@ module.exports = class UnbanCommand extends ModCommand {
       name: "unban",
       category: "mod",
       description: "Unbans a user from the server.",
-      flags: { target: "required" },
+      flags: {
+        bot: "optional",
+        user: "invalid",
+        target: "required"
+      },
       options: [
         {
-          name: "user-id",
+          name: "target-id",
           description: "The ID of the user you want to unban.",
           type: ApplicationCommandOptionType.String,
           required: true,

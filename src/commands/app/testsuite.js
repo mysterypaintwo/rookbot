@@ -36,12 +36,15 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
     commandName = interaction.options.getString("command-name")
 
     try {
+      // Find the command
       const commandObject = localCommands.find(
         (cmd) => cmd.name === commandName
       )
 
+      // Return if couldn't find it
       if (!commandObject) return;
 
+      // Return if devOnly and not a dev
       if (commandObject.devOnly) {
         let roleName = "botdev";
         let roleUserNames = roles[roleName];
@@ -61,6 +64,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         }
       }
 
+      // Return of testOnly and not a test server
       if (commandObject.testOnly) {
         let testGuilds = []
         for (let [guildID, guildName] of Object.entries(guildIDs)) {
@@ -77,8 +81,10 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         }
       }
 
+      // If UserPermissions
       if (commandObject.permissionsRequired?.length) {
         for (const permission of commandObject.permissionsRequired) {
+          // If we're missing one, abort
           if (!interaction.member.permissions.has(permission)) {
             interaction.reply({
               content: 'Not enough permissions.',
@@ -89,10 +95,11 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         }
       }
 
+      // If BotPermissions
       if (commandObject.botPermissions?.length) {
         for (const permission of commandObject.botPermissions) {
           const bot = interaction.guild.members.me
-
+          // If we're missing one, abort
           if (!bot.permissions.has(permission)) {
             interaction.reply({
               content: "I don't have enough permissions.",
@@ -103,6 +110,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         }
       }
 
+      // Run the test function
       await commandObject.test(client, interaction);
     } catch (error) {
       console.log(`There was an error running this command: ${error.stack}`);

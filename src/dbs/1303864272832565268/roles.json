@@ -1,5 +1,5 @@
 {
-  "admin":  [
+  "admin": [
     "Admin"
   ],
   "botdev": [
@@ -8,13 +8,7 @@
   "mod": [
     "Mod"
   ],
-  "access": [
-    "Accepted Values"
-  ],
   "member": [
     "Member"
-  ],
-  "muted": [
-    "Muted"
   ]
 }

@@ -343,7 +343,7 @@
       "description": "Displays the profile picture of the mentioned user",
       "options": [
         {
-          "name": "target-user",
+          "name": "target-id",
           "description": "The user whose profile picture you want to see",
           "required": true
         }
@@ -359,7 +359,7 @@
       "description": "Bans a user from the server",
       "options": [
         {
-          "name": "user-id",
+          "name": "target-id",
           "description": "The ID of the user you want to ban.",
           "required": true
         },
@@ -386,7 +386,7 @@
       "description": "Kicks a user from the server.",
       "options": [
         {
-          "name": "user-id",
+          "name": "target-id",
           "description": "The ID of the user you want to kick.",
           "required": true
         },
@@ -432,6 +432,33 @@
       "access": "Mod",
       "segment": "local"
     },
+    "mute": {
+      "name": "mute",
+      "category": "mod",
+      "description": "Mutes a user in the server",
+      "options": [
+        {
+          "name": "target-id",
+          "description": "The ID of the user you want to ban.",
+          "required": true
+        },
+        {
+          "name": "member-role-id",
+          "description": "The ID of the Member Role you want to remove"
+        },
+        {
+          "name": "muted-role-id",
+          "description": "The ID of the Muted Role you want to add"
+        },
+        {
+          "name": "reason",
+          "description": "The reason for banning the user.",
+          "required": false
+        }
+      ],
+      "access": "Mod",
+      "segment": "local"
+    },
     "search": {
       "name": "search",
       "category": "mod",
@@ -457,7 +484,7 @@
       "description": "Times out a user for a specified duration.",
       "options": [
         {
-          "name": "user-id",
+          "name": "target-id",
           "description": "The ID of the user you want to timeout.",
           "required": true
         },
@@ -481,7 +508,7 @@
       "description": "Unbans a user from the server.",
       "options": [
         {
-          "name": "user-id",
+          "name": "target-id",
           "description": "The ID of the user you want to unban.",
           "required": true
         },
@@ -508,13 +535,40 @@
       "access": "Mod",
       "segment": "local"
     },
+    "unmute": {
+      "name": "unmute",
+      "category": "mod",
+      "description": "Unmutes a user in the server",
+      "options": [
+        {
+          "name": "target-id",
+          "description": "The ID of the user you want to ban.",
+          "required": true
+        },
+        {
+          "name": "member-role-id",
+          "description": "The ID of the Member Role you want to add"
+        },
+        {
+          "name": "muted-role-id",
+          "description": "The ID of the Muted Role you want to remove"
+        },
+        {
+          "name": "reason",
+          "description": "The reason for banning the user.",
+          "required": false
+        }
+      ],
+      "access": "Mod",
+      "segment": "local"
+    },
     "warn": {
       "name": "warn",
       "category": "mod",
       "description": "Warns a user in the server.",
       "options": [
         {
-          "name": "user-id",
+          "name": "target-id",
           "description": "The ID of the user you want to warn.",
           "required": true
         },
@@ -539,7 +593,7 @@
           "description": "Game ID to call from"
         },
         {
-          "name": "slug",
+          "name": "slug-id",
           "description": "Slug ID to call"
         }
       ],
@@ -552,17 +606,17 @@
       "description": "Starts an SMZ3 game with all necessary details",
       "options": [
         {
-          "name": "ping_multiplayer_role",
+          "name": "ping-multiplayer-role",
           "description": "Whether or not to ping the Multiplayer Ping role",
           "required": false
         },
         {
-          "name": "seed_url",
+          "name": "seed-url",
           "description": "The URL of the seed to play",
           "required": false
         },
         {
-          "name": "prep_time",
+          "name": "prep-time",
           "description": "The number of minutes to prepare before the game starts.",
           "required": false
         }

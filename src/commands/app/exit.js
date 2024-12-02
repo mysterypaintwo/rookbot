@@ -13,7 +13,10 @@ module.exports = class ExitCommand extends BotDevCommand {
       description: "Exit rookbot"
     }
     let props = {
-      title: { text: "Exit", emoji: "⏹️" },
+      title: {
+        emoji:  "⏹️",
+        text:   "Exit"
+      },
       color: colors["bad"]
     }
     super(
@@ -34,12 +37,20 @@ module.exports = class ExitCommand extends BotDevCommand {
 
     // Entities
     let entities = {
-      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
-      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username }
+      bot: {
+        name:     client.user.name,
+        avatar:   client.user.avatarURL(),
+        username: client.user.username
+      },
+      user: {
+        name:     interaction.user.displayName,
+        avatar:   interaction.user.avatarURL(),
+        username: interaction.user.username
+      }
     }
     // Players
     this.props.players = {
-      user: entities.user,
+      user:   entities.user,
       target: entities.bot
     }
 

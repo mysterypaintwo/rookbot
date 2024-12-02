@@ -27,6 +27,8 @@ module.exports = class UpdateCommand extends BotDevCommand {
       latest: "",
       new: ""
     }
+
+    // Get Branch
     try {
       if (fs.existsSync("./.git/HEAD")) {
         // @ts-ignore

@@ -23,19 +23,19 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       description: "Starts an SMZ3 game with all necessary details",
       options: [
         {
-          name: "ping_multiplayer_role",
+          name: "ping-multiplayer-role",
           description: "Whether or not to ping the Multiplayer Ping role",
           type: ApplicationCommandOptionType.Boolean,
           required: false
         },
         {
-          name: 'seed_url',
+          name: 'seed-url',
           description: 'The URL of the seed to play',
           type: ApplicationCommandOptionType.String,
           required: false
         },
         {
-          name: 'prep_time',
+          name: 'prep-time',
           description: 'The number of minutes to prepare before the game starts.',
           type: ApplicationCommandOptionType.Integer,
           required: false

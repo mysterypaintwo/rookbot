@@ -7,6 +7,9 @@ module.exports = class BotAvatarCommand extends BotDevCommand {
       name: "botavatar",
       category: "bot",
       description: "Set rookbot's Avatar",
+      flags: {
+        user: "unapplicable"
+      },
       options: [
         {
           name: "avatar-url",

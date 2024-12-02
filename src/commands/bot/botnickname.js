@@ -7,6 +7,9 @@ module.exports = class BotNicknameCommand extends BotDevCommand {
       name: "botnickname",
       category: "bot",
       description: "Set rookbot's Nickname",
+      flags: {
+        user: "unapplicable"
+      },
       options: [
         {
           name: "bot-nickname",

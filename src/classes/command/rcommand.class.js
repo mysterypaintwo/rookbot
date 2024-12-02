@@ -17,10 +17,10 @@ class RookCommand {
    * @type {string} Command Name
    */
   // @ts-ignore
-  name;     // Command Name
-  category; // Command Category
-  options;  // Command Options
-  access;   // Command Access
+  name;                 // Command Name
+  category;             // Command Category
+  options;              // Command Options
+  access;               // Command Access
   permissionsRequired;  // Required User Permissions
   botPermissions;       // Required Bot Permissions
   /**
@@ -77,34 +77,34 @@ class RookCommand {
    * @property {string} avatar The Avatar
    */
   /**
-   * @typedef {Object.<string, any>} EmbedProps Embed Properties
-   * @property {boolean}            full          Print Full Embed
-   * @property {string}             color           Stripe color
-   * @property {{text: string}}         caption         Caption text
-   * @property {{text: string, url: string}}  title           Title text & url
+   * @typedef {Object.<string, any>} EmbedProps       Embed Properties
+   * @property {boolean}            full              Print Full Embed
+   * @property {string}             color             Stripe color
+   * @property {{text: string}}     caption           Caption text
+   * @property {{text: string, url: string}}  title   Title text & url
    * @property {string}             thumbnail         Thumbnail url
    * @property {string}             description       Body text
-   * @property {Array.<EmbedField>}       fields          Embed Fields
-   * @property {string}             image           Body Image
-   * @property {{msg: string, image: string}} footer          Footer text & image
-   * @property {number | boolean}       timestamp         Timestamp for footer
-   * @property {boolean}            error           Print error format
+   * @property {Array.<EmbedField>} fields            Embed Fields
+   * @property {string}             image             Body Image
+   * @property {{msg: string, image: string}} footer  Footer text & image
+   * @property {number | boolean}   timestamp         Timestamp for footer
+   * @property {boolean}            error             Print error format
    * @property {{bot: Player, user: Player, target: Player}} players  Players
    */
 
   /**
    * Constructor
    * @param {Object.<string, any>} comprops List of command properties from child class
-   * @param {EmbedProps} props        Local list of command properties
+   * @param {EmbedProps} props              Local list of command properties
    */
   constructor(comprops = {}, props = {}) {
-    this.name = comprops?.name ? comprops.name.toLowerCase() : "unknown"
-    this.category = comprops?.category ? comprops.category.toLowerCase() : "unknown"
-    this.description = comprops?.description ? comprops.description : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
-    this.options = comprops?.options ? comprops.options : []
-    this.access = comprops?.access ? comprops.access : "unset"
-    this.permissionsRequired = comprops?.permissionsRequired ? comprops.permissionsRequired : []
-    this.botPermissions = comprops?.botPermissions ? comprops.botPermissions : []
+    this.name                 = comprops?.name                ? comprops.name.toLowerCase()     : "unknown"
+    this.category             = comprops?.category            ? comprops.category.toLowerCase() : "unknown"
+    this.description          = comprops?.description         ? comprops.description            : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
+    this.options              = comprops?.options             ? comprops.options                : []
+    this.access               = comprops?.access              ? comprops.access                 : "unset"
+    this.permissionsRequired  = comprops?.permissionsRequired ? comprops.permissionsRequired    : []
+    this.botPermissions       = comprops?.botPermissions      ? comprops.botPermissions         : []
 
     /**
      * Embed Properties
@@ -119,52 +119,60 @@ class RookCommand {
     if (!(this?.props?.full)) {
       this.props.full = true
     }
+
+    // Ephemeral Message
     if (!(this?.props?.ephemeral)) {
       this.ephemeral = false
     }
+
+    // Caption text & emoji
     if (this?.props?.caption?.text) {
       if (this.props.caption?.emoji) {
         this.props.caption.text = `${this.props.caption.emoji} ${this.props.caption.text}`
       }
     }
+
+    // Title
     if (!(this?.props?.title)) {
       this.props.title = {}
     } else if (props?.title) {
       this.props.title = props.title
     }
+
+    // Description
     let undefDesc = (!(this?.props?.description))
     let emptyDesc = (!(undefDesc)) &&  (typeof this.props.description === "object")
     let noDesc = (!(undefDesc)) && (this.props.description.trim() == "")
+    // Default description
     if (undefDesc || emptyDesc || noDesc) {
       this.props.description = ""
     }
+    // Default footer
     if (!(this?.props?.footer)) {
       this.props.footer = {}
     }
+    // Default players
     if (!(this?.props?.players)) {
       this.props.players = {}
     }
+    // Default flags
     if (!(comprops?.flags)) {
       this.flags = {}
     } else {
       this.flags = comprops.flags
     }
 
+    // Set flags for players
     for (let [player, setting] of Object.entries({user:"default",target:"optional",bot:"invalid",search:"valid"})) {
       if (!(Object.keys(this.flags).includes(player))) {
         this.flags[player] = setting
       }
     }
 
+    // Set null if we're not actually printing a thing
     if (this?.props?.null && this.props.null) {
       this.null = true
     }
-
-    /**
-     * Command prefix
-     * @type {string}
-     */
-    this.prefix = ""
 
     /**
      * List of pages of Embeds
@@ -195,6 +203,7 @@ class RookCommand {
     }
   }
 
+  // DEV Mode
   get DEV() {
     return this.#DEV
   }
@@ -202,6 +211,7 @@ class RookCommand {
     this.#DEV = DEV
   }
 
+  // Ephemeral
   get ephemeral() {
     return this.#ephemeral
   }
@@ -209,6 +219,7 @@ class RookCommand {
     this.#ephemeral = ephemeral
   }
 
+  // Full props
   get props() {
     return this.#props
   }
@@ -216,6 +227,7 @@ class RookCommand {
     this.#props = props
   }
 
+  // Embed pages
   get pages() {
     return this.#pages
   }
@@ -223,6 +235,7 @@ class RookCommand {
     this.#pages = pages
   }
 
+  // Input Flags
   get flags() {
     return this.#flags
   }
@@ -230,6 +243,7 @@ class RookCommand {
     this.#flags = flags
   }
 
+  // Error Mode
   get error() {
     return this.#error
   }
@@ -237,6 +251,7 @@ class RookCommand {
     this.#error = error
   }
 
+  // List of errors
   get errors() {
     return this.#errors
   }
@@ -244,6 +259,7 @@ class RookCommand {
     this.#errors = errors
   }
 
+  // Channel object
   get channel() {
     return this.#channel
   }
@@ -251,6 +267,7 @@ class RookCommand {
     this.#channel = channel
   }
 
+  // Channel name
   get channelName() {
     return this.#channelName
   }
@@ -258,6 +275,7 @@ class RookCommand {
     this.#channelName = channelName
   }
 
+  // argv
   get inputData() {
     return this.#inputData
   }
@@ -324,15 +342,6 @@ class RookCommand {
       this.props.description = "Failed to get bot default information."
       return
     }
-
-    // this.prefix = GLOBALS.prefix
-
-    // Bail if we fail to get command prefix
-    // if (!this.prefix) {
-    //   this.error = true
-    //   this.props.description = "Failed to get command prefix."
-    //   return
-    // }
   }
 
   /**
@@ -425,8 +434,8 @@ class RookCommand {
     let search        = null
     let loaded        = null
 
+    // Different entities
     let entities = {}
-
     entities.discord = {
       id: "0",
       name: "Discord",
@@ -444,6 +453,7 @@ class RookCommand {
       discriminator:  message.client.user.discriminator
     }
 
+    // Get User issuing command
     // {Message} message
     if (message?.author) {
       user = message.author
@@ -457,6 +467,7 @@ class RookCommand {
     // @ts-ignore
     user = await message?.guild?.members.fetch(user.id)
 
+    // If we've got a user, set as author
     if (user) {
       entities.author = {
         id:             user.id,
@@ -467,6 +478,7 @@ class RookCommand {
       }
     }
 
+    // If we've got mentions, set as mention
     if (message?.mentions) {
       mention = message?.mentions?.members?.first()
       if (mention) {
@@ -511,10 +523,12 @@ class RookCommand {
     // If we got stuff to Search for
     if (search) {
       // We already ran the search
-      let tmp = search.size > 0
+      // @ts-ignore
+      let tmp = search?.size > 0
       // If there's results, get the first result
       // Otherwise, just gracefully degrade to our current Target
-      loaded = tmp ? search.first() : loaded
+      // @ts-ignore
+      loaded = tmp ? search?.first() : loaded
       if (tmp && loaded) {
         // @ts-ignore
         if (loaded?.nickname) {
@@ -748,10 +762,8 @@ class RookCommand {
           emojis = emojis.slice(0,1)
           emojis.push(filler)
         }
+
         // Send the pages
-        // return await pagination(message, pages, emojis, timeout) // discord.js v13
-        //FIXME: discord-pagination doesn't support discord.js v13 yet
-        //TODO: Check on discord-pagination and see if it supports discord.js v13 yet
         let these_pagination = await new Pagination(message)
         these_pagination.setOptions( { idle: timeout } )
         // these_pages.setEmojis({

@@ -12,7 +12,10 @@ module.exports = class HelloCommand extends RookCommand {
     }
     let props = {
       caption: { text: "Hello World" },
-      title: { text: "Hello World", emoji: "🔼" },
+      title: {
+        emoji:  "🔼",
+        text:   "Hello World"
+      },
       color:  colors["success"]
     }
     super(
@@ -24,6 +27,8 @@ module.exports = class HelloCommand extends RookCommand {
   async action(client, interaction) {
     let BRANCH = ""
     let COMMIT = ""
+
+    // Get Branch
     try {
       if (fs.existsSync("./.git/HEAD")) {
         // @ts-ignore
@@ -39,6 +44,7 @@ module.exports = class HelloCommand extends RookCommand {
       console.log(err)
     }
 
+    // Get Commit
     try {
       let git_log = shell.exec(
         "git log -1",
