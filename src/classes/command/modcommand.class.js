@@ -1,4 +1,4 @@
-const { MessageFlags, PermissionFlagsBits } = require('discord.js')
+const { MessageFlags, PermissionFlagsBits, IntegrationApplication } = require('discord.js')
 const { AdminCommand } = require('./admincommand.class')
 const { RookEmbed } = require('../embed/rembed.class')
 const colors = require('../../dbs/colors.json')
@@ -7,6 +7,10 @@ const fs = require('fs')
 
 String.prototype.ucfirst = function() {
   return this.charAt(0).toUpperCase() + this.slice(1)
+}
+
+function isString(input) {
+  return typeof input == "string" || input instanceof String
 }
 
 // Multiple messages
@@ -40,6 +44,88 @@ class ModCommand extends AdminCommand {
     )
   }
 
+  // Add/Remove roles by name/ID
+  // Add/Remove Member/Muted by command
+  // Mute user by command
+  // Unmute user by command
+
+  // Add/Remove roles
+  async adjust_roles(message, user, roles) {
+    if (!user) {
+      this.error = true
+      this.props.description = "No member loaded."
+      return
+    }
+
+    if (!roles) {
+      this.error = true
+      this.props.description = "No roles provided."
+      return
+    }
+
+    let addRole = 0
+    let remRole = 0
+    let matches = null
+
+    if (Object.keys(roles).includes("add")) {
+      addRole = roles["add"]
+      matches = addRole.match(/([\d]+)/)
+      if (
+        (
+          matches ||
+          ((parseInt(addRole) + "") == addRole) ||
+          Number.isInteger(addRole)
+        ) &&
+        addRole != 0
+      ) {
+        if (matches) {
+          addRole = matches[1]
+        }
+        addRole = await message.guild.roles.cache.find(role => role.id === addRole)
+      } else if (isString(addRole)) {
+        addRole = await message.guild.roles.cache.find(role => role.name === addRole)
+      }
+      if (addRole && addRole != 0) {
+        await user.roles.add(addRole.id)
+      }
+    }
+    if (Object.keys(roles).includes("remove")) {
+      remRole = roles["remove"]
+      matches = remRole.match(/([\d]+)/)
+      if (
+        (
+          matches ||
+          ((parseInt(remRole) + "") == remRole) ||
+          Number.isInteger(remRole)
+        ) &&
+        remRole != 0
+      ) {
+        if (matches) {
+          remRole = matches[1]
+        }
+        remRole = await message.guild.roles.cache.find(role => role.id === remRole)
+      } else if (isString(remRole)) {
+        remRole = await message.guild.roles.cache.find(role => role.name === remRole)
+      }
+      if (remRole && remRole != 0) {
+        await user.roles.remove(remRole.id)
+      }
+    }
+
+    if (addRole == 0 && remRole == 0) {
+      this.error = true
+      this.props.description = "No roles found."
+      return
+    }
+  }
+
+  async add_role(message, user, role) {
+    return await this.adjust_roles(message, user, { add: role })
+  }
+  async remove_role(message, user, role) {
+    return await this.adjust_roles(message, user, { remove: role })
+  }
+
   // Apply Voice Roles (un/mute) to User
   async voice_user(message, user, voice) {
     // Member Role Name
@@ -52,90 +138,55 @@ class ModCommand extends AdminCommand {
     // Muted Role ID
     let MUTED_ID    = message.options.getString("muted-role-id")   || null
 
-    // If we don't have a user
-    if (!user) {
-      this.error = true
-      this.props.description = "No member loaded."
-      return
-    }
-    // If we don't have a Member Role
-    if (!MEMBER_ROLE && !MEMBER_ID) {
-      this.error = true
-      this.props.description = "No Member Role found in definition file or sent."
-      return
-    }
-    // If we don't have a Muted Role
-    if (!MUTED_ROLE && !MUTED_ID) {
-      this.error = true
-      this.props.description = "No Muted Role found in definition file or sent."
-      return
-    }
-
     if (!this.DEV) {
-      let mainRoleID = null // Main Role ID
-      let muteRoleID = null // Mute Role ID
+      let mainRole = MEMBER_ROLE  || MEMBER_ID
+      let muteRole = MUTED_ROLE   || MUTED_ID
 
-      // Get Member Role ID
-      if (MEMBER_ROLE) {
-        mainRoleID = await message.guild.roles.cache.find(role => role.name === MEMBER_ROLE).id
-      }
-      // Get Muted Role ID
-      if (MUTED_ROLE) {
-        muteRoleID = await message.guild.roles.cache.find(role => role.name === MUTED_ROLE).id
-      }
-      // Verify Member Role ID
-      if (MEMBER_ID) {
-        mainRoleID = await message.guild.roles.cache.find(role => role.id === MEMBER_ID).id
-      }
-      // Verify Muted Role ID
-      if (MUTED_ID) {
-        muteRoleID = await message.guild.roles.cache.find(role => role.id === MUTED_ID).id
-      }
-
-      // If still no Member Role ID
-      if (!mainRoleID) {
+      // If no Member Role
+      if (!mainRole) {
         this.error = true
         this.props.description = `${MEMBER_ROLE} Member Role not found in server.`
         return
       }
-      // If still no Muted Role ID
-      if (!muteRoleID) {
+      // If no Muted Role
+      if (!muteRole) {
         this.error = true
         this.props.description = `${MUTED_ROLE} Muted Role not found in server.`
         return
       }
 
-      // Get Role ID to remove
-      let removeRole = 0
-      // Get Role ID to add
-      let addRole = 0
+      let roles = {
+        add:    0,
+        remove: 0
+      }
       // If muting
       if (voice == "mute") {
         // Remove Member
         // Add    Muted
-        removeRole  = mainRoleID
-        addRole     = muteRoleID
+        roles = {
+          add:    muteRole,
+          remove: mainRole
+        }
       } else if (voice == "unmute") {
         // If unmuting
         // Remove Muted
         // Add    Member
-        removeRole  = muteRoleID
-        addRole     = mainRoleID
+        roles = {
+          add:    mainRole,
+          remove: muteRole
+        }
       }
-      // Remove Role
-      user.roles.remove(removeRole)
-      // Add Role
-      user.roles.add(addRole)
+      this.adjust_roles(message, user, roles)
       this.props.description = `<@${user.id}> has been ${voice}d`
     } else {
       this.props.description = `<@${user.id}> *would be* **${voice}d** if this wasn't in DEV Mode`
     }
   }
-  async mute_user(message, user, reason) {
-    await this.voice_user(message, user, "mute", reason)
+  async mute_user(message, user) {
+    await this.voice_user(message, user, "mute")
   }
-  async unmute_user(message, user, reason) {
-    await this.voice_user(message, user, "unmute", reason)
+  async unmute_user(message, user) {
+    await this.voice_user(message, user, "unmute")
   }
 
   async action(client, interaction) {
@@ -161,40 +212,44 @@ class ModCommand extends AdminCommand {
       log:    null
     }
 
+    let pretty_name = this.name.split("_").map(x => x.ucfirst()).join(" ")
+
     // EMOJI for the action
     let emoji = ""
     // TENSE for the action
     let tenses = {
-      past:     `${this.name}ed`,
-      present:  this.name,
-      future:   this.name,
-      active:   `${this.name}ing`
+      past:     (pretty_name.endsWith("e") ? pretty_name.substring(0, pretty_name.length - 1) : pretty_name) + "ed",
+      present:  pretty_name,
+      future:   pretty_name,
+      active:   (pretty_name.endsWith("e") ? pretty_name.substring(0, pretty_name.length - 1) : pretty_name) + "ing"
     }
-    switch(this.name) {
-      case "ban":
-        tenses.past = "banned"
-        tenses.active = tenses.past.replace("ed","ing")
-        emoji = "🔨"
-        break
-      case "kick":
-        emoji = "👟💥🏃‍♂️"
-        break
-      case "mute":
-        tenses.past = "muted"
-        tenses.active = tenses.past.replace("ed","ing")
-        emoji = "🔈"
-        break
-      case "unban":
+    switch(pretty_name) {
+      case "Unban":
         tenses.past = "unbanned"
         tenses.active = tenses.past.replace("ed","ing")
         emoji = "🪃"
         break
-      case "unmute":
-        tenses.past = "unmuted"
+      case "Ban":
+        tenses.past = "banned"
         tenses.active = tenses.past.replace("ed","ing")
+        emoji = "🔨"
+        break
+      case "Kick":
+        emoji = "👟💥🏃‍♂️"
+        break
+      case "Unmute":
         emoji = "🔊"
         break
-      case "warn":
+      case "Mute":
+        emoji = "🔈"
+        break
+      case "Role Add":
+        emoji = "➕"
+        break
+      case "Role Remove":
+        emoji = "➖"
+        break
+      case "Warn":
         emoji = "⚠️"
         break
     }
@@ -242,6 +297,12 @@ class ModCommand extends AdminCommand {
       // ACTION the user
       if (!this.DEV) {
         switch(this.name) {
+          case "role_add":
+            await this.add_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
+            break
+          case "role_remove":
+            await this.remove_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
+            break
           case "ban":
             await interaction.guild.members.ban(targetUserId, { reason })
             break
@@ -307,7 +368,7 @@ class ModCommand extends AdminCommand {
             color: colors["bad"],
             title: {
               emoji: "⚠️",
-              text: (this.DEV ? "[DM] " : "") + this.name.ucfirst()
+              text: (this.DEV ? "[DM] " : "") + pretty_name
             },
             description: dm_desc
           }
@@ -415,7 +476,7 @@ class ModCommand extends AdminCommand {
           "..",
           "..",
           "botlogs",
-          "member" + this.name.ucfirst() + "s.log"
+          "member" + pretty_name.replace(" ", "") + "s.log"
         )
         let logEntry = [
           `[${new Date().toISOString()}]`,

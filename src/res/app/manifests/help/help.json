@@ -459,6 +459,52 @@
       "access": "Mod",
       "segment": "local"
     },
+    "role_add": {
+      "name": "role_add",
+      "category": "mod",
+      "description": "Adds a role to a member",
+      "options": [
+        {
+          "name": "target-id",
+          "description": "The ID of the user you want to add the role to.",
+          "required": true
+        },
+        {
+          "name": "role",
+          "description": "Role to add",
+          "required": true
+        },
+        {
+          "name": "reason",
+          "description": "Reason for adding role"
+        }
+      ],
+      "access": "Mod",
+      "segment": "local"
+    },
+    "role_remove": {
+      "name": "role_remove",
+      "category": "mod",
+      "description": "Removes a role from a member",
+      "options": [
+        {
+          "name": "target-id",
+          "description": "The ID of the user you want to remove the role from.",
+          "required": true
+        },
+        {
+          "name": "role",
+          "description": "Role to remove",
+          "required": true
+        },
+        {
+          "name": "reason",
+          "description": "Reason for adding role"
+        }
+      ],
+      "access": "Mod",
+      "segment": "local"
+    },
     "search": {
       "name": "search",
       "category": "mod",
