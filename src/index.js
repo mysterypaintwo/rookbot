@@ -37,14 +37,6 @@ const client = new Client(
             (cmd) => cmd.name === commandName
           )
           if (commandObject) {
-            let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
-            let channelID = channelIDs["bot-console"]
-            let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
-            if (guild) {
-              let channel = await guild.channels.cache.find(c => c.id === channelID)
-              let embed = new RookEmbed(props)
-              await channel.send({ embeds: [ embed ] })
-            }
             await commandObject.execute(
               client,
               {
@@ -55,7 +47,13 @@ const client = new Client(
                   username: "gitrook"
                 },
                 reply: async (props) => {
-                  await channel.send(props)
+                  let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
+                  let channelID = channelIDs["bot-console"]
+                  let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
+                  if (guild) {
+                    let channel = await guild.channels.cache.find(c => c.id === channelID)
+                    await channel.send(props)
+                  }
                 }
               }
             );
