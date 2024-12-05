@@ -37,6 +37,7 @@ module.exports = async (client) => {
     }
   } catch(err) {
     console.log("🔴Boot Sequence: PROFILE manifest not found!")
+    console.log(err.stack)
     process.exit(1)
   }
 
