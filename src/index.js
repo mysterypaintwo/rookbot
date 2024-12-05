@@ -55,7 +55,7 @@ const client = new Client(
                   username: "gitrook"
                 },
                 reply: async (props) => {
-                  await channel.send({ embeds: [ new RookEmbed(props) ] })
+                  await channel.send(props)
                 }
               }
             );
