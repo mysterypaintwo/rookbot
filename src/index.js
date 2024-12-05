@@ -37,7 +37,7 @@ const client = new Client(
             (cmd) => cmd.name === commandName
           )
           if (commandObject) {
-            let channelIDs = require(`../../dbs/${process.env.GUILD_ID}/channels.json`)
+            let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
             let channelID = channelIDs["bot-console"]
             let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
             if (guild) {
