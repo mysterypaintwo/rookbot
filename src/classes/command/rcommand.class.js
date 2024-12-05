@@ -765,6 +765,7 @@ class RookCommand {
         }
 
         // Send the pages
+        // @ts-ignore
         let these_pagination = await new Pagination(message)
         these_pagination.setOptions( { idle: timeout } )
         // these_pages.setEmojis({

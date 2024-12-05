@@ -1,7 +1,7 @@
 require('@dotenvx/dotenvx').config()
 const { Client, IntentsBitField } = require('discord.js')
+const { ExitCommand } = require('./commands/app/exit')
 const eventHandler = require('./handlers/eventHandler')
-const rook_exit = require('./events/unready/exit')
 
 const client = new Client(
   {
@@ -24,6 +24,10 @@ const client = new Client(
 
   if (process.env.GITHUB_WORKFLOW) {
     console.log(process.env.GITHUB_WORKFLOW)
+    setTimeout(() => {
+      let exit_cmd = new ExitCommand()
+      exit_cmd.execute(client)
+    })
     setTimeout(rook_exit, 60 * 1000)
   }
 })()
