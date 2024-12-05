@@ -33,7 +33,18 @@ const client = new Client(
           (cmd) => cmd.name === commandName
         )
         if (commandObject) {
-          await commandObject.execute(client, interaction);
+          await commandObject.execute(
+            client,
+            {
+              member: { user: { tag: "gitrook" } },
+              user: {
+                name: "gitrook",
+                avatarURL: () => { return "https://cdn.discordapp.com/avatars/1313777189187223603/4bc7c1dc2b41b0bd7f77945bcc55feef.webp?size=128" },
+                username: "gitrook"
+              },
+              reply: (props) => { console.log(props) }
+            }
+          );
         } else {
           console.log(localCommands)
         }
