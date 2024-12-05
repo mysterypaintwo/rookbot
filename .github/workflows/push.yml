@@ -19,8 +19,8 @@ on: [push, pull_request]
 # ubuntu-latest
 
 jobs:
-  # Test
-  install-test:
+  # Install, List Actions, Discord Notif
+  install-list-notif:
     name: 🧮
     runs-on: ${{ matrix.os-name }}
     continue-on-error: True
@@ -47,7 +47,7 @@ jobs:
       - name: 💿Call Install
         uses: ./.github/actions/install
         with:
-          calling-job: test
+          calling-job: install-list-notif
           os-name: ${{ matrix.os-name }}
           python-version: ${{ matrix.python-version }}
       # Analyze used GitHub Actions
@@ -55,10 +55,6 @@ jobs:
         shell: bash
         run: |
           python ./resources/ci/common/list_actions.py
-      # test
-      - name: ⏱️Call Test
-        uses: ./.github/actions/test
-
       # Send Discord Notification to Updates
       - name: Build Discord Notification Payload
         env:
@@ -69,6 +65,22 @@ jobs:
           contains(github.ref, 'stable') ||
           contains(github.ref, 'unstable') ||
           contains(github.ref, 'castIe')
+
+  # Install, Test
+  install-test:
+    name: ⏱️
+    runs-on: ${{ matrix.os-name }}
+    continue-on-error: True
+    strategy:
+      matrix:
+        os-name: [ ubuntu-latest ]
+        python-version: [ "3.12" ]
+    steps:
+      # test
+      - name: ⏱️Call Test
+        uses: ./.github/workflow/test.yml
+        env:
+          DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
 
   # Prepare Pages
   pages-prepare:
