@@ -55,6 +55,9 @@ const client = new Client(
                     let channel = await guild.channels.cache.find(c => c.id === channelID)
                     await channel.send(props)
                   }
+                },
+                editReply: async (props) => {
+                  this.reply(props)
                 }
               }
             );
