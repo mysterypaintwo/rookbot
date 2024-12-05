@@ -24,6 +24,7 @@ jobs:
     strategy:
       matrix:
         os-name: [ ubuntu-latest ]
+        python-version: [ "3.12" ]
     steps:
       # checkout commit
       - name: ✔️Checkout commit
@@ -71,7 +72,7 @@ jobs:
         run: npm run-script audit
         shell: bash
       - name: ⏱️Run Bot (Development)
-        run: dotnevx run -- npm run-script run
+        run: ./usr/local/bin/dotenvx run -- npm run-script run
         shell: bash
         env:
           DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
