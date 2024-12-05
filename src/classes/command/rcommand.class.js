@@ -311,6 +311,7 @@ class RookCommand {
       }
     } catch(err) {
       console.log("🔴RCommand: PROFILE manifest not found!")
+      console.log(err.stack)
       process.exit(1)
     }
 
