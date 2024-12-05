@@ -28,25 +28,40 @@ const client = new Client(
       const getLocalCommands = require('./utils/getLocalCommands')
       const localCommands = getLocalCommands()
       try {
-        let commandName = "exit"
-        const commandObject = localCommands.find(
-          (cmd) => cmd.name === commandName
-        )
-        if (commandObject) {
-          await commandObject.execute(
-            client,
-            {
-              member: { user: { tag: "gitrook" } },
-              user: {
-                name: "gitrook",
-                avatarURL: () => { return "https://cdn.discordapp.com/avatars/1313777189187223603/4bc7c1dc2b41b0bd7f77945bcc55feef.webp?size=128" },
-                username: "gitrook"
-              },
-              reply: (props) => { console.log(props) }
+        let commandNames = [
+          "uptime",
+          "exit"
+        ]
+        for(let commandName in commandNames) {
+          const commandObject = localCommands.find(
+            (cmd) => cmd.name === commandName
+          )
+          if (commandObject) {
+            let channelIDs = require(`../../dbs/${process.env.GUILD_ID}/channels.json`)
+            let channelID = channelIDs["bot-console"]
+            let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
+            if (guild) {
+              let channel = await guild.channels.cache.find(c => c.id === channelID)
+              let embed = new RookEmbed(props)
+              await channel.send({ embeds: [ embed ] })
             }
-          );
-        } else {
-          console.log(localCommands)
+            await commandObject.execute(
+              client,
+              {
+                member: { user: { tag: "gitrook" } },
+                user: {
+                  name: "gitrook",
+                  avatarURL: () => { return "https://cdn.discordapp.com/avatars/1313777189187223603/4bc7c1dc2b41b0bd7f77945bcc55feef.webp?size=128" },
+                  username: "gitrook"
+                },
+                reply: async (props) => {
+                  await channel.send({ embeds: [ new RookEmbed(props) ] })
+                }
+              }
+            );
+          } else {
+            console.log(localCommands)
+          }
         }
       } catch(err) {
         console.log(err.stack)
