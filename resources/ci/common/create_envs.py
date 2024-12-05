@@ -1,3 +1,4 @@
+from shutil import copy
 import os
 
 with open(".env", encoding="utf-8") as envFile:
@@ -43,3 +44,27 @@ if len(envLines) > 2:
         toPrint = "\n".join(envLines)
         thisEnvFile.write(toPrint)
     envLines = []
+
+for [srcFile, dstFile] in {
+    "./env/devs/.env.token.gitrook":    "./.env.token.ci",
+    "./env/devs/.env.client.gitrook":   "./.env.client.ci",
+    "./env/envs/.env.dev":              "./.env.dev.ci",
+    "./env/envs/.env.prod":             "./.env.prod.ci"
+}.items():
+    print(f"Creating: {dstFile}")
+    copy(
+        srcFile,
+        dstFile
+    )
+
+for dstFile in [ "dev", "prod" ]:
+    with open(os.path.join(".",f".env.{dstFile}.ci"), "a+", encoding="utf-8") as environmentFile:
+        for srcFile in [
+            "./.env.token.ci",
+            "./.env.client.ci"
+        ]:
+            with open(srcFile, "r", encoding="utf-8") as credFile:
+                environmentFile.write(
+                    "\n" +
+                    credFile.read()
+                )

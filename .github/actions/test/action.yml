@@ -26,7 +26,21 @@ runs:
     - name: 💿Install cross-env-shell
       run: npm i cross-env-shell --save
       shell: bash
+    # install dotenvx
+    - name: 💿Install dotenvx
+      run: curl -sfS https://dotenvx.sh/install.sh | sh
+      shell: bash
     # run audit
     - name: 🧮App Audit
       run: npm run-script audit
       shell: bash
+    - name: ⏱️Run Bot (Development)
+      run: dotnevx run -- npm run-script run
+      shell: bash
+      env:
+        DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
+    # - name: 🌎Run Bot (Production)
+    #   run: dotnevx run -- npm run-script run
+    #   shell: bash
+    #   env:
+    #     DOTENV_PRIVATE_KEY_PROD_CI: ${{ secrets.DOTENV_PRIVATE_KEY_PROD_CI }}

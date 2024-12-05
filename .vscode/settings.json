@@ -11,5 +11,6 @@
     "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
     "files.associations": {
       "*.js.off": "javascript"
-    }
+    },
+    "python.REPL.enableREPLSmartSend": false
 }
