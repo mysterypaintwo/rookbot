@@ -32,7 +32,11 @@ const client = new Client(
         const commandObject = localCommands.find(
           (cmd) => cmd.name === commandName
         )
-        await commandObject.execute(client, interaction);
+        if (commandObject) {
+          await commandObject.execute(client, interaction);
+        } else {
+          console.log(localCommands)
+        }
       } catch(err) {
         console.log(err.stack)
       }
