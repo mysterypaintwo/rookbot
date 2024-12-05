@@ -6,6 +6,9 @@ module.exports = class GuildStatusCommand extends RookCommand {
       name: "guildstatus",
       category: "bot",
       description: "Guild Status",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {}
     super(
@@ -14,7 +17,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Entities
     let entities = {
       user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username },

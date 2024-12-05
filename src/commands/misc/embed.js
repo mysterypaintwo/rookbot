@@ -5,7 +5,10 @@ module.exports = class EmbedCommand extends AdminCommand {
     let comprops = {
       name: "embed",
       category: "misc",
-      description: "Sends an embed with predefined content"
+      description: "Sends an embed with predefined content",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {
@@ -49,7 +52,7 @@ module.exports = class EmbedCommand extends AdminCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // all done in constructor
   }
 }

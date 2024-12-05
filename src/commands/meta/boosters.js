@@ -5,7 +5,10 @@ module.exports = class BoostersCommand extends RookCommand {
     let comprops = {
       name: "boosters",
       category: "meta",
-      description: "Displays the number of boosters and the server boost level"
+      description: "Displays the number of boosters and the server boost level",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {
@@ -24,7 +27,7 @@ module.exports = class BoostersCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     try {
       // Get the number of boosts in the server
       const boosts = interaction.guild.premiumSubscriptionCount

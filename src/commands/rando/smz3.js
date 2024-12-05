@@ -54,7 +54,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 

@@ -8,6 +8,9 @@ module.exports = class UpdateCommand extends BotDevCommand {
       name: "update",
       category: "app",
       description: "Update from Main",
+      flags: {
+        test: "basic"
+      }
       // permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
       // botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
     }
@@ -20,7 +23,7 @@ module.exports = class UpdateCommand extends BotDevCommand {
       {...props}
     )
   }
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let BRANCH = ""
     let COMMITS = {
       current: "",

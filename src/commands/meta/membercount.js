@@ -5,7 +5,10 @@ module.exports = class MemberCountCommand extends RookCommand {
     let comprops = {
       name: "membercount",
       category: "meta",
-      description: "Displays the total number of registered members on the server."
+      description: "Displays the total number of registered members on the server.",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {
@@ -23,7 +26,7 @@ module.exports = class MemberCountCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     try {
       // Fetch all members in the server to ensure the data is up-to-date
       const members = await interaction.guild.members.fetch()

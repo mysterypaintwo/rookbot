@@ -42,7 +42,7 @@ module.exports = class HelpCommand extends RookCommand {
       {...props}
     )
   }
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let helpJSON = require('../../res/app/manifests/help/help.json')
     let command = interaction.options.getString("command-name") ?? null
     let section = interaction.options.getString("section-name") ?? null

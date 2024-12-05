@@ -5,7 +5,10 @@ module.exports = class PingCommand extends RookCommand {
     let comprops = {
       name: "ping",
       category: "diagnostic",
-      description: "Pong!"
+      description: "Pong!",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: { text: "Pong!" }

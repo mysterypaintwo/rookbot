@@ -33,9 +33,9 @@ module.exports = class DiceRollCommand extends RookCommand {
     )
   }
 
-    async action(client, interaction) {
-      const count = interaction.options.getInteger('count')
-      const sides = interaction.options.getInteger('sides') ?? 6
+    async action(client, interaction, args, cmd, options) {
+      const count = options.count
+      const sides = options.sides ?? 6
 
       // Roll the dice and collect results
       const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1)
@@ -49,6 +49,16 @@ module.exports = class DiceRollCommand extends RookCommand {
           text: `Roll ${count}d${sides}!`
         },
         description: `🎲You got ${rolls.join(', ')} for a total of ${total}`
+      }
+    }
+
+    async test(client, interaction, args, cmd, options) {
+      let tests = [
+        { count: 4, sides: 6 },
+        { count: 5, sides: 6 }
+      ]
+      for (let thisTest of tests) {
+        this.execute(client, interaction, args, cmd, thisTest)
       }
     }
   }

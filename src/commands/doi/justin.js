@@ -5,7 +5,10 @@ module.exports = class JustinCommand extends RookCommand {
     let comprops = {
       name: "justin",
       category: "doi",
-      description: "Displays an embed showcasing the developer's video games from their portfolio."
+      description: "Displays an embed showcasing the developer's video games from their portfolio.",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {}
 
@@ -20,7 +23,7 @@ module.exports = class JustinCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     this.props = {
       title: {
         text: "Developer Portfolio: Justin Bohemier",

@@ -28,7 +28,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const targetUserInput = interaction.options.get('target-id').value
 
     // Extract user ID from mention (if it's a mention)

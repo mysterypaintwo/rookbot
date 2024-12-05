@@ -8,6 +8,9 @@ module.exports = class InstallCommand extends BotDevCommand {
       name: "install",
       category: "app",
       description: "Install Node Modules",
+      flags: {
+        test: "basic"
+      }
       // permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
       // botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
     }
@@ -19,7 +22,7 @@ module.exports = class InstallCommand extends BotDevCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let GLOBALS = null
     const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
     let profileName = "default"

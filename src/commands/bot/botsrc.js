@@ -5,7 +5,10 @@ module.exports = class BotSourceCommand extends RookCommand {
     let comprops = {
       name: "botsrc",
       category: "bot",
-      description: "Links to the GitHub repository of rookbot"
+      description: "Links to the GitHub repository of rookbot",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {
@@ -32,7 +35,7 @@ module.exports = class BotSourceCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // all done in constructor
   }
 }

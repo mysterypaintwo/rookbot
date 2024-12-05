@@ -6,7 +6,10 @@ module.exports = class CastleNameCommand extends RookCommand {
     let comprops = {
       name: "castlename",
       category: "doi",
-      description: "Immediately triggers a nickname change for castle, to a random castle-esque name"
+      description: "Immediately triggers a nickname change for castle, to a random castle-esque name",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {}
     super(
@@ -15,7 +18,7 @@ module.exports = class CastleNameCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Get this Guild ID
     // Set Castle's User ID
     const guildID = interaction.guild.id

@@ -8,7 +8,10 @@ module.exports = class HelloCommand extends RookCommand {
     let comprops = {
       name: "hello",
       category: "app",
-      description: "Hello"
+      description: "Hello",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       caption: { text: "Hello World" },
@@ -24,7 +27,7 @@ module.exports = class HelloCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let BRANCH = ""
     let COMMIT = ""
 

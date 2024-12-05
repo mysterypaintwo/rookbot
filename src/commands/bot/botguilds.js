@@ -19,7 +19,8 @@ module.exports = class BotGuildsCommand extends RookCommand {
       category: "bot",
       description: "Bot Guilds",
       flags: {
-        user: "unapplicable"
+        user: "unapplicable",
+        test: "basic"
       },
       options: [
         {
@@ -38,7 +39,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     this.props.description = []
     this.props.description.push(
       `***Guilds that ${client.user} is in:***`,

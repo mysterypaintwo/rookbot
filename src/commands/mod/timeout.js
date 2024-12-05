@@ -49,7 +49,7 @@ module.exports = class TimeoutCommand extends ModCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const guildID = interaction.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
     const targetUserInput = interaction.options.getString("target-id")

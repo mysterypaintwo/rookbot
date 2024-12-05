@@ -46,7 +46,7 @@ module.exports = class MentionCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let targetInput   = interaction.options.getString("target-id")
     let targetId      = targetInput.replace(/[<#@&!>]/g, '');  // Remove <@>, <@!>, and >
     let targetType    = interaction.options.getString("target-type") || "channel"

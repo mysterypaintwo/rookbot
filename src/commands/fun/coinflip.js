@@ -5,7 +5,10 @@ module.exports = class CoinFlipCommand extends RookCommand {
     let comprops = {
       name: "coinflip",
       category: "fun",
-      description: "Flips a coin and return either Heads or Tails"
+      description: "Flips a coin and return either Heads or Tails",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {
@@ -19,7 +22,7 @@ module.exports = class CoinFlipCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Randomly choose between "Heads" and "Tails"
     const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails'
 

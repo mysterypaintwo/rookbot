@@ -47,7 +47,7 @@ module.exports = class SearchCommand extends ModCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let searchType = interaction.options.getString("search-type")
     let targetUserInput = interaction.options.getString("target-id")
     let targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >

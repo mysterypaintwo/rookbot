@@ -29,7 +29,7 @@ module.exports = class CalcCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const expression = interaction.options.getString('expression')
 
     try {

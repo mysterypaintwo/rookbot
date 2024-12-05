@@ -50,7 +50,7 @@ module.exports = class HolyImageCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     let gameID = interaction.options.getString('game-id') ?? "z3r"
     let slugID = interaction.options.getString('slug-id') ?? "verify"
 

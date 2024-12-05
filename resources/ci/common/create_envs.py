@@ -16,6 +16,10 @@ with open(".env", encoding="utf-8") as envFile:
             assign_line = False
             if len(envLines) > 2:
                 print(envPath)
+                envDir = os.path.dirname(envPath)
+                print(envDir)
+                if not os.path.isdir(envDir):
+                    os.makedirs(envDir)
                 with open(envPath, "w", encoding="utf-8") as thisEnvFile:
                     toPrint = "\n".join(envLines)
                     thisEnvFile.write(toPrint)

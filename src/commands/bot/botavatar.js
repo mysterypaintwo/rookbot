@@ -27,8 +27,8 @@ module.exports = class BotAvatarCommand extends BotDevCommand {
     )
   }
 
-  async action(client, interaction) {
-    let new_avatar = interaction.options.getString("avatar-url")
+  async action(client, interaction, cmd, options) {
+    let new_avatar = options["avatar-url"]
     let old_avatar = client.user.displayAvatarURL()
 
     this.props.title = {

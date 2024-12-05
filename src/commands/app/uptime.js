@@ -5,7 +5,11 @@ module.exports = class UptimeCommand extends RookCommand {
     let comprops = {
       name: "uptime",
       category: "app",
-      description: "Uptime"
+      description: "Uptime",
+      flags: {
+        user: "unapplicable",
+        test: "basic"
+      }
     }
     let props = {
       caption: { text: "Uptime", emoji: "⏱️" }
@@ -15,7 +19,7 @@ module.exports = class UptimeCommand extends RookCommand {
       {...props}
     )
   }
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     function timeConversion(duration = 0) {
       const portions = []
       const msInSec = 1000

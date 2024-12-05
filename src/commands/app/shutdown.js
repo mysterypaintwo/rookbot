@@ -11,6 +11,9 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       name: "shutdown",
       category: "app",
       description: "Shutdown (and restart if pm2) rookbot",
+      flags: {
+        test: "basic"
+      }
       // permissionsRequired: [PermissionFlagsBits.ManageMessages], // Restrict to staff
       // botPermissions: [PermissionFlagsBits.SendMessages] // Ensure bot can send messages
     }

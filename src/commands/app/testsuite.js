@@ -8,6 +8,12 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
       name: "testsuite",
       category: "botdev",
       description: "Runs a test suite for a command",
+      flags: {
+        user: "unapplicable",
+        target: "unapplicable",
+        mention: "unapplicable",
+        bot: "unapplicable"
+      },
       options: [
         {
           name: "command-name",
@@ -31,9 +37,9 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const localCommands = getLocalCommands()
-    commandName = interaction.options.getString("command-name")
+    let commandName = interaction.options.getString("command-name")
 
     try {
       // Find the command
@@ -115,5 +121,6 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
     } catch (error) {
       console.log(`There was an error running this command: ${error.stack}`);
     }
+    this.null = true
   }
 }

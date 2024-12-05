@@ -428,7 +428,12 @@ class RookCommand {
    * @param {Array.<string>} args Command-line args
    * @param {Object.<string, string>} flags Flags for user management
    */
-  async processArgs(message, args, flags = { user: "default", target: "invalid", bot: "invalid", search: "valid" }) {
+  async processArgs(
+    message,
+    args,
+    flags = { user: "default", target: "invalid", bot: "invalid", search: "valid" },
+    options
+  ) {
     let foundHandles  = { players: {}, invalid: "", flags: flags }
     let user          = null
     let mention       = null
@@ -674,7 +679,7 @@ class RookCommand {
    * @param {Message} message Message that called the command
    * @param {string} cmd Command name/alias sent
    */
-  async action(client, message, cmd) {
+  async action(client, message, args, cmd, options) {
     // Do nothing; command overrides this
     // If the thing doesn't modify anything, don't worry about DEV flag
     // If the thing does modify stuff, use DEV flag to describe action instead of performing it
@@ -689,18 +694,30 @@ class RookCommand {
    * Build pre-flight characteristics of Command
    *
    * @param {Client} client Discord Client object
-   * @param {Message} message Message that called the command
    */
-  async build(client, message, cmd) {
+  async build(client, interaction, args, cmd, options) {
     if(!(this.error)) {
-      await this.action(client, message, cmd)
+      console.log(`Options: ${options}`)
+      console.log(options)
+      for (let option of this.options) {
+        if (!(options.hasOwnProperty(option.name))) {
+          // @ts-ignore
+          let thisOption = interaction.options.get(option.name)
+          console.log(`Option: ${option.name}, ${thisOption}`)
+          if (thisOption) {
+            options[option.name] = thisOption.value
+          }
+        }
+        console.log(`Option: ${option.name}, ${options[option.name]}`)
+      }
+
+      await this.action(client, interaction, args, cmd, options)
     }
   }
 
   /**
    * Send pages to Discord Client
    *
-   * @param {Message} message Message that called the command
    * @param {Array.<(RookEmbed)> | RookEmbed} pages Pages to send to client
    * @param {Array.<string>} emojis Emoji for pagination
    * @param {number} timeout Timeout for disabling pagination
@@ -708,14 +725,14 @@ class RookCommand {
    */
   // @ts-ignore
   async send(
-    message,
+    interaction,
     pages       = [new RookEmbed({"description":"No pages sent!"})],
     emojis      = [],
     timeout     = 600000,
     forcepages  = false
   ) {
-    if ((!this.channel) && message) {
-      this.channel = message.channel
+    if ((!this.channel) && interaction) {
+      this.channel = interaction.channel
     }
     // If pages are being forced, set defaults
     if (forcepages) {
@@ -742,11 +759,11 @@ class RookCommand {
         if (flags == 0) {
           console.log(`/${this.name}: Editing an embed`)
           // @ts-ignore
-          return message.editReply(this_page)
+          return interaction.editReply(this_page)
         } else {
           console.log(`/${this.name}: Sending an embed`)
           // @ts-ignore
-          return message.followUp(this_page)
+          return interaction.followUp(this_page)
         }
       } else {
         // Else, set up for pagination
@@ -800,11 +817,11 @@ class RookCommand {
         if (flags == 0) {
           console.log(`/${this.name}: Editing pages`)
           // @ts-ignore
-          return message.editReply(these_pages)
+          return interaction.editReply(these_pages)
         } else {
           console.log(`/${this.name}: Sending pages`)
           // @ts-ignore
-          return message.followUp(these_pages)
+          return interaction.followUp(these_pages)
         }
       }
     } else {
@@ -820,11 +837,11 @@ class RookCommand {
       if (flags == 0) {
         console.log(`/${this.name}: Editing one embed page`)
         // @ts-ignore
-        return message.editReply(this_embed)
+        return interaction.editReply(this_embed)
       } else {
         console.log(`/${this.name}: Sending one embed page`)
         // @ts-ignore
-        return message.followUp(this_embed)
+        return interaction.followUp(this_embed)
       }
     }
   }
@@ -833,13 +850,15 @@ class RookCommand {
    * Run the command
    *
    * @param {Client} client Discord Client object
-   * @param {Message} message Message that called the command
    * @param {Array.<string>} args Command-line args
    * @param {string} cmd Actual command name used (alias here if alias used)
    * @returns {Promise.<any>}
    */
   // @ts-ignore
-  async execute(client, message, args,  cmd) {
+  async execute(client, interaction, args, cmd, options, skipBody=false) {
+    if(!options) {
+      options = {}
+    }
     try {
       // @ts-ignore
       await message.deferReply()
@@ -852,13 +871,15 @@ class RookCommand {
     await this.getProfile()
 
     // Process arguments
-    await this.processArgs(message, args, this.flags)
+    await this.processArgs(interaction, args, options, this.flags)
 
-    try {
-      // Build the thing
-      await this.build(client, message, cmd)
-    } catch(err) {
-      console.log(err.stack)
+    if (!skipBody) {
+      try {
+        // Build the thing
+        await this.build(client, interaction, cmd, options)
+      } catch(err) {
+        console.log(err.stack)
+      }
     }
 
     // If we have an error, make it errortastic
@@ -886,7 +907,7 @@ class RookCommand {
     // Not setting this.null after sending the page(s) will send the page(s) again
     if ((!(this?.null)) || (this?.null && (!(this.null)))) {
       try {
-        await this.send(message, this.pages)
+        await this.send(interaction, this.pages)
       } catch(e) {
         // do nothing
       }
@@ -900,8 +921,15 @@ class RookCommand {
     }
   }
 
-  async test(client, message, args, cmd) {
-    console.log(`/${this.name}: Test`)
+  async test(client, interaction, args, cmd) {
+    if (this?.flags?.test == "basic") {
+      this.execute(client, interaction, args, cmd, [])
+    } else {
+      this.props.title = {text: `/${this.name}: Test`}
+      this.props.description = ""
+      console.log(this.props.title.text)
+      this.execute(client, interaction, args, cmd, [], true)
+    }
   }
 }
 

@@ -189,7 +189,7 @@ class ModCommand extends AdminCommand {
     await this.voice_user(message, user, "unmute")
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Get Guild ID
     const guildID = interaction.guild.id;
     // Get Guild Channels
@@ -527,7 +527,12 @@ class ModCommand extends AdminCommand {
       return
     }
 
-    this.action(client, message, cmd)
+    let options = {}
+    for (let option of this.options) {
+      // @ts-ignore
+      options[option.name] = message?.options.get(option.name).value
+    }
+    this.action(client, message, cmd, options)
   }
 }
 

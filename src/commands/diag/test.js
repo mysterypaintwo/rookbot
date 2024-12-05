@@ -4,14 +4,17 @@ module.exports = class TestCommand extends RookCommand {
   constructor() {
     let comprops = {
       name: "test",
-      category: "diagnostic"
+      category: "diagnostic",
+      flags: {
+        test: "basic"
+      }
     }
     super(
       {...comprops}
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     if (! this.DEV) {
       // Do the thing
       this.props.description = "Doing the thing!"

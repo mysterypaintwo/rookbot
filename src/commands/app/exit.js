@@ -10,7 +10,10 @@ module.exports = class ExitCommand extends BotDevCommand {
     let comprops = {
       name: "exit",
       category: "app",
-      description: "Exit rookbot"
+      description: "Exit rookbot",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {
       title: {

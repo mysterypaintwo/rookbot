@@ -24,7 +24,7 @@ module.exports = class ColorCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase()
 
     // Validate hex string

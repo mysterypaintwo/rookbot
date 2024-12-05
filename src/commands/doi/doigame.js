@@ -8,7 +8,10 @@ module.exports = class DOIGameCommand extends RookCommand {
     let comprops = {
       name: "doigame",
       category: "doi",
-      description: `Sends a message with download info for *${serverGameName}*.`
+      description: `Sends a message with download info for *${serverGameName}*.`,
+      flags: {
+        test: "basic"
+      }
     }
     let props = {}
 
@@ -18,7 +21,7 @@ module.exports = class DOIGameCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Decode the base64 string
     const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8')
 

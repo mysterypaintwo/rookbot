@@ -41,7 +41,7 @@ class AdminCommand extends RookCommand {
   }
 
   // Build the response
-  async build(client, message, cmd) {
+  async build(client, message, cmd, options) {
     if (message) {
       // Get list of roles
       this.ROLES = JSON.parse(fs.readFileSync(`./src/dbs/${message.guild.id}/roles.json`, "utf8"))
@@ -65,7 +65,11 @@ class AdminCommand extends RookCommand {
       }
     }
 
-    await this.action(client, message, cmd)
+    for (let option of this.options) {
+      // @ts-ignore
+      options[option.name] = message?.options.get(option.name).value
+    }
+    await this.action(client, message, cmd, options)
   }
 }
 

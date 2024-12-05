@@ -7,7 +7,10 @@ module.exports = class MothCommand extends RookCommand {
     let comprops = {
       name: "moth",
       category: "doi",
-      description: "Hear it from the legend himself"
+      description: "Hear it from the legend himself",
+      flags: {
+        test: "basic"
+      }
     }
     let props = {}
 
@@ -21,7 +24,7 @@ module.exports = class MothCommand extends RookCommand {
    * @param {Client} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction) {
+  async action(client, interaction, cmd, options) {
     // Path to the local video file
     const videoPath = path.join(__dirname, '..', '..', 'res', 'media', 'mothula.mp4')
 

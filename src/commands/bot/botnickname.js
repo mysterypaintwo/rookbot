@@ -27,8 +27,8 @@ module.exports = class BotNicknameCommand extends BotDevCommand {
     )
   }
 
-  async action(client, interaction) {
-    let new_nickname = interaction.options.getString("bot-nickname")
+  async action(client, interaction, cmd, options) {
+    let new_nickname = options["bot-nickname"]
     let old_nickname = ""
 
     this.props.title = {
