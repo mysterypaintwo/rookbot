@@ -145,7 +145,7 @@ module.exports = async (client) => {
     id: process.env.GUILD_ID
   }
   if (server.id != "?") {
-    server.name = await client.guilds.cache.find(g => g.id == server.id).name
+    server.name = await client?.guilds.cache.find(g => g.id == server.id).name | "?"
   }
   props.fields = [
     {
