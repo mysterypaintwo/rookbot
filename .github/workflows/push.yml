@@ -70,7 +70,7 @@ jobs:
   install-test:
     name: ⏱️
     uses: ./.github/workflows/test.yml
-    with:
+    secrets:
       DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
 
   # Prepare Pages
