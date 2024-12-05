@@ -82,7 +82,7 @@ jobs:
       # test
       - name: ⏱️Call Test
         uses: ./.github/workflows/test.yml
-        env:
+        with:
           DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
 
   # Prepare Pages
