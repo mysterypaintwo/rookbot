@@ -76,6 +76,9 @@ jobs:
         os-name: [ ubuntu-latest ]
         python-version: [ "3.12" ]
     steps:
+      # checkout commit
+      - name: ✔️Checkout commit
+        uses: actions/checkout@v4.2.2
       # test
       - name: ⏱️Call Test
         uses: ./.github/workflows/test.yml
