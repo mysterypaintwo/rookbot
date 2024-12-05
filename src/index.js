@@ -25,7 +25,7 @@ const client = new Client(
   if (process.env.GITHUB_WORKFLOW) {
     console.log(process.env.GITHUB_WORKFLOW)
     setTimeout(async () => {
-      const getLocalCommands = require('../../utils/getLocalCommands')
+      const getLocalCommands = require('./utils/getLocalCommands')
       const localCommands = getLocalCommands()
       try {
         let commandName = "ExitCommand"
