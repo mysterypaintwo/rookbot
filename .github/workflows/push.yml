@@ -78,7 +78,7 @@ jobs:
     steps:
       # test
       - name: ⏱️Call Test
-        uses: ./.github/workflow/test.yml
+        uses: ./.github/workflows/test.yml
         env:
           DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
 
