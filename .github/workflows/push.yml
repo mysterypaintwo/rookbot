@@ -69,21 +69,9 @@ jobs:
   # Install, Test
   install-test:
     name: ⏱️
-    runs-on: ${{ matrix.os-name }}
-    continue-on-error: True
-    strategy:
-      matrix:
-        os-name: [ ubuntu-latest ]
-        python-version: [ "3.12" ]
-    steps:
-      # checkout commit
-      - name: ✔️Checkout commit
-        uses: actions/checkout@v4.2.2
-      # test
-      - name: ⏱️Call Test
-        uses: ./.github/workflows/test.yml
-        with:
-          DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
+    uses: ./.github/workflows/test.yml
+    with:
+      DOTENV_PRIVATE_KEY_DEV_CI: ${{ secrets.DOTENV_PRIVATE_KEY_DEV_CI }}
 
   # Prepare Pages
   pages-prepare:
