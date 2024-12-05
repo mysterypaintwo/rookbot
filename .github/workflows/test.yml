@@ -71,6 +71,10 @@ jobs:
       - name: 🧮App Audit
         run: npm run-script audit
         shell: bash
+      # create profile
+      - name: Create gitrook profile
+        run: |
+          python ./resources/ci/common/create_gitrook_profile.py
       - name: ⏱️Run Bot (Development)
         run: /usr/local/bin/dotenvx run -- npm run-script run
         shell: bash
