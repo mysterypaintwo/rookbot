@@ -32,7 +32,7 @@ const client = new Client(
           "uptime",
           "exit"
         ]
-        for(let commandName in commandNames) {
+        for(let commandName of commandNames) {
           const commandObject = localCommands.find(
             (cmd) => cmd.name === commandName
           )
