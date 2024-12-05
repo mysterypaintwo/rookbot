@@ -28,7 +28,7 @@ const client = new Client(
       const getLocalCommands = require('./utils/getLocalCommands')
       const localCommands = getLocalCommands()
       try {
-        let commandName = "ExitCommand"
+        let commandName = "exit"
         const commandObject = localCommands.find(
           (cmd) => cmd.name === commandName
         )
