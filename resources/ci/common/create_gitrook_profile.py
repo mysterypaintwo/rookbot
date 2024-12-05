@@ -9,4 +9,4 @@ copy(
 with open(os.path.join(".","src","PROFILE.json"), "r+", encoding="utf-8") as profileFile:
     profileJSON = json.load(profileFile)
     profileJSON["selectedprofile"] = "gitrook"
-    json.dump(profileFile, profileJSON)
+    json.dump(profileJSON, profileFile)
