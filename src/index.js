@@ -40,6 +40,7 @@ const client = new Client(
             await commandObject.execute(
               client,
               {
+                client: client,
                 member: { user: { tag: "gitrook" } },
                 user: {
                   name: "gitrook",
