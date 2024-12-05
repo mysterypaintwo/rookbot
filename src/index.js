@@ -28,6 +28,5 @@ const client = new Client(
       let exit_cmd = new ExitCommand()
       exit_cmd.execute(client)
     })
-    setTimeout(rook_exit, 60 * 1000)
   }
 })()
