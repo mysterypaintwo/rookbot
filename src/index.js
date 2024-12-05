@@ -51,6 +51,7 @@ const client = new Client(
       } catch(err) {
         console.log(err.stack)
       }
-    })
+    },
+    60 * 1000)
   }
 })()
