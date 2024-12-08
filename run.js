@@ -1,7 +1,7 @@
-// import shell from 'shelljs'
+require('@dotenvx/dotenvx').config()
 const shell = require('shelljs')
 
-let QUICK = true
+let QUICK = !process.env.GITHUB_WORKFLOW
 
 if (!QUICK) {
   shell.exec("node ./src/res/ci/common/ver.js")

@@ -1,5 +1,6 @@
 const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
+const UptimeCommand = require('../../commands/app/uptime.js')
 const unready = require('../../events/unready/exit')
 const colors = require('../../dbs/colors.json')
 
@@ -79,12 +80,16 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       }
 
       this.props.description = `${action} <@${client.user.id}>`
-      interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
 
-      console.log(`!!! SHUTDOWN`)
+      await interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
+
+      let command = await new UptimeCommand()
+      await command.execute(client)
+      this.null = true
 
       await unready(client)
 
+      console.log(`!!! SHUTDOWN`)
       process.exit(1337)
     }
   }

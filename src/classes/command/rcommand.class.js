@@ -972,12 +972,12 @@ class RookCommand {
       console.log("Execute: Defer Needed:", needsDeferred)
       console.log("Execute: Has Replied:", !needsReplied)
       if (needsDeferred && needsReplied) {
-        console.log(`/${this.name} Test: Deferring reply`)
+        console.log(`/${this.name} Execute: Deferring reply`)
         // @ts-ignore
         await interaction.deferReply()
       }
       if (!needsReplied) {
-        console.log(`/${this.name} Test: Fetching reply`)
+        console.log(`/${this.name} Execute: Fetching reply`)
         // @ts-ignore
         reply = await interaction.fetchReply()
       }

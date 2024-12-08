@@ -41,6 +41,14 @@
       "access": "BotDev",
       "segment": "local"
     },
+    "pull": {
+      "name": "pull",
+      "category": "app",
+      "description": "Pull from Main",
+      "options": [],
+      "access": "BotDev",
+      "segment": "local"
+    },
     "shutdown": {
       "name": "shutdown",
       "category": "app",
@@ -52,7 +60,7 @@
     "update": {
       "name": "update",
       "category": "app",
-      "description": "Update from Main",
+      "description": "Update Node Modules",
       "options": [],
       "access": "BotDev",
       "segment": "local"

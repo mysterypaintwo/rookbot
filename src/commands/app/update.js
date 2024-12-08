@@ -7,101 +7,50 @@ module.exports = class UpdateCommand extends BotDevCommand {
     let comprops = {
       name: "update",
       category: "app",
-      description: "Update from Main",
+      description: "Update Node Modules",
       flags: {
         test: "basic"
       }
       // permissionsRequired: [PermissionFlagsBits.Administrator], // Restrict to staff
       // botPermissions: [PermissionFlagsBits.Administrator] // Ensure bot can send messages
     }
-    let props = {
-      caption: { text: "Update", emoji: "⏫" },
-      title: { text: "Update", emoji: "⏫" }
-    }
+    let props = {}
+
     super(
       {...comprops},
       {...props}
     )
   }
+
   async action(client, interaction, cmd, options) {
-    let BRANCH = ""
-    let COMMITS = {
-      current: "",
-      latest: "",
-      new: ""
-    }
-
-    // Get Branch
+    let GLOBALS = null
+    const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
+    let profileName = "default"
     try {
-      if (fs.existsSync("./.git/HEAD")) {
-        // @ts-ignore
-        BRANCH = fs.readFileSync("./.git/HEAD","utf8").trim().match(/(?:\/)([^\/]*)$/)
-        if (BRANCH && (BRANCH.length > 0)) {
-          // @ts-ignore
-          BRANCH = BRANCH[1]
-        }
-      } else if (process.env?.HOME == "/app") {
-        BRANCH = "heroku"
+      if (fs.existsSync("./src/PROFILE.json")) {
+        GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
+      } else {
+        console.log("🟡Install Script: PROFILE manifest not found! Using defaults!")
       }
-    } catch (err) {
-      console.log(err)
-    }
-
-    // Get Current commit ID
-    try {
-      let git_log = shell.exec(
-        "git log -1",
-        { silent: true }
-      )
-      git_log = git_log.stdout.trim()
-      let commits = git_log.split("\n")
-      let latest_commit = commits[0 * 6]
-      COMMITS.current = latest_commit.match(/^(?:[^\s]+)(?:[\s])([^\s]{7})/)
-      if (COMMITS.current && (COMMITS.current.length > 0)) {
-        COMMITS.current = COMMITS.current[1]
+      if (
+        GLOBALS?.selectedprofile &&
+        GLOBALS?.profiles &&
+        GLOBALS.selectedprofile in GLOBALS.profiles
+      ) {
+        profileName = GLOBALS.selectedprofile
+        GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
+      } else {
+        GLOBALS = defaults
       }
-    } catch (err) {
-      console.log(err.stack)
-    }
-
-    // Checkout
-    try {
-      shell.exec(
-        "git checkout main",
-        { silent: true }
-      )
     } catch(err) {
-      console.log(err.stack)
-    }
-    // Pull
-    try {
-      shell.exec(
-        "git pull origin",
-        { silent: true }
-      )
-    } catch(err) {
-      console.log(err.stack)
+      console.log("🔴Install Script: PROFILE manifest not found!")
+      process.exit(1)
     }
 
-    // Get Fresh commit ID
-    // Get previous commit ID
+    let node_update = null
     try {
-      let git_log = shell.exec(
-        "git log -2",
-        { silent: true }
-      )
-      git_log = git_log.stdout.trim()
-      let commits = git_log.split("\n")
-      let latest_commit = commits[0 * 6]
-      COMMITS.fresh = latest_commit.match(/^(?:[^\s]+)(?:[\s])([^\s]{7})/)
-      if (COMMITS.fresh && (COMMITS.fresh.length > 0)) {
-        COMMITS.fresh = COMMITS.fresh[1]
-      }
-      let second_commit = commits[1 * 6]
-      COMMITS.prev = second_commit.match(/^(?:[^\s]+)(?:[\s])([^\s]{7})/)
-      if (COMMITS.prev && (COMMITS.prev.length > 0)) {
-        COMMITS.prev = COMMITS.prev[1]
-      }
+      node_update = shell.exec("npm run-script update")
+      node_update = node_update.stdout.trim()
     } catch (err) {
       console.log(err.stack)
     }
@@ -117,90 +66,27 @@ module.exports = class UpdateCommand extends BotDevCommand {
       (user ? user.username : "") +
       ` v${this.PACKAGE.version}!`
     )
-    this.props = {
-      title: {
-        text: console_output[1],
-        emoji: "⏫",
-        url: "https://github.com/mysterypaintwo/rookbot"
-      }
+    this.props.title = {
+      text: "💿 " + console_output[1],
+      url: "https://github.com/mysterypaintwo/rookbot"
     }
-
-    console_output.push(
-      `Branch Key:      <${BRANCH}>`,
-      `Current Commit:  [${COMMITS.current}]`,
-      `Fresh Commit:    [${COMMITS.fresh}]`,
-      `Previous Commit: [${COMMITS.prev}]`,
-      ""
-    )
 
     // console.log(console_output)
 
     /*
 
     console_output[1] = ---
-    console_output[2] = MODE
-    console_output[3] = Footer  Tag
-    console_outout[4] = Profile Key
-    console_output[5] = Branch  Key
-    console_output[6] = Commit  ID
-    console_output[7] = Ready
+    console_output[2] = Updating Message
+    console_output[3] = Output from npm up
 
     */
-    this.props.fields = [
-      {
-        name: "Branch",
-        value:
-          console_output[2].substring(console_output[2].indexOf(':') + 2)
-          .replace(
-            `<${BRANCH}>`,
-            `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
-          ),
-      }
-    ]
 
-    this.props.fields.push(
-      {
-        name: "Old Commit",
-        value: `[\`${COMMITS.current}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.current})`,
-        inline: true
-      }
-    )
-
-    // If fresh isn't the same as the old current
-    if (COMMITS.fresh != COMMITS.current) {
-      this.props.fields.push(
-        {
-          name: "New Commit",
-          value: `[\`${COMMITS.fresh}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.fresh})`,
-          inline: true
-        }
-      )
-      this.props.fields.push(
-        {
-          name: "Updated?",
-          value: "Yes"
-        }
-      )
-    } else {
-      this.props.fields[1].name = "Same Commit"
-      this.props.fields.push(
-        {
-          name: "Updated?",
-          value: "No"
-        }
-      )
-    }
-
-    // Entities
-    let entities = {
-      bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
-      user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username }
-    }
-    // Players
-    this.props.players = {
-      user: entities.user,
-      target: entities.bot
-    }
+    console_output.push(`
+      \`\`\`` + "\n" +
+      node_update +
+      `\`\`\`
+    `)
+    this.props.description = console_output
 
     return !this.error
   }
