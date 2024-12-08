@@ -14,6 +14,12 @@ module.exports = class ColorCommand extends RookCommand {
           type: ApplicationCommandOptionType.String,
           required: true
         }
+      ],
+      testOptions: [
+        { hex: "FFAF00" },
+        { hex: "c8a0c8" },
+        { hex: "#FFAF00" },
+        { hex: "#c8a0c8" }
       ]
     }
     let props = {}
@@ -25,7 +31,7 @@ module.exports = class ColorCommand extends RookCommand {
   }
 
   async action(client, interaction, cmd, options) {
-    const hexInput = interaction.options.getString('hex').replace('#', '').toUpperCase()
+    const hexInput = options.hex.replace('#', '').toUpperCase()
 
     // Validate hex string
     const hexRegex = /^[0-9A-F]{6}$/
@@ -39,6 +45,7 @@ module.exports = class ColorCommand extends RookCommand {
     const r = parseInt(hexInput.substring(0, 2), 16)
     const g = parseInt(hexInput.substring(2, 4), 16)
     const b = parseInt(hexInput.substring(4, 6), 16)
+    let dims = "50x50"
 
     // Create the embed
     this.props = {
@@ -46,10 +53,13 @@ module.exports = class ColorCommand extends RookCommand {
       title: {
         text: "Color Information"
       },
+      image: `https://png-pixel.com/${dims}-${hexInput.toLowerCase()}ff.png`,
       fields: [
         { name: 'Hex', value: `\`#${hexInput}\``,   inline: true },
         { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true }
       ]
     }
+
+    return !this.error
   }
 }

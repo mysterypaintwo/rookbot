@@ -39,7 +39,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
    */
   async action(client, interaction, cmd, options) {
     const localCommands = getLocalCommands()
-    let commandName = interaction.options.getString("command-name")
+    let commandName = options["command-name"]
 
     try {
       // Find the command
@@ -117,7 +117,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
       }
 
       // Run the test function
-      await commandObject.test(client, interaction);
+      await commandObject.test(client, interaction, cmd);
     } catch (error) {
       console.log(`There was an error running this command: ${error.stack}`);
     }

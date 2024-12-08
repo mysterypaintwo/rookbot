@@ -27,6 +27,13 @@ module.exports = class MentionCommand extends RookCommand {
             { name: "Voice Channel",  value: "channel" }
           ]
         }
+      ],
+      testOptions: [
+        { "target-id": "<#895062573999878234>" },
+        { "target-id": "<@&833812507012366366>" },
+        { "target-id": "<#895062573999878234>" },
+        { "target-id": "<@!263968998645956608>" },
+        { "target-id": "<#!1097065219014021130>" }
       ]
     }
     let props = {
@@ -47,9 +54,9 @@ module.exports = class MentionCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
-    let targetInput   = interaction.options.getString("target-id")
+    let targetInput   = options["target-id"]
     let targetId      = targetInput.replace(/[<#@&!>]/g, '');  // Remove <@>, <@!>, and >
-    let targetType    = interaction.options.getString("target-type") || "channel"
+    let targetType    = options["target-type"] || "channel"
     let targetMention = ""
 
     // console.log(
@@ -127,5 +134,7 @@ module.exports = class MentionCommand extends RookCommand {
         }
       ]
     }
+
+    return !this.error
   }
 }

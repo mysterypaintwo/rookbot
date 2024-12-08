@@ -50,5 +50,7 @@ module.exports = class TimeCommand extends RookCommand {
     let tmp = `Local: <t:${Math.floor(now / 1000)}:f>`
     this.props.description += tmp
     console.log(tmp)
+
+    return !this.error
   }
 }

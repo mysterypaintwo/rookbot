@@ -116,9 +116,11 @@ module.exports = class HelloCommand extends RookCommand {
         "🟧"
       )
     let server = {
-      name: await interaction.guild.name,
-      id: await interaction.guild.id
+      name: await this?.channel?.guild.name,
+      id: await this?.channel?.guild.id
     }
+    let uptime = client.uptime
+    let launched = Math.floor((new Date() - uptime) / 1000)
     this.props.fields = [
       {
         name: "Name",
@@ -188,6 +190,10 @@ module.exports = class HelloCommand extends RookCommand {
         inline: true
       },
       {
+        name: "Launched",
+        value: `<t:${launched}:f> (\`${launched}\`)`
+      },
+      {
         name: "Status",
         value:
           user ?
@@ -199,5 +205,7 @@ module.exports = class HelloCommand extends RookCommand {
             console_output[7]
       }
     ]
+
+    return !this.error
   }
 }

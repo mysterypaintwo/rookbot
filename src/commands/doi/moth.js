@@ -39,5 +39,7 @@ module.exports = class MothCommand extends RookCommand {
       this.props.description = "There was an error uploading the video."
       console.log(`There was an error when uploading the video: ${error.stack}`)
     }
+
+    return !this.error
   }
 }

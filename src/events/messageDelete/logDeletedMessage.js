@@ -1,4 +1,4 @@
-const { Client, Message } = require('discord.js')
+const { Client, AuditLogEvent, Message } = require('discord.js')
 const fs = require('fs')
 const path = require('path')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
@@ -36,6 +36,72 @@ module.exports = async (client, deletedMessage) => {
       return
     }
 
+    // Fetch a couple audit logs than just one as new entries could've been added right after this event was emitted.
+    const fetchedLogs = await deletedMessage.guild.fetchAuditLogs({
+      limit: 6,
+      type: AuditLogEvent.MessageDelete
+    }).catch(console.error)
+
+    if (fetchedLogs) {
+      // console.log("Logs Fetched!")
+    }
+
+    const auditEntry = await fetchedLogs.entries.find(a =>
+      // Small filter function to make use of the little discord provides to narrow down the correct audit entry.
+      a.target.id === deletedMessage.author.id &&
+      a.extra.channel.id === deletedMessage.channel.id &&
+      // Ignore entries that are older than 20 seconds to reduce false positives.
+      Date.now() - a.createdTimestamp < 20000
+    )
+
+    if (auditEntry) {
+      // console.log("Log Entry Found!")
+    } else {
+      // console.log(fetchedLogs)
+    }
+
+    // If entry exists, grab the user that deleted the message and display username + tag, if none, display 'Unknown'.
+    const deleter = await auditEntry?.executor || null
+
+    let fields = []
+    fields.push(
+      {
+        name: 'Author',
+        value: `<@${deletedMessage.author.id}>` + " " +
+          `(ID: \`${deletedMessage.author.id}\`)`
+      }
+    )
+    if (deleter && deleter?.id) {
+      fields.push(
+        {
+          name: 'Deleter',
+          value: `<@${deleter.id}>` + " " +
+            `(ID: \`${deleter.id}\`)`
+        }
+      )
+    } else {
+      fields.push(
+        {
+          name: 'Deleter',
+          value: `Probably self or a bot`
+        }
+      )
+    }
+    fields.push(
+      {
+        name: 'Message',
+        value: `${deletedMessage.url} (ID: \`${deletedMessage.id}\`)`
+      },
+      {
+        name: 'Channel',
+        value: `<#${deletedMessage.channel.id}>`
+      },
+      {
+        name: 'Content',
+        value: deletedMessage.content || '*No content*'
+      }
+    )
+
     // Prepare the log embed
     const logEmbed = new RookEmbed({
       color: colors["bad"], // Orange for message updates
@@ -52,25 +118,7 @@ module.exports = async (client, deletedMessage) => {
           avatar: deletedMessage.author.displayAvatarURL( { dynamic: true, size: 128 } )
         }
       },
-      fields: [
-        {
-          name: 'Author',
-          value: `<@${deletedMessage.author.id}>` + " " +
-            `(ID: \`${deletedMessage.author.id}\`)`
-        },
-        {
-          name: 'Channel',
-          value: `<#${deletedMessage.channel.id}>`
-        },
-        {
-          name: 'Content',
-          value: deletedMessage.content || '*No content*'
-        },
-      ],
-      footer: {
-        msg: `Message ID: ${deletedMessage.id}`
-      },
-      timestamp: true
+      fields: fields
     })
 
 
@@ -85,14 +133,27 @@ module.exports = async (client, deletedMessage) => {
       'botlogs',
       'deletedMessages.log'
     )
-    const logEntry = [
+    let logEntry = [
       `[${new Date().toISOString()}]`,
-      `Author:     ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`,
-      `Channel:    #${deletedMessage.channel.name}`,
+      `Author:     ${deletedMessage.author.tag} (ID: ${deletedMessage.author.id})`
+    ]
+    if (deleter) {
+      logEntry.push(
+        `Deleter:    ${deleter.tag} (ID: ${deleter.id})`
+      )
+    } else {
+      logEntry.push(
+        `Deleter:    Self/bot?`
+      )
+    }
+    logEntry.push(
+      `Guild:      ${deletedMessage.guild.name} (ID: ${deletedMessage.guild.id})`,
+      `Channel:    #${deletedMessage.channel.name} (ID: ${deletedMessage.channel.id})`,
       `Content:    ${deletedMessage.content}`,
       `Message ID: ${deletedMessage.id}`,
       '--------------------------------'
-    ].join('\n') + '\n\n'
+    )
+    logEntry = logEntry.join("\n") + "\n\n"
 
     // Append the log entry to the file
     fs.appendFileSync(logFilePath, logEntry, 'utf8')

@@ -7,7 +7,6 @@ const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 module.exports = async (client) => {
   let help = {}
   try {
-    const PROFILE = require('../../PROFILE.json')
     const testGuildID = process.env.GUILD_ID
     const localCommands = getLocalCommands()
 

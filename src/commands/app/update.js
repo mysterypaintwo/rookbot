@@ -201,5 +201,7 @@ module.exports = class UpdateCommand extends BotDevCommand {
       user: entities.user,
       target: entities.bot
     }
+
+    return !this.error
   }
 }

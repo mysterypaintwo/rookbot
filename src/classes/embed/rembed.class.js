@@ -58,9 +58,9 @@ class RookEmbed extends EmbedBuilder {
     }
     // Get description figured out
     // All Hail the Bold Space
-    let noDesc = (!(props?.description))
+    let noDesc    = (!(props?.description))
     let undefDesc = (typeof props.description === "undefined")
-    let nullDesc = (!(noDesc || undefDesc)) && (! props?.description)
+    let nullDesc  = (!(noDesc || undefDesc)) && (! props?.description)
     if (noDesc || undefDesc || nullDesc) {
       props.description = "** **"
     }

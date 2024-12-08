@@ -16,7 +16,6 @@ module.exports = class NLCommand extends RookCommand {
   }
 
   async execute(client, interaction) {
-    interaction.deferReply()
     try {
       // Create the embed with the rainbow divider line image
       interaction.channel.send(

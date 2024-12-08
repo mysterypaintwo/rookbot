@@ -58,9 +58,9 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
     const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 
-    const pingMultiplayerRole = interaction.options.getBoolean('ping_multiplayer_role') || false; // Default to false
-    const seedURL = interaction.options.getString('seed_url') || null;
-    const prepTimeMinutes = interaction.options.getInteger('prep_time') ?? 5; // Default to 5 minutes
+    const pingMultiplayerRole = options['ping_multiplayer_role'] || false; // Default to false
+    const seedURL = options['seed_url'] || null;
+    const prepTimeMinutes = options['prep_time'] ?? 5; // Default to 5 minutes
 
       /*
     const sahaBot = interaction.guild.members.fetch(userIDs['sahabot']);
@@ -251,5 +251,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       // Respond with an error message if something goes wrong
       this.props.description = "An error occurred while setting up the SMZ3 game. Please try again later."
     }
+
+    return !this.error
   }
 }

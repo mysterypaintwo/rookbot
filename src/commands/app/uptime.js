@@ -57,5 +57,7 @@ module.exports = class UptimeCommand extends RookCommand {
         `<@${client.user.id}> has been online for:`,
         await timeConversion(uptime)
     ]
+
+    return !this.error
   }
 }

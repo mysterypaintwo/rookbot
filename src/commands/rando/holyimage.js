@@ -35,6 +35,11 @@ module.exports = class HolyImageCommand extends RookCommand {
           type: ApplicationCommandOptionType.String,
           autocomplete: false
         }
+      ],
+      testOptions: [
+        {},
+        { "game-id": "smz3" },
+        { "game-id": "smz3", "slug-id": "crc" }
       ]
     }
     let props = {}
@@ -51,8 +56,9 @@ module.exports = class HolyImageCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
-    let gameID = interaction.options.getString('game-id') ?? "z3r"
-    let slugID = interaction.options.getString('slug-id') ?? "verify"
+    let gameID = options['game-id'] ?? "z3r"
+    let slugID = options['slug-id'] ?? "verify"
+    // console.log(gameID,slugID)
 
     let gameNames = await get_url(`http://alttp.mymm1.com/holyimage/metadata.php?mode=gameIDs&expand=1`)
     let gameName = gameNames["games"][gameID]
@@ -163,5 +169,7 @@ module.exports = class HolyImageCommand extends RookCommand {
       this.error = true
       this.props.description = "Holy Image not found!"
     }
+
+    return !this.error
   }
 }

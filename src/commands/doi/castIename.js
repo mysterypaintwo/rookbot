@@ -65,5 +65,7 @@ module.exports = class CastleNameCommand extends RookCommand {
       this.props.description = "There was an error changing the nickname"
       console.error("Error changing nickname:", error)
     }
+
+    return !this.error
   }
 }

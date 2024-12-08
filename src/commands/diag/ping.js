@@ -54,9 +54,7 @@ module.exports = class PingCommand extends RookCommand {
         value: `${client.ws.ping}ms`
       }
     ]
-  }
 
-  async test(client, message, args) {
-    await this.execute(client, message, args, null, "")
+    return !this.error
   }
 }

@@ -53,9 +53,13 @@ module.exports = async (client, newMember) => {
             `(ID: \`${fetchedMember.user.id}\`)`
         },
         {
+          name: "Member Link",
+          value: `<@${fetchedMember.user.id}>`
+        },
+        {
           name: 'Joined At',
-          value: fetchedMember.joinedAt
-            ? fetchedMember.joinedAt.toISOString()
+          value: fetchedMember.joinedTimestamp
+            ? (`<t:${Math.floor(new Date(fetchedMember.joinedTimestamp ) / 1000)}:f> (\`${fetchedMember.joinedTimestamp}\`)`)
             : 'Unknown' // Handle cases where joinedAt is null
         },
         {
@@ -63,11 +67,7 @@ module.exports = async (client, newMember) => {
           value: fetchedMember.guild.name + " " +
             `(ID: \`${fetchedMember.guild.id}\`)`
         }
-      ],
-      footer: {
-        msg: `User ID: ${fetchedMember.user.id}`
-      },
-      timestamp: true
+      ]
     });
 
     // Send the log embed to the log channel

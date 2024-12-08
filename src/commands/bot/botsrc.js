@@ -37,5 +37,6 @@ module.exports = class BotSourceCommand extends RookCommand {
    */
   async action(client, interaction, cmd, options) {
     // all done in constructor
+    return !this.error
   }
 }

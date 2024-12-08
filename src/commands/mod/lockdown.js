@@ -49,8 +49,8 @@ module.exports = class LockdownCommand extends ModCommand {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
 
-    const action = interaction.options.getString('action');
-    const confirm = interaction.options.getString('confirm');
+    const action = options['action'];
+    const confirm = options['confirm'];
     const channels = interaction.guild.channels.cache.filter(
       ch => ch.isTextBased() || ch.isVoiceBased()
     );

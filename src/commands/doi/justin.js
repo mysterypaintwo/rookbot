@@ -52,5 +52,7 @@ module.exports = class JustinCommand extends RookCommand {
         msg: "Visit Justin Bohemier's Portfolio for more!"
       }
     }
+
+    return !this.error
   }
 }

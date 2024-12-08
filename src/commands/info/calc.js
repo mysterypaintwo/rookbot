@@ -15,6 +15,12 @@ module.exports = class CalcCommand extends RookCommand {
           type: ApplicationCommandOptionType.String,
           required: true
         }
+      ],
+      testOptions: [
+        { expression: "2+2" },
+        { expression: "2-2" },
+        { expression: "2*2" },
+        { expression: "2/2" }
       ]
     }
     let props = {
@@ -30,7 +36,7 @@ module.exports = class CalcCommand extends RookCommand {
   }
 
   async action(client, interaction, cmd, options) {
-    const expression = interaction.options.getString('expression')
+    const expression = options.expression
 
     try {
       // Evaluate the math expression
@@ -48,5 +54,7 @@ module.exports = class CalcCommand extends RookCommand {
       this.error = true
       this.props.description = "Invalid math expression. Please try again."
     }
+
+    return !this.error
   }
 }

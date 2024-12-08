@@ -32,6 +32,13 @@ module.exports = class HelpCommand extends RookCommand {
           description: "Command Name",
           type: ApplicationCommandOptionType.String
         }
+      ],
+      testOptions: [
+        {},
+        { "section-name": "app" },
+        { "command-name": "diceroll" },
+        { "section-name": "moo", "assert": false },
+        { "command-name": "moo", "assert": false }
       ]
     }
     let props = {
@@ -44,8 +51,8 @@ module.exports = class HelpCommand extends RookCommand {
   }
   async action(client, interaction, cmd, options) {
     let helpJSON = require('../../res/app/manifests/help/help.json')
-    let command = interaction.options.getString("command-name") ?? null
-    let section = interaction.options.getString("section-name") ?? null
+    let command = options["command-name"] ?? null
+    let section = options["section-name"] ?? null
 
     this.props.description = ""
 
@@ -67,8 +74,8 @@ module.exports = class HelpCommand extends RookCommand {
     for(let [sectionName, sectionCmds] of Object.entries(helpJSON)) {
       for(let [cmdName, cmd] of Object.entries(sectionCmds)) {
         let props = {
-          title: { text: `Help - ${cmd.name}` },
-          description: "",
+          title: { text: `Help - ${sectionName} - ${cmdName}` },
+          description: "** **",
           fields: [
             {
               name: "Name",
@@ -82,7 +89,7 @@ module.exports = class HelpCommand extends RookCommand {
             },
             {
               name: "Description",
-              value: cmd.description,
+              value: cmd.description || "** **",
               inline: false
             }
           ]
@@ -106,18 +113,17 @@ module.exports = class HelpCommand extends RookCommand {
               props.fields.push(
                 {
                   name: optionName,
-                  value: option.description,
+                  value: option.description || "** **",
                   inline: false
                 }
               )
             }
           }
         }
-        // console.log(props.fields)
-        this.pages.push(
-          new RookEmbed(props)
-        )
+        await this.pages.push(new RookEmbed(props))
       }
     }
+
+    return this.pages.length > 0 && !this.error
   }
 }

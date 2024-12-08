@@ -15,6 +15,12 @@ module.exports = class ProfilePicCommand extends RookCommand {
           type: ApplicationCommandOptionType.String,
           required: true
         }
+      ],
+      testOptions: [
+        { "target-id": "263968998645956608" },
+        { "target-id": "1111517386588307536" },
+        { "target-id": "1307416505171968011" },
+        { "target-id": "942642507488034841" }
       ]
     }
     let props = {}
@@ -29,7 +35,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
-    const targetUserInput = interaction.options.get('target-id').value
+    const targetUserInput = options['target-id']
 
     // Extract user ID from mention (if it's a mention)
     const targetUserId = targetUserInput.replace(/[<@!>]/g, '')  // Remove <@>, <@!>, and >
@@ -50,5 +56,7 @@ module.exports = class ProfilePicCommand extends RookCommand {
       },
       image: avatarURL
     }
+
+    return !this.error
   }
 }

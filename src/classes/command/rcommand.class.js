@@ -1,6 +1,6 @@
 // @ts-check
 
-const { Client, Message, MessageFlags, TextChannel } = require('discord.js')
+const { Client, MessageFlags, TextChannel } = require('discord.js')
 const { Pagination } = require('pagination.djs')
 const { RookEmbed } = require('../embed/rembed.class')
 const { SlimEmbed } = require('../embed/rslimbed.class')
@@ -20,6 +20,7 @@ class RookCommand {
   name;                 // Command Name
   category;             // Command Category
   options;              // Command Options
+  testOptions;          // Test Options
   access;               // Command Access
   permissionsRequired;  // Required User Permissions
   botPermissions;       // Required Bot Permissions
@@ -31,6 +32,10 @@ class RookCommand {
    * @type {boolean} Send Ephemeral?
    */
   #ephemeral; // Private: Ephemeral flag
+  /**
+   * @type {boolean} Send Independent?
+   */
+  #independent; // Private: Independent flag
   /**
    * @type {Object.<string, any>} List of properties for embed manipulation
    */
@@ -102,9 +107,14 @@ class RookCommand {
     this.category             = comprops?.category            ? comprops.category.toLowerCase() : "unknown"
     this.description          = comprops?.description         ? comprops.description            : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
     this.options              = comprops?.options             ? comprops.options                : []
+    this.testOptions          = comprops?.testOptions         ? comprops.testOptions            : []
+    this.channelName          = comprops?.channelName         ? comprops.channelNames           : "bot-console"
     this.access               = comprops?.access              ? comprops.access                 : "unset"
     this.permissionsRequired  = comprops?.permissionsRequired ? comprops.permissionsRequired    : []
     this.botPermissions       = comprops?.botPermissions      ? comprops.botPermissions         : []
+
+    // Build profile
+    this.getProfile()
 
     /**
      * Embed Properties
@@ -217,6 +227,13 @@ class RookCommand {
   }
   set ephemeral(ephemeral) {
     this.#ephemeral = ephemeral
+  }
+  // Independent
+  get independent() {
+    return this.#independent
+  }
+  set independent(independent) {
+    this.#independent = independent
   }
 
   // Full props
@@ -347,33 +364,39 @@ class RookCommand {
 
   /**
    * Get Channel object based on general key name
-   * @param {Message | any} message Message that called the command
    * @param {string} channelType Key for channel to get from database
-   * @returns {Promise.<TextChannel>} Found channel object
    */
-  async getChannel(message, channelType) {
+  async getChannel(client, interaction, channelType) {
     // Get botdev-defined list of channelIDs/channelNames
-    let channelIDs = JSON.parse(fs.readFileSync(`./src/dbs/${message.guild.id}/channels.json`,"utf8"))
+    let guildID = interaction?.guild.id || process.env.GUILD_ID
+    let channelIDs = {}
     let channelID = this.channelName
+    let guild = interaction?.guild || await client.guilds.cache.find(g => g.id === guildID)
     let channel = null
+
+    try {
+      channelIDs = JSON.parse(fs.readFileSync(`./src/dbs/${guildID}/channels.json`,"utf8"))
+    } catch(err) {
+      console.log(err.stack)
+    }
 
     if (channelIDs) {
       // Get channel IDs for this guild
-      if (Object.keys(channelIDs).includes(message.guild.id)) {
+      if (Object.keys(channelIDs).includes(guildID)) {
         // If the channel type exists
-        if (Object.keys(channelIDs[message.guild.id]).includes(channelType)) {
+        if (Object.keys(channelIDs[guildID]).includes(channelType)) {
           // Get the ID
-          channelID = channelIDs[message.guild.id][channelType]
+          channelID = channelIDs[guildID][channelType]
         }
       }
     }
 
     // If the ID is not a number, search for a named channel
     if (typeof channelID == "string") {
-      channel = await message.guild.channels.cache.find(c => c.name === channelID)
+      channel = await guild.channels.cache.find(c => c.name === channelID)
     } else {
       // Else, search for a numbered channel
-      channel = await message.guild.channels.cache.find(c => c.id === channelID)
+      channel = await guild.channels.cache.find(c => c.id === channelID)
     }
 
     return channel
@@ -424,13 +447,11 @@ class RookCommand {
 
   /**
    *
-   * @param {Message} message Message that called the command
-   * @param {Array.<string>} args Command-line args
    * @param {Object.<string, string>} flags Flags for user management
    */
   async processArgs(
-    message,
-    args,
+    client,
+    interaction,
     flags = { user: "default", target: "invalid", bot: "invalid", search: "valid" },
     options
   ) {
@@ -450,28 +471,28 @@ class RookCommand {
       discriminator: "0"
     }
 
-    let client_user = await message?.guild?.members.fetch(message.client.user.id)
+    let client_user = await interaction?.guild?.members.fetch(interaction.client.user.id) || interaction?.client.user || client.user
     entities.bot = {
-      id:             message.client.user.id,
-      name:           client_user?.nickname || message.client.user.displayName,
-      avatar:         message.client.user.displayAvatarURL(),
-      username:       message.client.user.id,
-      discriminator:  message.client.user.discriminator
+      id:             client_user.id,
+      name:           client_user?.nickname || client_user.displayName || client_user.id,
+      avatar:         client_user.displayAvatarURL(),
+      username:       client_user.id,
+      discriminator:  client_user.discriminator
     }
 
     // Get User issuing command
     // {Message} message
-    if (message?.author) {
-      user = message.author
+    if (interaction?.author) {
+      user = interaction.author
     }
     // {Interaction} message
     // @ts-ignore
-    if (message?.user) {
+    if (interaction?.user) {
       // @ts-ignore
-      user = message.user
+      user = interaction.user
     }
     // @ts-ignore
-    user = await message?.guild?.members.fetch(user.id)
+    user = await interaction?.guild?.members.fetch(user.id)
 
     // If we've got a user, set as author
     if (user) {
@@ -485,10 +506,10 @@ class RookCommand {
     }
 
     // If we've got mentions, set as mention
-    if (message?.mentions) {
-      mention = message?.mentions?.members?.first()
+    if (interaction?.mentions) {
+      mention = interaction?.mentions?.members?.first()
       if (mention) {
-        mention = await message?.guild?.members.fetch(mention.id)
+        mention = await interaction?.guild?.members.fetch(mention.id)
         if (mention) {
           entities.mention = {
             id:             mention.id,
@@ -597,42 +618,6 @@ class RookCommand {
 
     debugout.push(`Invalid:`.padEnd(padding) + `${foundHandles.invalid}`)
 
-    // If we used a Search Term, do our best to remove it from Args list
-    try {
-      if (args && args.length > 0) {
-        debugout.push(`Args:`.padEnd(padding) + `[${args.join(" ")}]`)
-        let re = /(?:\<)(?<PingChan>[\@\#]{1})(?<UsrRole>[\!\&]?)(?<ItemID>[\d]*)(?:\>)/
-        let matches = args.join(" ").match(re)
-        let cleansed = ""
-        // debugout.push(`Matches:`.padEnd(padding) + `${matches}`)
-        if (matches) {
-          matches.shift()
-          cleansed = args.join(" ").trim().replace(`<${matches.join("")}>`,"")
-        } else {
-          cleansed = args.join(" ").trim()
-          for (let check of [
-            `${loaded.username}#${loaded.discriminator}`,
-            loaded.username,
-            `${loaded.username}#${loaded.discriminator}`.toLowerCase(),
-            loaded.username.toLowerCase()
-          ]) {
-            cleansed = cleansed.trim().replace(check,"")
-          }
-        }
-        foundHandles.argsArr = cleansed.trim().split(" ").filter(function(e) { return e != null && e != "" })
-        cleansed = foundHandles.argsArr.join(" ")
-        foundHandles.args = cleansed.trim().split(" ")
-        debugout.push(`Clean:`.padEnd(padding) + `[${cleansed}]`)
-      } else {
-        foundHandles.args = [ "" ]
-      }
-    } catch(e) {
-      console.log("---")
-      console.log(e)
-      console.log("---")
-      console.log(debugout.join("\n"))
-    }
-
     if (this.DEV && false) {
       console.log("---")
       console.log(debugout.join("\n"))
@@ -676,10 +661,9 @@ class RookCommand {
    * Execute command and build embed
    *
    * @param {Client} client Discord Client object
-   * @param {Message} message Message that called the command
    * @param {string} cmd Command name/alias sent
    */
-  async action(client, message, args, cmd, options) {
+  async action(client, interaction, cmd, options) {
     // Do nothing; command overrides this
     // If the thing doesn't modify anything, don't worry about DEV flag
     // If the thing does modify stuff, use DEV flag to describe action instead of performing it
@@ -688,6 +672,8 @@ class RookCommand {
     } else {
       // Describe the thing
     }
+
+    return !this.error
   }
 
   /**
@@ -695,24 +681,39 @@ class RookCommand {
    *
    * @param {Client} client Discord Client object
    */
-  async build(client, interaction, args, cmd, options) {
+  async build(client, interaction, cmd, options) {
+    this.channel = await this.getChannel(client, interaction, this.channelName)
+
+    let actionResult = false
+
     if(!(this.error)) {
-      console.log(`Options: ${options}`)
-      console.log(options)
+      // Process arguments
+      await this.processArgs(
+        client,
+        interaction,
+        this.flags,
+        options
+      )
+
       for (let option of this.options) {
         if (!(options.hasOwnProperty(option.name))) {
           // @ts-ignore
           let thisOption = interaction.options.get(option.name)
-          console.log(`Option: ${option.name}, ${thisOption}`)
           if (thisOption) {
             options[option.name] = thisOption.value
           }
         }
-        console.log(`Option: ${option.name}, ${options[option.name]}`)
       }
 
-      await this.action(client, interaction, args, cmd, options)
+      actionResult = await this.action(
+        client,
+        interaction,
+        cmd,
+        options
+      )
     }
+
+    return actionResult && !this.error
   }
 
   /**
@@ -727,6 +728,7 @@ class RookCommand {
   async send(
     interaction,
     pages       = [new RookEmbed({"description":"No pages sent!"})],
+    execOptions = {},
     emojis      = [],
     timeout     = 600000,
     forcepages  = false
@@ -743,12 +745,40 @@ class RookCommand {
     if (this.ephemeral) {
       flags = MessageFlags.Ephemeral
     }
+    if (execOptions?.independent && execOptions.independent) {
+      // flags = 1337
+    }
+
+    let reply = null
+    let needsDeferred = (interaction?.deferred && !interaction.deferred)
+    let needsReplied = (interaction?.replied && !interaction.replied)
+    try {
+      if (interaction) {
+        if (needsDeferred && needsReplied) {
+          console.log(`/${this.name} Send: Deferring reply`)
+          await interaction.deferReply()
+        }
+        if (!needsReplied) {
+          console.log(`/${this.name} Send: Fetching reply`)
+          reply = await interaction.fetchReply()
+        }
+      } else {
+        console.log(`/${this.name} Send: No Interaction to defer?`)
+      }
+    } catch(err) {
+      console.log(`/${this.name} Send: Failed to defer Reply?`)
+      if (!err.stack.contains("10062")) {
+        console.log(err.stack)
+      }
+    }
+
+    let destination = ""
 
     // If we have an array of page(s)
     if (Array.isArray(pages)) {
       // If it's just one and we're not forcing pages, just send the embed
       if ((pages.length <= 1) && !forcepages) {
-        if (pages[0].ephemeral) {
+        if (pages[0]?.ephemeral) {
           flags = MessageFlags.Ephemeral
         }
         let this_page = {
@@ -756,14 +786,36 @@ class RookCommand {
           embeds:   [ pages[0] ],
           flags:    flags
         }
-        if (flags == 0) {
-          console.log(`/${this.name}: Editing an embed`)
-          // @ts-ignore
-          return interaction.editReply(this_page)
+        if (interaction) {
+          destination = "" +
+            "'" +
+            `${interaction.guild.name} (${interaction.guild.id})` +
+            "/" +
+            `${interaction.channel.name} (${interaction.channel.id})` +
+            "/" +
+            `${reply.id}` +
+            "'" +
+            "/" +
+            `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+          if (flags == 0) {
+            console.log(`/${this.name}: Editing embed at ${destination}`)
+            return interaction.editReply(this_page)
+          } else if (execOptions?.independent && execOptions.independent) {
+            console.log(`/${this.name}: Reply embed to ${destination}`)
+            return reply.reply(this_page)
+          } else {
+            console.log(`/${this.name}: Follow-up embed to ${destination}`)
+            return interaction.followUp(this_page)
+          }
         } else {
-          console.log(`/${this.name}: Sending an embed`)
-          // @ts-ignore
-          return interaction.followUp(this_page)
+          destination = "" +
+            `'${this.channel.guild.name} (${this.channel.guild.id})` +
+            "/" +
+            `${this.channel.name} (${this.channel.id})'` +
+            "/" +
+            `https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}`
+          console.log(`/${this.name}: Sending embed to ${destination}`)
+          return this.channel.send(this_page)
         }
       } else {
         // Else, set up for pagination
@@ -783,7 +835,7 @@ class RookCommand {
 
         // Send the pages
         // @ts-ignore
-        let these_pagination = await new Pagination(message)
+        let these_pagination = await new Pagination(interaction)
         these_pagination.setOptions( { idle: timeout } )
         // these_pages.setEmojis({
         //   firstEmoji: emojis[0],
@@ -806,27 +858,52 @@ class RookCommand {
           }
         )
         these_pagination.render()
-        if (these_pagination[0].ephemeral) {
+        if (these_pagination[0]?.ephemeral) {
           flags = MessageFlags.Ephemeral
         }
         let these_pages = {
-          content:  "",
+          content:  "_",
           embeds:   [ these_pagination ],
           flags:    flags
         }
-        if (flags == 0) {
-          console.log(`/${this.name}: Editing pages`)
-          // @ts-ignore
-          return interaction.editReply(these_pages)
+        if (interaction) {
+          let reply = await interaction.fetchReply()
+          destination = "" +
+            "'" +
+            `${interaction.guild.name} (${interaction.guild.id})` +
+            "/" +
+            `${interaction.channel.name} (${interaction.channel.id})` +
+            "/" +
+            `${reply.id}` +
+            "'" +
+            "/" +
+            `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+          if (flags == 0) {
+            console.log(`/${this.name}: Editing pages at ${destination}`)
+            return interaction.editReply(these_pages)
+          } else if (execOptions?.independent && execOptions.independent) {
+            console.log(`/${this.name}: Reply pages to ${destination}`)
+            // return reply.reply(these_pages)
+            reply.reply(these_pages)
+            console.log("Sent!")
+          } else {
+            console.log(`/${this.name}: Follow-up pages to ${destination}`)
+            return interaction.followUp(these_pages)
+          }
         } else {
-          console.log(`/${this.name}: Sending pages`)
-          // @ts-ignore
-          return interaction.followUp(these_pages)
+          destination = "" +
+            `'${this.channel.guild.name} (${this.channel.guild.id})` +
+            "/" +
+            `${this.channel.name} (${this.channel.id})'` +
+            "/" +
+            `https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}`
+          console.log(`/${this.name}: Sending pages to '${this.channel.guild.name} (${this.channel.guild.id})/${this.channel.name} (${this.channel.id})'/ https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}`)
+          return this.channel.send(these_pages)
         }
       }
     } else {
       // Else, it's just an embed, send it
-      if (pages[0].ephemeral) {
+      if (pages[0]?.ephemeral) {
         flags = MessageFlags.Ephemeral
       }
       let this_embed = {
@@ -834,14 +911,37 @@ class RookCommand {
         embeds:   [ pages ],
         flags:    flags
       }
-      if (flags == 0) {
-        console.log(`/${this.name}: Editing one embed page`)
-        // @ts-ignore
-        return interaction.editReply(this_embed)
+      if (interaction) {
+        let reply = await interaction.fetchReply()
+        destination = "" +
+          "'" +
+          `${interaction.guild.name} (${interaction.guild.id})` +
+          "/" +
+          `${interaction.channel.name} (${interaction.channel.id})` +
+          "/" +
+          `${reply.id}` +
+          "'" +
+          "/" +
+          `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+        if (flags == 0) {
+          console.log(`/${this.name}: Editing embed page at ${destination}`)
+          return interaction.editReply(this_embed)
+        } else if (execOptions?.independent && execOptions.independent) {
+          console.log(`/${this.name}: Reply embed page to ${destination}`)
+          return reply.reply(this_embed)
+        } else {
+          console.log(`/${this.name}: Follow-up embed page to ${destination}`)
+          return interaction.followUp(this_embed)
+        }
       } else {
-        console.log(`/${this.name}: Sending one embed page`)
-        // @ts-ignore
-        return interaction.followUp(this_embed)
+        destination = "" +
+          `'${this.channel.guild.name} (${this.channel.guild.id})` +
+          "/" +
+          `${this.channel.name} (${this.channel.id})'` +
+          "/" +
+          `https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}`
+        console.log(`/${this.name}: Sending embed page to ${destination}`)
+        return this.channel.send(this_embed)
       }
     }
   }
@@ -850,33 +950,33 @@ class RookCommand {
    * Run the command
    *
    * @param {Client} client Discord Client object
-   * @param {Array.<string>} args Command-line args
    * @param {string} cmd Actual command name used (alias here if alias used)
    * @returns {Promise.<any>}
    */
   // @ts-ignore
-  async execute(client, interaction, args, cmd, options, skipBody=false) {
-    if(!options) {
-      options = {}
+  async execute(
+    client,
+    interaction=null,
+    cmd="",
+    options={},
+    execOptions={}
+  ) {
+    if (interaction) {
+      if (
+        // @ts-ignore
+        ((!interaction?.deferred) || (interaction?.deferred && !interaction.deferred)) &&
+        // @ts-ignore
+        ((!interaction?.replied) || (interaction?.replied && !interaction.replied))
+      ) {
+        // @ts-ignore
+        interaction.deferReply()
+      }
     }
-    try {
-      // @ts-ignore
-      await message.deferReply()
-    } catch(err) {
-      console.log(`/${this.name}: Failed to defer reply?`)
-      // console.log(err.stack)
-    }
 
-    // Load profile
-    await this.getProfile()
-
-    // Process arguments
-    await this.processArgs(interaction, args, options, this.flags)
-
-    if (!skipBody) {
+    if (!execOptions?.skipBody) {
       try {
         // Build the thing
-        await this.build(client, interaction, cmd, options)
+        let buildResult = await this.build(client, interaction, cmd, options)
       } catch(err) {
         console.log(err.stack)
       }
@@ -907,28 +1007,83 @@ class RookCommand {
     // Not setting this.null after sending the page(s) will send the page(s) again
     if ((!(this?.null)) || (this?.null && (!(this.null)))) {
       try {
-        await this.send(interaction, this.pages)
+        await this.send(interaction, this.pages, execOptions)
       } catch(e) {
         // do nothing
       }
     }
-
-    try {
-      // @ts-ignore
-      // await message.editReply( { embeds: [ new RookEmbed({ description: "_" }) ] } )
-    } catch(err) {
-      console.log(err.stack)
-    }
   }
 
-  async test(client, interaction, args, cmd) {
-    if (this?.flags?.test == "basic") {
-      this.execute(client, interaction, args, cmd, [])
+  async test(client, interaction, cmd) {
+    let reply = null
+
+    let needsDeferred = (interaction?.deferred && !interaction.deferred)
+    let needsReplied = (interaction?.replied && !interaction.replied)
+    console.log("Defer Needed:", needsDeferred)
+    console.log("Has Replied:", !needsReplied)
+    if (needsDeferred && needsReplied) {
+      console.log(`/${this.name} Test: Deferring reply`)
+      await interaction.deferReply()
+    }
+    if (!needsReplied) {
+      console.log(`/${this.name} Test: Fetching reply`)
+      reply = await interaction.fetchReply()
+    }
+    if (this.testOptions.length > 0) {
+      let i = 0
+      for (let thisTest of this.testOptions) {
+        let buildResult = await this.build(
+          client,
+          interaction,
+          cmd,
+          thisTest
+        )
+        if (this.testOptions.hasOwnProperty("assert")) {
+          if (buildResult != this.testOptions.assert) {
+            this.props.error = true
+          }
+        }
+
+        // If we have an error, make it errortastic
+        if (this.error) {
+          if (this.props?.title) {
+            this.props.title.text = "Error"
+          } else if (this.props?.caption) {
+            this.props.caption.text = "Error"
+          }
+        }
+
+        // if ((!this.props?.description) || this.props.description.trim() == "") {
+        //   this.props.description = "** **"
+        // }
+
+        this.pages.push(new RookEmbed({...this.props}))
+
+        i += 1
+      }
+
+      console.log(`/${this.name} Test:`,"Pages being sent", this.pages.length)
+
+      // this.null is to be set if we've already sent the page(s) somewhere else
+      // Not setting this.null after sending the page(s) will send the page(s) again
+      if ((!(this?.null)) || (this?.null && (!(this.null)))) {
+        try {
+          await this.send(
+            interaction,
+            this.pages,
+            { independent: i != 0 }
+          )
+        } catch(e) {
+          // do nothing
+        }
+      }
     } else {
-      this.props.title = {text: `/${this.name}: Test`}
-      this.props.description = ""
-      console.log(this.props.title.text)
-      this.execute(client, interaction, args, cmd, [], true)
+      await this.execute(client, interaction, cmd)
+
+      // this.props.title = {text: `/${this.name}: Test`}
+      // this.props.description = ""
+      // console.log(this.props.title.text)
+      // this.execute(client, interaction, cmd, [])
     }
   }
 }

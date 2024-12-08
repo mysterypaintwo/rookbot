@@ -22,9 +22,7 @@ module.exports = class TestCommand extends RookCommand {
       // Describe the thing
       this.props.description = "Describing the thing!"
     }
-  }
 
-  async test(client, interaction, args) {
-    await this.execute(client, interaction, args)
+    return !this.error
   }
 }

@@ -1,7 +1,7 @@
 from shutil import copy
 import os
 
-with open(".env", encoding="utf-8") as envFile:
+with open(".env.GLOBAL", encoding="utf-8") as envFile:
     envData = envFile.read()
     as_line = False
     path_line = False

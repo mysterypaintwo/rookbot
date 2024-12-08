@@ -49,23 +49,19 @@ module.exports = async (client, oldMember, newMember) => {
             `(ID: \`${newMember.user.id}\`)`
         },
         {
+          name: 'Guild',
+          value: newMember.guild.name + " " +
+            `(ID: \`${newMember.guild.id}\`)`
+        },
+        {
           name: 'Old Nickname',
           value: oldNick
         },
         {
           name: 'New Nickname',
           value: newNick // Use username if nickname is undefined
-        },
-        {
-          name: 'Guild',
-          value: newMember.guild.name + " " +
-            `(ID: \`${newMember.guild.id}\`)`
         }
-      ],
-      footer: {
-        msg: `User ID: ${newMember.user.id}`
-      },
-      timestamp: true
+      ]
     });
 
 
@@ -100,7 +96,6 @@ module.exports = async (client, oldMember, newMember) => {
       `Guild:        ${newMember.guild.name} (ID: ${newMember.guild.id})`,
       `Old Nickname: ${oldNick}`,
       `New Nickname: ${newNick}`, // Use username if nickname is undefined
-      `User ID:      ${newMember.user.id}`,
       '--------------------------------'
     ].join('\n') + '\n\n'
 

@@ -1,4 +1,5 @@
 const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
+const UptimeCommand = require('../../commands/app/uptime.js')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const unready = require('../../events/unready/exit')
 const colors = require('../../dbs/colors.json')
@@ -57,9 +58,13 @@ module.exports = class ExitCommand extends BotDevCommand {
       target: entities.bot
     }
 
-    interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
+    await interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
 
-    await unready(client)
+    let command = await new UptimeCommand()
+    await command.execute(client)
+    this.null = true
+
+    await unready(client, interaction)
 
     console.log(`!!! EXIT`)
     process.exit(1337)

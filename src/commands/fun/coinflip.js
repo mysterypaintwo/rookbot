@@ -27,5 +27,7 @@ module.exports = class CoinFlipCommand extends RookCommand {
     const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails'
 
     this.props.description = `The coin landed on **${outcome}**!`
+
+    return !this.error
   }
 }

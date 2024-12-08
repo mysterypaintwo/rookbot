@@ -51,5 +51,7 @@ module.exports = class BoostersCommand extends RookCommand {
       this.error = true
       this.props.description = "There was an error fetching the server's boost information."
     }
+
+    return !this.error
   }
 }

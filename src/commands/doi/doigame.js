@@ -45,5 +45,7 @@ module.exports = class DOIGameCommand extends RookCommand {
       this.error = true
       this.props.description = "There was an error posting the download information."
     }
+
+    return !this.error
   }
 }

@@ -54,5 +54,6 @@ module.exports = class EmbedCommand extends AdminCommand {
    */
   async action(client, interaction, cmd, options) {
     // all done in constructor
+    return !this.error
   }
 }

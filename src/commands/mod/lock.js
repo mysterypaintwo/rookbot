@@ -37,7 +37,7 @@ module.exports = class LockCommand extends ModCommand {
   async action(client, interaction, cmd, options) {
     const guildID = interaction.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
-    const channel = interaction.options.getChannel('channel')
+    const channel = options['channel']
 
     try {
       if (!this.DEV) {

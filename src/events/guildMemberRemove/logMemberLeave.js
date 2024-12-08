@@ -26,6 +26,8 @@ module.exports = async (client, oldMember) => {
       return
     }
 
+    const leftAt = new Date()
+
     // Prepare the log embed
     const logEmbed = new RookEmbed({
       color: colors["bad"], // Red for member leaving
@@ -50,19 +52,21 @@ module.exports = async (client, oldMember) => {
             `(ID: \`${oldMember.user.id}\`)`
         },
         {
+          name: "Member Link",
+          value: `<@${oldMember.user.id}>`
+        },
+        {
           name: 'Left At',
-          value: new Date().toISOString()
+          value: leftAt
+            ? (`<t:${Math.floor(leftAt / 1000)}:f> (\`${leftAt.getTime()}\`)`)
+            : 'Unknown' // Handle cases where leftAt is null
         },
         {
           name: 'Guild',
           value: oldMember.guild.name + " " +
             `(ID: \`${oldMember.guild.id}\`)`
         }
-      ],
-      footer: {
-        msg: `User ID: ${oldMember.user.id}`,
-      },
-      timestamp: true
+      ]
     })
 
     // Send the log embed to the log channel

@@ -47,5 +47,7 @@ module.exports = class MemberCountCommand extends RookCommand {
       this.props.description = "There was an error fetching the member count."
       console.log(`Error fetching member count: ${error.stack}`)
     }
+
+    return !this.error
   }
 }

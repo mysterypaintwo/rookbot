@@ -47,7 +47,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
     )
 
     let guilds = client.guilds.cache
-    let locale = interaction.options.getString('locale')
+    let locale = options['locale']
     if (!locale) {
       locale = "en-AU"
     }
@@ -69,7 +69,9 @@ module.exports = class BotGuildsCommand extends RookCommand {
           discriminator: owner.discriminator,
           id: owner.id
         },
-        added: new Date(bot.joinedTimestamp).toLocaleString(locale)
+        added: new Date(bot.joinedTimestamp).toLocaleString(),
+        addedTimestamp: Math.floor(new Date(bot.joinedTimestamp) / 1000),
+        addedHammertime: `<t:${Math.floor(new Date(bot.joinedTimestamp) / 1000)}:f>`
       }
     }
     console.log("")
@@ -90,7 +92,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
         this.props.description.push(
           `**Guild:** ${guildData.guild.name} (ID:\`${guildData.guild.id}\`)`,
           `**Owner:** \`${guildData.owner.username}#${guildData.owner.discriminator}\` (ID:\`${guildData.owner.id}\`, <@${guildData.owner.id}>)`,
-          `**Added:** ${guildData.added}`,
+          `**Added:** ${guildData.addedHammertime} (\`${guildData.addedTimestamp}\`)`,
           `**Tier:** ${tier}`,
           ""
         )
@@ -106,5 +108,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
     this.props.players = {
       user: entities.bot
     }
+
+    return !this.error
   }
 }

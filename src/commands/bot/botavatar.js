@@ -55,5 +55,7 @@ module.exports = class BotAvatarCommand extends BotDevCommand {
       ]
       return
     }
+
+    return !this.error
   }
 }

@@ -83,5 +83,7 @@ module.exports = class BotNicknameCommand extends BotDevCommand {
       ]
       return
     }
+
+    return !this.error
   }
 }

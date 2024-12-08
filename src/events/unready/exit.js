@@ -2,7 +2,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = async (client) => {
+module.exports = async (client, interaction) => {
   let profileName = "default"
   let defaults = {}
   try {
@@ -142,11 +142,12 @@ module.exports = async (client) => {
       "🟥"
     )
   let server = {
-    id: process.env.GUILD_ID
+    name: await interaction.guild.name,
+    id: await interaction.guild.id
   }
-  if (server.id != "?") {
-    server.name = await client?.guilds.cache.find(g => g.id == server.id).name | "?"
-  }
+  let uptime = client.uptime
+  let launched = Math.floor((new Date() - uptime) / 1000)
+  let offline = Math.floor(new Date() / 1000)
   props.fields = [
     {
       name: "Name",
@@ -216,6 +217,14 @@ module.exports = async (client) => {
       inline: true
     },
     {
+      name: "Launched",
+      value: `<t:${launched}:f> (\`${launched}\`)`
+    },
+    {
+      name: "Exited",
+      value: `<t:${offline}:f> (\`${offline}\`)`
+    },
+    {
       name: "Status",
       value:
         user ?
@@ -260,7 +269,7 @@ module.exports = async (client) => {
       let channelID = channelIDs["bot-console"]
       let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
       let channel = await guild.channels.cache.find(c => c.id === channelID)
-      let embed = new RookEmbed(props)
+      let embed = await new RookEmbed(props)
       await channel.send({ embeds: [ embed ] })
     }
   }

@@ -92,6 +92,10 @@ module.exports = async (client, oldMessage, newMessage) => {
           value: `${newMessage.url} (ID: \`${newMessage.id}\`)`
         },
         {
+          name: 'Channel',
+          value: `<#${newMessage.channel.id}>`
+        },
+        {
           name: 'Old Content',
           value: oldContent || '*No old content*' // Ensure there's always a default value
         },
@@ -99,11 +103,7 @@ module.exports = async (client, oldMessage, newMessage) => {
           name: 'New Content',
           value: newContent || '*No new content*' // Ensure there's always a default value
         },
-      ],
-      footer: {
-        msg: `Message ID: ${newMessage.id}`
-      },
-      timestamp: true
+      ]
     });
 
     // Send the embed to the log channel, if found and valid
