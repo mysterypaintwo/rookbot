@@ -1,13 +1,13 @@
 {
-  "#note": "DoI Bot Testing",
-  "welcome": "",
-  "rules": "",
-  "roles": "",
-  "suggestions": "",
-  "survey": "",
-  "giveaway": "",
-  "logging": "1307483798044278794",
-  "logging-members": "1310180926562635840",
-  "bot-console": "1307484911346647081",
-  "bot-testing": "1307484932645322822"
+  "#note": "DoI Navy",
+  "welcome":          "",
+  "rules":            "",
+  "roles":            "",
+  "suggestions":      "",
+  "survey":           "",
+  "giveaway":         "",
+  "logging":          "1307483798044278794",
+  "logging-members":  "1310180926562635840",
+  "bot-console":      "1307484911346647081",
+  "bot-testing":      "1307484932645322822"
 }
