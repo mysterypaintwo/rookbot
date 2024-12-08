@@ -36,6 +36,32 @@ module.exports = class SearchCommand extends ModCommand {
           required: true
         }
       ],
+      testOptions: [
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Change"
+        },
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Warn"
+        },
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Mute"
+        },
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Unmute"
+        },
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Ban"
+        },
+        {
+          "target-id":    "282859044593598464",
+          "search-type":  "Unban"
+        }
+      ]
       // permissionsRequired: [PermissionFlagsBits.ManageMessages],
       // botPermissions: [PermissionFlagsBits.ManageMessages],
     }

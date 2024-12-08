@@ -26,6 +26,15 @@ module.exports = class WarnCommand extends ModCommand {
           required: false,
         },
       ],
+      testOptions: [
+        {
+          "target-id":  "282859044593598464"
+        },
+        {
+          "target-id":  "282859044593598464",
+          "reason":     "Because"
+        }
+      ]
       // permissionsRequired: [PermissionFlagsBits.ManageMessages],
       // botPermissions: [PermissionFlagsBits.ManageMessages],
     }

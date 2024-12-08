@@ -48,7 +48,10 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
       )
 
       // Return if couldn't find it
-      if (!commandObject) return;
+      if (!commandObject) {
+        console.log(`Couldn't find /${commandName}`)
+        return;
+      }
 
       // Return if devOnly and not a dev
       if (commandObject.devOnly) {
@@ -62,6 +65,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         }
         console.log(roleName,roleUserNames,roleUserIDs);
         if (!roleUserIDs.includes(interaction.member.id)) {
+          console.log(`/${commandName} attempted by non BotDev`)
           interaction.reply({
             content: 'Only developers are allowed to run this command.',
             ephemeral: true
@@ -79,6 +83,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
           }
         }
         if (!(testGuilds.includes(interaction.guild.id))) {
+          console.log(`/${commandName} attempted on non TestServer`)
           interaction.reply({
             content: 'This command cannot be ran here.',
             ephemeral: true
@@ -92,6 +97,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
         for (const permission of commandObject.permissionsRequired) {
           // If we're missing one, abort
           if (!interaction.member.permissions.has(permission)) {
+            console.log(`/${commandName} attempted without proper user perms`)
             interaction.reply({
               content: 'Not enough permissions.',
               ephemeral: true
@@ -107,6 +113,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
           const bot = interaction.guild.members.me
           // If we're missing one, abort
           if (!bot.permissions.has(permission)) {
+            console.log(`/${commandName} attempted without proper bot perms`)
             interaction.reply({
               content: "I don't have enough permissions.",
               ephemeral: true
@@ -117,6 +124,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
       }
 
       // Run the test function
+      console.log(`/${this.name}/${commandObject.name}`)
       await commandObject.test(client, interaction, cmd);
     } catch (error) {
       console.log(`There was an error running this command: ${error.stack}`);

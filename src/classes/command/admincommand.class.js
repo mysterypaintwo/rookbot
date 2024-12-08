@@ -41,10 +41,10 @@ class AdminCommand extends RookCommand {
   }
 
   // Build the response
-  async build(client, message, cmd, options) {
-    if (message) {
+  async build(client, interaction, cmd, options) {
+    if (interaction) {
       // Get list of roles
-      this.ROLES = JSON.parse(fs.readFileSync(`./src/dbs/${message.guild.id}/roles.json`, "utf8"))
+      this.ROLES = JSON.parse(fs.readFileSync(`./src/dbs/${interaction.guild.id}/roles.json`, "utf8"))
       // Get Admin roles
       let APPROVED_ROLES = this.ROLES["admin"]
       // Bail if we don't have intended Approved Roles data
@@ -55,7 +55,7 @@ class AdminCommand extends RookCommand {
       }
 
       // Bail if member doesn't have Approved Roles
-      if(!(await message.member.roles.cache.some(r=>APPROVED_ROLES.includes(r.name))) ) {
+      if(!(await interaction.member.roles.cache.some(r=>APPROVED_ROLES.includes(r.name))) ) {
         this.error = true
         this.props.description = this.errors.adminOnly
         this.props.fields = []
@@ -65,11 +65,36 @@ class AdminCommand extends RookCommand {
       }
     }
 
-    for (let option of this.options) {
-      // @ts-ignore
-      options[option.name] = message?.options.get(option.name).value
+    let actionResult = false
+
+    if(!(this.error)) {
+      // Process arguments
+      await this.processArgs(
+        client,
+        interaction,
+        this.flags,
+        options
+      )
+
+      for (let option of this.options) {
+        if (!(options.hasOwnProperty(option.name))) {
+          // @ts-ignore
+          let thisOption = interaction.options.get(option.name)
+          if (thisOption) {
+            options[option.name] = thisOption.value
+          }
+        }
+      }
+
+      actionResult = await this.action(
+        client,
+        interaction,
+        cmd,
+        options
+      )
     }
-    await this.action(client, message, cmd, options)
+
+    return actionResult && !this.error
   }
 }
 

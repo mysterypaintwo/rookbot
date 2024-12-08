@@ -36,6 +36,19 @@ module.exports = class MuteCommand extends ModCommand {
           required: false
         }
       ],
+      testOptions: [
+        {
+          "target-id":      "282859044593598464",
+          "member-role-id": "member",
+          "muted-role-id":  "muted"
+        },
+        {
+          "target-id":      "282859044593598464",
+          "member-role-id": "member",
+          "muted-role-id":  "muted",
+          "reason":         "Because"
+        }
+      ]
       // permissionsRequired: [PermissionFlagsBits.BanMembers],
       // botPermissions: [PermissionFlagsBits.BanMembers],
     }
