@@ -56,7 +56,7 @@ const client = new Client(
                   }
                 },
                 editReply: async (props) => {
-                  this.reply(props)
+                  await this.reply(props)
                 }
               }
             );
@@ -68,6 +68,7 @@ const client = new Client(
         console.log(err.stack)
       }
     },
+    // 5 * 1000)
     60 * 1000)
   }
 })()

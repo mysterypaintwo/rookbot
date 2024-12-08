@@ -141,10 +141,15 @@ module.exports = async (client, interaction) => {
       /vvv/g,
       "🟥"
     )
-  let server = {
-    name: await interaction.guild.name,
-    id: await interaction.guild.id
+
+    let server = {
+    name: await interaction?.guild?.name || "Unknown Guild",
+    id: await interaction?.guild?.id || process.env.GUILD_ID
   }
+  if (server?.id) {
+    server.name = client?.guilds.cache.find(g => g.id === server.id).name || "Unknown Guild"
+  }
+
   let uptime = client.uptime
   let launched = Math.floor((new Date() - uptime) / 1000)
   let offline = Math.floor(new Date() / 1000)

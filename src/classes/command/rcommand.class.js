@@ -368,7 +368,7 @@ class RookCommand {
    */
   async getChannel(client, interaction, channelType) {
     // Get botdev-defined list of channelIDs/channelNames
-    let guildID = interaction?.guild.id || process.env.GUILD_ID
+    let guildID = interaction?.guild?.id || process.env.GUILD_ID
     let channelIDs = {}
     let channelID = this.channelName
     let guild = interaction?.guild || await client.guilds.cache.find(g => g.id === guildID)
@@ -963,13 +963,14 @@ class RookCommand {
   ) {
     let reply = null
 
-    if (interaction) {
+    // @ts-ignore
+    if (interaction?.id) {
       // @ts-ignore
-      let needsDeferred = (interaction?.deferred && !interaction.deferred)
+      let needsDeferred = (!interaction?.deferred) || (interaction?.deferred && !interaction.deferred)
       // @ts-ignore
-      let needsReplied = (interaction?.replied && !interaction.replied)
-      console.log("Defer Needed:", needsDeferred)
-      console.log("Has Replied:", !needsReplied)
+      let needsReplied = (!interaction?.replied) || (interaction?.replied && !interaction.replied)
+      console.log("Execute: Defer Needed:", needsDeferred)
+      console.log("Execute: Has Replied:", !needsReplied)
       if (needsDeferred && needsReplied) {
         console.log(`/${this.name} Test: Deferring reply`)
         // @ts-ignore
