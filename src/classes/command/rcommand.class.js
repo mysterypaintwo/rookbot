@@ -961,15 +961,24 @@ class RookCommand {
     options={},
     execOptions={}
   ) {
+    let reply = null
+
     if (interaction) {
-      if (
+      // @ts-ignore
+      let needsDeferred = (interaction?.deferred && !interaction.deferred)
+      // @ts-ignore
+      let needsReplied = (interaction?.replied && !interaction.replied)
+      console.log("Defer Needed:", needsDeferred)
+      console.log("Has Replied:", !needsReplied)
+      if (needsDeferred && needsReplied) {
+        console.log(`/${this.name} Test: Deferring reply`)
         // @ts-ignore
-        ((!interaction?.deferred) || (interaction?.deferred && !interaction.deferred)) &&
+        await interaction.deferReply()
+      }
+      if (!needsReplied) {
+        console.log(`/${this.name} Test: Fetching reply`)
         // @ts-ignore
-        ((!interaction?.replied) || (interaction?.replied && !interaction.replied))
-      ) {
-        // @ts-ignore
-        interaction.deferReply()
+        reply = await interaction.fetchReply()
       }
     }
 
