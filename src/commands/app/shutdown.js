@@ -87,7 +87,7 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       await command.execute(client)
       this.null = true
 
-      await unready(client)
+      await unready(client, interaction)
 
       console.log(`!!! SHUTDOWN`)
       process.exit(1337)

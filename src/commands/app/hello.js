@@ -116,8 +116,8 @@ module.exports = class HelloCommand extends RookCommand {
         "🟧"
       )
     let server = {
-      name: await this?.channel?.guild.name,
-      id: await this?.channel?.guild.id
+      name: await interaction?.guild.name || this?.channel?.guild.name,
+      id: await interaction?.guild.id || this?.channel?.guild.id
     }
     let uptime = client.uptime
     let launched = Math.floor((new Date() - uptime) / 1000)

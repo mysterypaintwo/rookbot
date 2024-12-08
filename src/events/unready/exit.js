@@ -147,7 +147,7 @@ module.exports = async (client, interaction) => {
     id: await interaction?.guild?.id || process.env.GUILD_ID
   }
   if (server?.id) {
-    server.name = client?.guilds.cache.find(g => g.id === server.id).name || "Unknown Guild"
+    server.name = client?.guilds.cache.find(g => g.id === server.id)?.name || "Unknown Guild"
   }
 
   let uptime = client.uptime
@@ -270,10 +270,11 @@ module.exports = async (client, interaction) => {
         }
       }
 
-      let channelIDs = require(`../../dbs/${process.env.GUILD_ID}/channels.json`)
+      let guildID = interaction?.guild.id || process.env.GUILD_ID
+      let channelIDs = require(`../../dbs/${guildID}/channels.json`)
       let channelID = channelIDs["bot-console"]
-      let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
-      let channel = await guild.channels.cache.find(c => c.id === channelID)
+      let guild = await client.guilds.cache.find(g => g.id === guildID)
+      let channel = await guild?.channels.cache.find(c => c.id === channelID) || interaction.channel
       let embed = await new RookEmbed(props)
       await channel.send({ embeds: [ embed ] })
     }

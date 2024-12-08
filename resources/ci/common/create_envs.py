@@ -17,7 +17,6 @@ with open(".env.GLOBAL", encoding="utf-8") as envFile:
             if len(envLines) > 2:
                 print(envPath)
                 envDir = os.path.dirname(envPath)
-                print(envDir)
                 if not os.path.isdir(envDir):
                     os.makedirs(envDir)
                 with open(envPath, "w", encoding="utf-8") as thisEnvFile:
@@ -72,3 +71,6 @@ for dstFile in [ "dev", "prod" ]:
                     "\n" +
                     credFile.read()
                 )
+
+for delFile in [ "./.env.token.ci", "./.env.client.ci" ]:
+    os.remove(delFile)

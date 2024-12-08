@@ -393,10 +393,10 @@ class RookCommand {
 
     // If the ID is not a number, search for a named channel
     if (typeof channelID == "string") {
-      channel = await guild.channels.cache.find(c => c.name === channelID)
+      channel = await guild?.channels.cache.find(c => c.name === channelID)
     } else {
       // Else, search for a numbered channel
-      channel = await guild.channels.cache.find(c => c.id === channelID)
+      channel = await guild?.channels.cache.find(c => c.id === channelID)
     }
 
     return channel
