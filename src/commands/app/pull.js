@@ -2,6 +2,13 @@ const { BotDevCommand } = require('../../classes/command/botdevcommand.class.js'
 const shell = require('shelljs')
 const fs = require('fs')
 
+/**
+ * @class
+ * @classdesc Git Pull
+ * @this {PullCommand}
+ * @extends {BotDevCommand}
+ * @public
+ */
 module.exports = class PullCommand extends BotDevCommand {
   constructor() {
     let comprops = {

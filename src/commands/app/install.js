@@ -2,6 +2,13 @@ const { BotDevCommand } = require('../../classes/command/botdevcommand.class.js'
 const shell = require('shelljs')
 const fs = require('fs')
 
+/**
+ * @class
+ * @classdesc NPM Install
+ * @this {InstallCommand}
+ * @extends {BotDevCommand}
+ * @public
+ */
 module.exports = class InstallCommand extends BotDevCommand {
   constructor() {
     let comprops = {

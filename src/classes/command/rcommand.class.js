@@ -1,6 +1,6 @@
 // @ts-check
 
-const { Client, MessageFlags, TextChannel } = require('discord.js')
+const { Client, CommandInteraction, Message, MessageFlags } = require('discord.js')
 const { Pagination } = require('pagination.djs')
 const { RookEmbed } = require('../embed/rembed.class')
 const { SlimEmbed } = require('../embed/rslimbed.class')
@@ -8,7 +8,7 @@ const fs = require('fs')
 
 /**
  * @class
- * @classdesc Build a Villains-branded Command
+ * @classdesc Build a Rook-branded Command
  * @this {RookCommand}
  * @public
  */
@@ -17,12 +17,34 @@ class RookCommand {
    * @type {string} Command Name
    */
   // @ts-ignore
+  /**
+   * @type {string}
+   */
   name;                 // Command Name
+  /**
+   * @type {string}
+   */
   category;             // Command Category
+  /**
+   * @type {CommandFlags}
+   */
+  flags;                // Command Flags
+  /**
+   * @type {Array.<CommandOption>}
+   */
   options;              // Command Options
   testOptions;          // Test Options
+  /**
+   * @type {string}
+   */
   access;               // Command Access
+  /**
+   * @type {Array.<number>}
+   */
   permissionsRequired;  // Required User Permissions
+  /**
+   * @type {Array.<number>}
+   */
   botPermissions;       // Required Bot Permissions
   /**
    * @type {boolean} Development Mode?
@@ -45,10 +67,6 @@ class RookCommand {
    */
   #pages;   // Private: Pages to print
   /**
-   * @type {Object.<string, string>} Flags for user management
-   */
-  #flags;   // Private: Flags for user management
-  /**
    * @type {boolean} Set to true if we threw an error
    */
   #error;   // Private: Error Thrown
@@ -57,7 +75,7 @@ class RookCommand {
    */
   #errors;  // Private: Global Error Message strings
   /**
-   * @type {TextChannel | any} Channel to send embeds to
+   * Channel to send embeds to
    */
   #channel;   // Private: Channel to send VillainsEmbed to
   /**
@@ -70,35 +88,51 @@ class RookCommand {
   #inputData; // Private: Command Inputs
 
   /**
+   * @typedef {Object} CommandOption
+   * @property {string} name Option Name
+   * @property {string} description Option Description
+   * @property {number} type Option Type
+   * @property {boolean} required Required?
+   */
+  /**
+   * @typedef {Object} CommandFlags
+   * @property {string} [user]    User Flag
+   * @property {string} [target]  Target Flag
+   * @property {string} [mention] Mention Flag
+   * @property {string} [bot]     Bot Flag
+   * @property {string} [search]  Search Flag
+   */
+  /**
    * @typedef {Object} EmbedField
-   * @property {string} name Field Name
-   * @property {string} value Field Value
+   * @property {string} name    Field Name
+   * @property {string} value   Field Value
    * @property {boolean} inline Inline?
    */
   /**
-   * @typedef {Object} Player Player
-   * @property {string} name The name
-   * @property {string} url The URL
-   * @property {string} avatar The Avatar
+   * @typedef {Object} Player   Player
+   * @property {string} name    The name
+   * @property {string} url     The URL
+   * @property {string} avatar  The Avatar
    */
   /**
-   * @typedef {Object.<string, any>} EmbedProps       Embed Properties
-   * @property {boolean}            full              Print Full Embed
-   * @property {string}             color             Stripe color
-   * @property {{text: string}}     caption           Caption text
-   * @property {{text: string, url: string}}  title   Title text & url
-   * @property {string}             thumbnail         Thumbnail url
-   * @property {string}             description       Body text
-   * @property {Array.<EmbedField>} fields            Embed Fields
-   * @property {string}             image             Body Image
-   * @property {{msg: string, image: string}} footer  Footer text & image
-   * @property {number | boolean}   timestamp         Timestamp for footer
-   * @property {boolean}            error             Print error format
-   * @property {{bot: Player, user: Player, target: Player}} players  Players
+   * @typedef {Object} EmbedProps                       Embed Properties
+   * @property {boolean}            [full]              Print Full Embed
+   * @property {string}             [color]             Stripe color
+   * @property {{text: string}}     [caption]           Caption text
+   * @property {{text: string, url: string}}  [title]   Title text & url
+   * @property {string}             [thumbnail]         Thumbnail url
+   * @property {string}             [description]       Body text
+   * @property {Array.<EmbedField>} [fields]            Embed Fields
+   * @property {string}             [image]             Body Image
+   * @property {{msg: string, image: string}} [footer]  Footer text & image
+   * @property {number | boolean}   [timestamp]         Timestamp for footer
+   * @property {boolean}            [error]             Print error format
+   * @property {{bot: Player, user: Player, target: Player}} [players]  Players
    */
 
   /**
    * Constructor
+   *
    * @param {Object.<string, any>} comprops List of command properties from child class
    * @param {EmbedProps} props              Local list of command properties
    */
@@ -129,6 +163,27 @@ class RookCommand {
     if (!(this?.props?.full)) {
       this.props.full = true
     }
+
+    /**
+     * List of pages of Embeds
+     * @type {Array.<(RookEmbed | SlimEmbed)>}
+     */
+    this.pages = []
+
+    /**
+     * Print Error
+     * @type {boolean}
+     */
+    this.error = false
+
+    /**
+     * Global Error Strings
+     * @type {Object.<string, Array.<string>>}
+     */
+    this.errors = JSON.parse(fs.readFileSync("./src/dbs/errors.json", "utf8"))
+
+    /** @type {Object.<string, any>} Data gathered from input management */
+    this.inputData = {}
 
     // Ephemeral Message
     if (!(this?.props?.ephemeral)) {
@@ -184,27 +239,6 @@ class RookCommand {
       this.null = true
     }
 
-    /**
-     * List of pages of Embeds
-     * @type {Array.<(RookEmbed | SlimEmbed)>}
-     */
-    this.pages = []
-
-    /**
-     * Print Error
-     * @type {boolean}
-     */
-    this.error = false
-
-    /**
-     * Global Error Strings
-     * @type {Object.<string, Array.<string>>}
-     */
-    this.errors = JSON.parse(fs.readFileSync("./src/dbs/errors.json", "utf8"))
-
-    /** @type {Object.<string, any>} Data gathered from input management */
-    this.inputData = {}
-
     // Bail if we fail to get error message information
     if (!(this.errors)) {
       this.error = true
@@ -228,6 +262,7 @@ class RookCommand {
   set ephemeral(ephemeral) {
     this.#ephemeral = ephemeral
   }
+
   // Independent
   get independent() {
     return this.#independent
@@ -250,14 +285,6 @@ class RookCommand {
   }
   set pages(pages) {
     this.#pages = pages
-  }
-
-  // Input Flags
-  get flags() {
-    return this.#flags
-  }
-  set flags(flags) {
-    this.#flags = flags
   }
 
   // Error Mode
@@ -364,11 +391,14 @@ class RookCommand {
 
   /**
    * Get Channel object based on general key name
-   * @param {string} channelType Key for channel to get from database
+   *
+   * @param {Client}              client      Client Object
+   * @param {CommandInteraction}  interaction Interaction that called the command
+   * @param {string}              channelType Key for channel to get from database
    */
   async getChannel(client, interaction, channelType) {
     // Get botdev-defined list of channelIDs/channelNames
-    let guildID = interaction?.guild?.id || process.env.GUILD_ID
+    let guildID = interaction?.guild?.id || process.env.GUILD_ID || "0"
     let channelIDs = {}
     let channelID = this.channelName
     let guild = interaction?.guild || await client.guilds.cache.find(g => g.id === guildID)
@@ -404,7 +434,10 @@ class RookCommand {
 
   /**
    * Return emoji if present, otherwise return emoji name
-   * @param {string} emojiKey
+   *
+   * @param {string} emojiKey Emoji name to retrieve
+   * @param {any} [emojis]    Emoji library to search
+   *
    * @returns {Promise.<string>}
    */
   async getEmoji(emojiKey, emojis=null) {
@@ -437,7 +470,9 @@ class RookCommand {
 
   /**
    * Sanitizes input for Markdown
+   *
    * @param {string} input String to sanitize
+   *
    * @returns {Promise.<string>}
    */
   async sanitizeMarkdown(input) {
@@ -446,8 +481,10 @@ class RookCommand {
   }
 
   /**
+   * Process arguments
    *
-   * @param {Object.<string, string>} flags Flags for user management
+   * @param {CommandFlags}            flags   Flags for user management
+   * @param {Array.<CommandOption>}   options Input parameters
    */
   async processArgs(
     client,
@@ -598,7 +635,7 @@ class RookCommand {
       if (!(USERIDS?.botWhite)) {
         USERIDS["botWhite"] = []
       }
-      if (["default","required","optional"].includes(this.flags.bot)) {
+      if (this.flags?.bot && ["default","required","optional"].includes(this.flags.bot)) {
         // Do... something?
       } else if (loaded?.bot && loaded.bot && (!(USERIDS?.botWhite.includes(loaded.id)))) {
         // If Bot has been specified as in Invalid source
@@ -653,15 +690,17 @@ class RookCommand {
     this.props.players      = foundHandles.players
     this.props.title        = foundHandles?.title ? foundHandles.title : this.props.title
     this.props.description  = foundHandles?.description ? foundHandles.description : this.props.description
-
-    // console.log(this.props)
   }
 
   /**
    * Execute command and build embed
    *
-   * @param {Client} client Discord Client object
-   * @param {string} cmd Command name/alias sent
+   * @param {Client}                client      Discord Client object
+   * @param {CommandInteraction}    interaction Interaction that called the command
+   * @param {string}                cmd         Command name/alias sent
+   * @param {Array.<CommandOption>} options     Command Options
+   *
+   * @returns {Promise<boolean>}    Did we complete it successfully?
    */
   async action(client, interaction, cmd, options) {
     // Do nothing; command overrides this
@@ -679,7 +718,12 @@ class RookCommand {
   /**
    * Build pre-flight characteristics of Command
    *
-   * @param {Client} client Discord Client object
+   * @param {Client}                client      Discord Client object
+   * @param {CommandInteraction}    interaction Interaction that called the command
+   * @param {string}                cmd         Command name/alias sent
+   * @param {Array.<CommandOption>} options     Command Options
+   *
+   * @returns {Promise<boolean>}    Did we complete it successfully?
    */
   async build(client, interaction, cmd, options) {
     this.channel = await this.getChannel(client, interaction, this.channelName)
@@ -719,10 +763,14 @@ class RookCommand {
   /**
    * Send pages to Discord Client
    *
-   * @param {Array.<(RookEmbed)> | RookEmbed} pages Pages to send to client
-   * @param {Array.<string>} emojis Emoji for pagination
-   * @param {number} timeout Timeout for disabling pagination
-   * @param {boolean} forcepages Force pagination
+   * @param {CommandInteraction}              interaction Interaction that called the command
+   * @param {Array.<(RookEmbed)> | RookEmbed} pages       Pages to send to client
+   * @param {Object.<string, any>}            execOptions Execution options
+   * @param {Array.<string>}                  emojis      Emoji for pagination
+   * @param {number}                          timeout     Timeout for disabling pagination
+   * @param {boolean}                         forcepages  Force pagination
+   *
+   * @returns {Promise<Message<boolean> | undefined>}  Message that is sent
    */
   // @ts-ignore
   async send(
@@ -789,20 +837,21 @@ class RookCommand {
         if (interaction) {
           destination = "" +
             "'" +
-            `${interaction.guild.name} (${interaction.guild.id})` +
+            `${interaction.guild?.name} (${interaction.guild?.id})` +
             "/" +
-            `${interaction.channel.name} (${interaction.channel.id})` +
+            // @ts-ignore
+            `${interaction.channel?.name} (${interaction.channel?.id})` +
             "/" +
-            `${reply.id}` +
+            `${reply?.id}` +
             "'" +
             "/" +
-            `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+            `https://discord.com/channels/${interaction.guild?.id}/${interaction.channel?.id}/${reply?.id}`
           if (flags == 0) {
             console.log(`/${this.name}: Editing embed at ${destination}`)
             return interaction.editReply(this_page)
           } else if (execOptions?.independent && execOptions.independent) {
             console.log(`/${this.name}: Reply embed to ${destination}`)
-            return reply.reply(this_page)
+            return reply?.reply(this_page)
           } else {
             console.log(`/${this.name}: Follow-up embed to ${destination}`)
             return interaction.followUp(this_page)
@@ -870,14 +919,15 @@ class RookCommand {
           let reply = await interaction.fetchReply()
           destination = "" +
             "'" +
-            `${interaction.guild.name} (${interaction.guild.id})` +
+            `${interaction.guild?.name} (${interaction.guild?.id})` +
             "/" +
-            `${interaction.channel.name} (${interaction.channel.id})` +
+            // @ts-ignore
+            `${interaction.channel?.name} (${interaction.channel?.id})` +
             "/" +
             `${reply.id}` +
             "'" +
             "/" +
-            `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+            `https://discord.com/channels/${interaction.guild?.id}/${interaction.channel?.id}/${reply.id}`
           if (flags == 0) {
             console.log(`/${this.name}: Editing pages at ${destination}`)
             return interaction.editReply(these_pages)
@@ -915,14 +965,15 @@ class RookCommand {
         let reply = await interaction.fetchReply()
         destination = "" +
           "'" +
-          `${interaction.guild.name} (${interaction.guild.id})` +
+          `${interaction.guild?.name} (${interaction.guild?.id})` +
           "/" +
-          `${interaction.channel.name} (${interaction.channel.id})` +
+          // @ts-ignore
+          `${interaction.channel?.name} (${interaction.channel?.id})` +
           "/" +
           `${reply.id}` +
           "'" +
           "/" +
-          `https://discord.com/channels/${interaction.guild.id}/${interaction.channel.id}/${reply.id}`
+          `https://discord.com/channels/${interaction.guild?.id}/${interaction.channel?.id}/${reply.id}`
         if (flags == 0) {
           console.log(`/${this.name}: Editing embed page at ${destination}`)
           return interaction.editReply(this_embed)
@@ -949,16 +1000,20 @@ class RookCommand {
   /**
    * Run the command
    *
-   * @param {Client} client Discord Client object
-   * @param {string} cmd Actual command name used (alias here if alias used)
+   * @param {Client}                client      Discord Client object
+   * @param {CommandInteraction}    interaction Interaction that called the command
+   * @param {string}                cmd         Command name/alias sent
+   * @param {Array.<CommandOption>} options     Command Options
+   * @param {Object.<string, any>}  execOptions Execution options
+   *
    * @returns {Promise.<any>}
    */
   // @ts-ignore
   async execute(
     client,
-    interaction=null,
+    interaction,
     cmd="",
-    options={},
+    options=[],
     execOptions={}
   ) {
     let reply = null
@@ -983,10 +1038,15 @@ class RookCommand {
       }
     }
 
-    if (!execOptions?.skipBody) {
+    if ((!execOptions?.skipBody) && interaction) {
       try {
         // Build the thing
-        let buildResult = await this.build(client, interaction, cmd, options)
+        let buildResult = await this.build(
+          client,
+          interaction,
+          cmd,
+          options
+        )
       } catch(err) {
         console.log(err.stack)
       }
@@ -1015,15 +1075,24 @@ class RookCommand {
 
     // this.null is to be set if we've already sent the page(s) somewhere else
     // Not setting this.null after sending the page(s) will send the page(s) again
-    if ((!(this?.null)) || (this?.null && (!(this.null)))) {
-      try {
-        await this.send(interaction, this.pages, execOptions)
-      } catch(e) {
-        // do nothing
+    if (interaction) {
+      if ((!(this?.null)) || (this?.null && (!(this.null)))) {
+        try {
+          await this.send(interaction, this.pages, execOptions)
+        } catch(e) {
+          // do nothing
+        }
       }
     }
   }
 
+  /**
+   * Test the function
+   *
+   * @param {Client}              client      Client Object
+   * @param {CommandInteraction}  interaction Interaction that called the command
+   * @param {string}              cmd         Command name/alias
+   */
   async test(client, interaction, cmd) {
     let reply = null
 

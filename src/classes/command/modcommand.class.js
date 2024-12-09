@@ -1,4 +1,4 @@
-const { MessageFlags, PermissionFlagsBits, IntegrationApplication } = require('discord.js')
+const { MessageFlags, PermissionFlagsBits } = require('discord.js')
 const { AdminCommand } = require('./admincommand.class')
 const { RookEmbed } = require('../embed/rembed.class')
 const colors = require('../../dbs/colors.json')
@@ -44,12 +44,13 @@ class ModCommand extends AdminCommand {
     )
   }
 
-  // Add/Remove roles by name/ID
-  // Add/Remove Member/Muted by command
-  // Mute user by command
-  // Unmute user by command
-
-  // Add/Remove roles
+  /**
+   * Add/Remove roles
+   *
+   * @param {CommandInteraction}      interaction Interaction that called the command
+   * @param {User}                    user        User that we're modifying
+   * @param {Object.<string, string>} roles       Roles that we're adjusting
+   */
   async adjust_roles(message, user, roles) {
     if (!user) {
       this.error = true
@@ -119,14 +120,34 @@ class ModCommand extends AdminCommand {
     }
   }
 
+  /**
+   * Add role to user
+   *
+   * @param {CommandInteraction}  message Interaction that called the command
+   * @param {User}                user    User that we're modifying
+   * @param {RoleResolvable}      role    Role that we're adding
+   */
   async add_role(message, user, role) {
     return await this.adjust_roles(message, user, { add: role })
   }
+  /**
+   * Remove role from user
+   *
+   * @param {CommandInteraction}  message Interaction that called the command
+   * @param {User}                user    User that we're modifying
+   * @param {RoleResolvable}      role    Role that we're removing
+   */
   async remove_role(message, user, role) {
     return await this.adjust_roles(message, user, { remove: role })
   }
 
-  // Apply Voice Roles (un/mute) to User
+  /**
+   * Apply Voice Roles (un/mute) to User
+   *
+   * @param {CommandInteraction}  message Interaction that called the command
+   * @param {User}                user    User that we're modifying
+   * @param {string}              voice   Un/Mute?
+   */
   async voice_user(message, user, voice) {
     // Member Role Name
     let MEMBER_ROLE = this?.ROLES?.member ? this.ROLES.member[0]  : null
@@ -182,9 +203,21 @@ class ModCommand extends AdminCommand {
       this.props.description = `<@${user.id}> *would be* **${voice}d** if this wasn't in DEV Mode`
     }
   }
+  /**
+   * Mute a User
+   *
+   * @param {CommandInteraction}  message Interaction that called the command
+   * @param {User}                user    User that we're modifying
+   */
   async mute_user(message, user) {
     await this.voice_user(message, user, "mute")
   }
+  /**
+   * Unmute a User
+   *
+   * @param {CommandInteraction}  message Interaction that called the command
+   * @param {User}                user    User that we're modifying
+   */
   async unmute_user(message, user) {
     await this.voice_user(message, user, "unmute")
   }

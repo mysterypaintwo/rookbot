@@ -6,6 +6,13 @@ const colors = require('../../dbs/colors.json')
 
 // Multiple messages
 
+/**
+ * @class
+ * @classdesc App Exit
+ * @this {ExitCommand}
+ * @extends {BotDevCommand}
+ * @public
+ */
 module.exports = class ExitCommand extends BotDevCommand {
   constructor() {
     let comprops = {
@@ -29,11 +36,6 @@ module.exports = class ExitCommand extends BotDevCommand {
     )
   }
 
-  /**
-   *
-   * @param {Client} client
-   * @param {Interaction} interaction
-   */
   async execute(client, interaction, cmd) {
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
 

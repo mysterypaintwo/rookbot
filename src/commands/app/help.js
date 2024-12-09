@@ -2,6 +2,13 @@ const { ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
 
+/**
+ * @class
+ * @classdesc App Help
+ * @this {HelpCommand}
+ * @extends {RookCommand}
+ * @public
+ */
 module.exports = class HelpCommand extends RookCommand {
   constructor() {
     let comprops = {

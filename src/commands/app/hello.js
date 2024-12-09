@@ -3,6 +3,13 @@ const colors = require('../../dbs/colors.json')
 const shell = require('shelljs')
 const fs = require('fs')
 
+/**
+ * @class
+ * @classdesc Instance Hello
+ * @this {HelloCommand}
+ * @extends {RookCommand}
+ * @public
+ */
 module.exports = class HelloCommand extends RookCommand {
   constructor() {
     let comprops = {
