@@ -270,7 +270,7 @@ module.exports = async (client, interaction) => {
         }
       }
 
-      let guildID = interaction?.guild.id || process.env.GUILD_ID
+      let guildID = interaction?.guild?.id || process.env.GUILD_ID
       let channelIDs = require(`../../dbs/${guildID}/channels.json`)
       let channelID = channelIDs["bot-console"]
       let guild = await client.guilds.cache.find(g => g.id === guildID)
