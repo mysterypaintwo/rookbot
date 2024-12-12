@@ -345,14 +345,14 @@
       "access": "unset",
       "segment": "local"
     },
-    "pfp": {
-      "name": "pfp",
+    "userinfo": {
+      "name": "userinfo",
       "category": "misc",
-      "description": "Displays the profile picture of the mentioned user",
+      "description": "Displays data of the mentioned user",
       "options": [
         {
           "name": "target-id",
-          "description": "The user whose profile picture you want to see",
+          "description": "The user you want to see",
           "required": true
         }
       ],

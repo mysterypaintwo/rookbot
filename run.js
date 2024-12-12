@@ -1,7 +1,21 @@
-require('@dotenvx/dotenvx').config()
+const { program } = require('commander')
+const PACKAGE = require('./package.json')
 const shell = require('shelljs')
 
-let QUICK = !process.env.GITHUB_WORKFLOW
+program
+  .name(PACKAGE.name)
+  .version(PACKAGE.version)
+  .usage("[OPTIONS]...")
+  // Profile Name
+  .option(
+    "-l, --long", "Long?", false
+  )
+  .parse(process.argv)
+
+const options = program.opts()
+// console.log(JSON.stringify(options, null, "  "))
+
+let QUICK = !options.long
 
 if (!QUICK) {
   shell.exec("node ./src/res/ci/common/ver.js")

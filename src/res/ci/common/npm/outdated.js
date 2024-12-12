@@ -66,6 +66,9 @@ if (
   debug.NPMCheckUpdates.installed.global ||
   debug.NPMCheckUpdates.installed.user
   ) {
+  // FIXME:
+  // Use ./node_modules/.bin/* if linux
+  // Use ./* if not linux
   let outdated = await shell.exec("npm-check-updates", { silent: true })
   if (
     (outdated.stdout.trim() == "" && outdated.stderr.trim() == "") ||

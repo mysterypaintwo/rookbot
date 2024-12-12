@@ -62,5 +62,8 @@ if (
   debug.betterNPMAudit.installed.global ||
   debug.betterNPMAudit.installed.user
   ) {
+  // FIXME:
+  // Use ./node_modules/.bin/* if linux
+  // Use ./* if not linux
   shell.exec("better-npm-audit audit")
 }
