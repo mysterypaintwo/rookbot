@@ -49,7 +49,7 @@ module.exports = async (client, profileName, interaction) => {
 
   console_output.push(
     (user ? user.username : "") +
-    ` v${PACKAGE.version} is Offline!`
+    ` v${GLOBALS.PACKAGE.version} is Offline!`
   )
   props = {
     title: {
