@@ -1,7 +1,7 @@
-const path = require('path')
 const getAllFiles = require('./getAllFiles')
+const path = require('path')
 
-module.exports = (exceptions = []) => {
+module.exports = (client, exceptions = []) => {
   let localCommands = []
 
   const commandCategories = getAllFiles(
@@ -20,7 +20,7 @@ module.exports = (exceptions = []) => {
       }
 
       if (commandObject.name.indexOf("Command") > -1) {
-        let cmd = new commandObject()
+        let cmd = new commandObject(client)
         commandObject = cmd
       }
 

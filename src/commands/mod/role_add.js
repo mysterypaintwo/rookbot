@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.j
 const { ModCommand } = require('../../classes/command/modcommand.class.js')
 
 module.exports = class RoleAddCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "role_add",
       category: "mod",
@@ -37,6 +37,7 @@ module.exports = class RoleAddCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

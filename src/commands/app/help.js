@@ -10,7 +10,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class.js')
  * @public
  */
 module.exports = class HelpCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "help",
       category: "app",
@@ -52,6 +52,7 @@ module.exports = class HelpCommand extends RookCommand {
       caption: { text: "Help", emoji: "?" }
     }
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -127,7 +128,9 @@ module.exports = class HelpCommand extends RookCommand {
             }
           }
         }
-        await this.pages.push(new RookEmbed(props))
+        let this_page = new RookEmbed(client, props)
+        this_page.init(client, props)
+        await this.pages.push(this_page)
       }
     }
 

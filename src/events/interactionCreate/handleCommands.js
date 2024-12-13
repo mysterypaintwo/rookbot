@@ -1,6 +1,6 @@
 const getLocalCommands = require('../../utils/getLocalCommands')
 
-module.exports = async (client, interaction) => {
+module.exports = async (client, profileName, interaction) => {
   if (!interaction.isChatInputCommand()) return
 
   const roles = require('../../dbs/roles.json')

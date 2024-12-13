@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class UptimeCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "uptime",
       category: "app",
@@ -15,6 +15,7 @@ module.exports = class UptimeCommand extends RookCommand {
       caption: { text: "Uptime", emoji: "⏱️" }
     }
     super(
+      client,
       {...comprops},
       {...props}
     )

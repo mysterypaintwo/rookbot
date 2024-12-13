@@ -97,7 +97,7 @@ module.exports = {
             }
           ]
         }
-        embed = new RookEmbed(props)
+        embed = new RookEmbed(client, props)
         interaction.editReply({ embeds: [ embed ] })
       }
     )

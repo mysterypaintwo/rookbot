@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class NLCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "nl",
       category: "misc",
@@ -10,6 +10,7 @@ module.exports = class NLCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -31,7 +32,7 @@ module.exports = class NLCommand extends RookCommand {
       let props = []
       props.description = "An error occurred while posting the rainbow line. Pleas try again later."
       interaction.channel.send(
-        { embeds: [new RookEmbed(props)] }
+        { embeds: [new RookEmbed(client, props)] }
       )
     }
     interaction.deleteReply()

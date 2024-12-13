@@ -14,7 +14,7 @@ const colors = require('../../dbs/colors.json')
  * @public
  */
 module.exports = class ExitCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "exit",
       category: "app",
@@ -31,6 +31,7 @@ module.exports = class ExitCommand extends BotDevCommand {
       color: colors["bad"]
     }
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -60,7 +61,9 @@ module.exports = class ExitCommand extends BotDevCommand {
       target: entities.bot
     }
 
-    await interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
+    let this_embed = new RookEmbed(client, this.props)
+    await this_embed.init()
+    await interaction.reply({ embeds: [ this_embed ] })
 
     let command = await new UptimeCommand()
     await command.execute(client)

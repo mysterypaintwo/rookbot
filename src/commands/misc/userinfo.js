@@ -2,7 +2,7 @@ const { Client, Interaction, ApplicationCommandOptionType } = require('discord.j
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class UserInfoCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "userinfo",
       category: "misc",
@@ -26,12 +26,13 @@ module.exports = class UserInfoCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType } = require('discord.js')
 const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
 
 module.exports = class BotNicknameCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "botnickname",
       category: "bot",
@@ -22,6 +22,7 @@ module.exports = class BotNicknameCommand extends BotDevCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

@@ -1,7 +1,7 @@
 const { AdminCommand } = require('../../classes/command/admincommand.class')
 
 module.exports = class EmbedCommand extends AdminCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "embed",
       category: "misc",
@@ -42,6 +42,7 @@ module.exports = class EmbedCommand extends AdminCommand {
     }
 
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -49,7 +50,7 @@ module.exports = class EmbedCommand extends AdminCommand {
 
   /**
    * Sends an embed message in response to a slash command interaction.
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

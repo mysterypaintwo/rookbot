@@ -11,7 +11,7 @@ const fs = require('fs')
  * @public
  */
 module.exports = class HelloCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "hello",
       category: "app",
@@ -29,6 +29,7 @@ module.exports = class HelloCommand extends RookCommand {
       color:  colors["success"]
     }
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -78,7 +79,7 @@ module.exports = class HelloCommand extends RookCommand {
 
     console_output.push(
       (user ? user.username : "") +
-      ` v${this.PACKAGE.version} is Online!`
+      ` v${this.GLOBALS.PACKAGE.version} is Online!`
     )
     this.props.title.text = console_output[1]
     this.props.title.url  = "https://github.com/mysterypaintwo/rookbot"
@@ -95,7 +96,7 @@ module.exports = class HelloCommand extends RookCommand {
       )
     }
     console_output.push(
-      `Profile Key: '${this.PACKAGE.profileName}'`,
+      `Profile Key: '${this.GLOBALS.profileName}'`,
       `Branch Key:  <${BRANCH}>`,
       `Commit ID:   [${COMMIT}]`,
       "Bot is Ready!",
@@ -123,8 +124,8 @@ module.exports = class HelloCommand extends RookCommand {
         "🟧"
       )
     let server = {
-      name: await interaction?.guild.name || this?.channel?.guild.name,
-      id: await interaction?.guild.id || this?.channel?.guild.id
+      name: client.guild.name || this?.channel?.guild.name,
+      id: client.guild.id || this?.channel?.guild.id
     }
     let uptime = client.uptime
     let launched = Math.floor((new Date() - uptime) / 1000)
@@ -146,8 +147,8 @@ module.exports = class HelloCommand extends RookCommand {
         value:
           console_output[4].substring(console_output[4].indexOf(':') + 2)
           .replace(
-            `'${this.PACKAGE.profileName}'`,
-            `\`${this.PACKAGE.profileName}\``
+            `'${this.GLOBALS.profileName}'`,
+            `\`${this.GLOBALS.profileName}\``
           ),
         inline: true
       },

@@ -3,7 +3,7 @@ const { ModCommand } = require('../../classes/command/modcommand.class')
 const { RookEmbed } = require('../../classes/embed/rembed.class');
 
 module.exports = class LockdownCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "lockdown",
       category: "mod",
@@ -36,13 +36,14 @@ module.exports = class LockdownCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

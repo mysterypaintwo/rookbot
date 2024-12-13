@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 
 module.exports = class SearchCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "search",
       category: "mod",
@@ -68,6 +68,7 @@ module.exports = class SearchCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

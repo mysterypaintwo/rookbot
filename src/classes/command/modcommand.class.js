@@ -23,7 +23,7 @@ function isString(input) {
  * @public
  */
 class ModCommand extends AdminCommand {
-  constructor(comprops, props) {
+  constructor(client, comprops, props) {
     // If we don't have UserPermissions defined
     if (!comprops?.permissionsRequired) {
       // Default to KickMembers
@@ -39,6 +39,7 @@ class ModCommand extends AdminCommand {
 
     // Create parent object
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -374,7 +375,8 @@ class ModCommand extends AdminCommand {
         reason +
         ")"
       ]
-      embeds.public = new RookEmbed(props.public)
+      embeds.public = new RookEmbed(client, props.public)
+      await embeds.public.init(props.public)
       interaction.editReply(
         {
           embeds: [ embeds.public ]
@@ -405,7 +407,8 @@ class ModCommand extends AdminCommand {
             },
             description: dm_desc
           }
-          embeds.dm = new RookEmbed(props.dm)
+          embeds.dm = new RookEmbed(client, props.dm)
+          await embeds.dm.init(props.dm)
           await targetUser.send(
             {
               embeds: [ embeds.dm ]
@@ -427,7 +430,8 @@ class ModCommand extends AdminCommand {
             ],
             ephemeral: true
           }
-          embeds.mod = new RookEmbed(props.mod)
+          embeds.mod = new RookEmbed(client, props.mod)
+          await embeds.mod.init(props.mod)
           interaction.followUp(
             {
               embeds: [ embeds.mod ],
@@ -447,7 +451,8 @@ class ModCommand extends AdminCommand {
             ],
             ephemeral: true
           }
-          embeds.mod = new RookEmbed(props.mod)
+          embeds.mod = new RookEmbed(client, props.mod)
+          await embeds.mod.init(props.mod)
           interaction.followUp(
             {
               embeds: [ embeds.mod ],
@@ -496,7 +501,8 @@ class ModCommand extends AdminCommand {
               }
             )
           }
-          embeds.log = new RookEmbed(props.log)
+          embeds.log = new RookEmbed(client, props.log)
+          await embeds.log.init(props.log)
           logs.send({ embeds: [ embeds.log ] })
           console.log(`/${this.name}: LogPost`)
         } else {
@@ -528,7 +534,8 @@ class ModCommand extends AdminCommand {
       props.mod.error = true
       props.mod.ephemeral = true
       props.mod.description = `I couldn't ${tenses.present} that user (ID: \`${targetUserId}\`).`
-      embeds.mod = new RookEmbed(props.mod)
+      embeds.mod = new RookEmbed(client, props.mod)
+      await embeds.mod.init(props.mod)
       interaction.followUp(
         {
           embeds: [ embeds.mod ],

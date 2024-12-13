@@ -3,7 +3,7 @@ const shell = require('shelljs')
 const fs = require('fs')
 
 module.exports = class UpdateCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "update",
       category: "app",
@@ -17,6 +17,7 @@ module.exports = class UpdateCommand extends BotDevCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

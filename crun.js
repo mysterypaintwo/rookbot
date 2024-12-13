@@ -2,6 +2,10 @@ const { program } = require('commander')
 const PACKAGE = require('./package.json')
 const shell = require('shelljs')
 
+console.log("")
+console.log("dotenvx Runner:")
+console.log(PACKAGE.name, "v" + PACKAGE.version)
+
 program
   .name(PACKAGE.name)
   .version(PACKAGE.version)
@@ -35,14 +39,23 @@ program
 
 const options = program.opts()
 
+console.log("Options:")
 console.log(JSON.stringify(options, null, "  "))
 
 // FIXME:
 // Use ./node_modules/.bin/* if linux
 // Use ./* if not linux
-let bin = "./node_modules/.bin/dotenvx"
+
+let dotenvx = shell.exec("which dotenvx", { silent: true })
+let uname = shell.exec("uname", { silent: true })
+
+let bin = dotenvx.stdout.trim()
+console.log(bin)
+if (bin.indexOf("WinGet") > -1 || uname.stdout.trim().indexOf("MINGW") > -1) {
+  bin = "dotenvx"
+}
 let envs = ""
-let args = ""
+let args = []
 
 if (options.client) {
   envs += `-f ./env/devs/.env.client.${options.client} `
@@ -59,10 +72,22 @@ if (options.environment) {
 }
 
 if (options.long) {
-  args += "-l "
+  args.push("-l")
+}
+if (options.profile) {
+  args.push(
+    `-p ${options.profile}`
+  )
 }
 
-let command = `${bin} run ${envs} -- node ./run.js ${args}`
+let command = []
+command.push(bin.trim())
+command.push("run")
+command.push(envs.trim())
+command.push("--")
+command.push("node ./run.js")
+command.push(args.join(" "))
+command = command.join(" ")
 
-console.log(command)
+console.log("CLI Command:", command)
 shell.exec(command)

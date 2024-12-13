@@ -3,7 +3,7 @@ const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const { evaluate } = require('mathjs')
 
 module.exports = class CalcCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "calc",
       category: "info",
@@ -30,6 +30,7 @@ module.exports = class CalcCommand extends RookCommand {
     }
 
     super(
+      client,
       {...comprops},
       {...props}
     )

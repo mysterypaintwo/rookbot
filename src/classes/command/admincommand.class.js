@@ -10,7 +10,7 @@ const fs = require('fs')
  * @public
  */
 class AdminCommand extends RookCommand {
-  constructor(comprops, props) {
+  constructor(client, comprops, props) {
     // BotPerms: Administrator
     comprops.botPermssions = [PermissionFlagsBits.Administrator]
     // Category: Admin
@@ -18,6 +18,7 @@ class AdminCommand extends RookCommand {
 
     // Create parent object
     super(
+      client,
       {...comprops},
       {...props}
     )

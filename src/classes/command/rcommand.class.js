@@ -1,9 +1,11 @@
 // @ts-check
 
-const { Client, CommandInteraction, Message, MessageFlags } = require('discord.js')
+const { CommandInteraction, Message, MessageFlags } = require('discord.js')
+const { RookClient } = require('../objects/rclient.class')
 const { Pagination } = require('pagination.djs')
 const { RookEmbed } = require('../embed/rembed.class')
 const { SlimEmbed } = require('../embed/rslimbed.class')
+const getProfile = require('../../utils/getProfile')
 const fs = require('fs')
 
 /**
@@ -136,7 +138,7 @@ class RookCommand {
    * @param {Object.<string, any>} comprops List of command properties from child class
    * @param {EmbedProps} props              Local list of command properties
    */
-  constructor(comprops = {}, props = {}) {
+  constructor(client, comprops = {}, props = {}) {
     this.name                 = comprops?.name                ? comprops.name.toLowerCase()     : "unknown"
     this.category             = comprops?.category            ? comprops.category.toLowerCase() : "unknown"
     this.description          = comprops?.description         ? comprops.description            : (this.name.charAt(0).toUpperCase() + this.name.slice(1))
@@ -148,7 +150,7 @@ class RookCommand {
     this.botPermissions       = comprops?.botPermissions      ? comprops.botPermissions         : []
 
     // Build profile
-    this.getProfile()
+    this.GLOBALS = client?.profile
 
     /**
      * Embed Properties
@@ -330,48 +332,8 @@ class RookCommand {
   /**
    * Get Profile data from loaded profile
    */
-  async getProfile() {
-    let profileName = "default"
-    try {
-      /**
-       * Global properties
-       * @type {Object.<string, any>}
-       */
-      this.defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-      if (fs.existsSync("./src/PROFILE.json")) {
-        this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡RCommand: PROFILE manifest not found! Using defaults!")
-      }
-      if (
-        this.GLOBALS?.selectedprofile &&
-        this.GLOBALS?.profiles &&
-        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
-      ) {
-        profileName = this.GLOBALS.selectedprofile
-        this.GLOBALS = this.GLOBALS.profiles[this.GLOBALS.selectedprofile]
-      } else {
-        this.GLOBALS = this.defaults
-      }
-    } catch(err) {
-      console.log("🔴RCommand: PROFILE manifest not found!")
-      console.log(err.stack)
-      process.exit(1)
-    }
-
-    try {
-      /**
-       * Package properties
-       * @type {Object.<string, any>}
-       */
-      this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
-      if (this?.PACKAGE) {
-        this.PACKAGE.profileName = profileName
-      }
-    } catch(err) {
-      console.log("🔴RCommand: PACKAGE manifest not found!")
-      process.exit(1)
-    }
+  async getProfile(client) {
+    this.GLOBALS = await getProfile(client.profileName)
 
     this.DEV = process.env.ENV_ACTIVE === "development"
 
@@ -382,7 +344,7 @@ class RookCommand {
       return
     }
     // Bail if we fail to get bot default information
-    if (!this.defaults) {
+    if (!this.GLOBALS.defaults) {
       this.error = true
       this.props.description = "Failed to get bot default information."
       return
@@ -392,16 +354,16 @@ class RookCommand {
   /**
    * Get Channel object based on general key name
    *
-   * @param {Client}              client      Client Object
+   * @param {RookClient}          client      Client Object
    * @param {CommandInteraction}  interaction Interaction that called the command
    * @param {string}              channelType Key for channel to get from database
    */
   async getChannel(client, interaction, channelType) {
     // Get botdev-defined list of channelIDs/channelNames
-    let guildID = interaction?.guild?.id || process.env.GUILD_ID || "0"
     let channelIDs = {}
     let channelID = this.channelName
-    let guild = interaction?.guild || await client.guilds.cache.find(g => g.id === guildID)
+    let guild = interaction?.guild || client.guild
+    let guildID = guild.id
     let channel = null
 
     try {
@@ -695,7 +657,7 @@ class RookCommand {
   /**
    * Execute command and build embed
    *
-   * @param {Client}                client      Discord Client object
+   * @param {RookClient}            client      Discord Client object
    * @param {CommandInteraction}    interaction Interaction that called the command
    * @param {string}                cmd         Command name/alias sent
    * @param {Array.<CommandOption>} options     Command Options
@@ -718,7 +680,7 @@ class RookCommand {
   /**
    * Build pre-flight characteristics of Command
    *
-   * @param {Client}                client      Discord Client object
+   * @param {RookClient}            client      Discord Client object
    * @param {CommandInteraction}    interaction Interaction that called the command
    * @param {string}                cmd         Command name/alias sent
    * @param {Array.<CommandOption>} options     Command Options
@@ -726,7 +688,12 @@ class RookCommand {
    * @returns {Promise<boolean>}    Did we complete it successfully?
    */
   async build(client, interaction, cmd, options) {
-    this.channel = await this.getChannel(client, interaction, this.channelName)
+    console.log(`/${this.name}: Build`)
+    this.channel = await this.getChannel(
+      client,
+      interaction,
+      this.channelName
+    )
 
     let actionResult = false
 
@@ -774,13 +741,19 @@ class RookCommand {
    */
   // @ts-ignore
   async send(
+    client,
     interaction,
-    pages       = [new RookEmbed({"description":"No pages sent!"})],
+    pages       = [],
     execOptions = {},
     emojis      = [],
     timeout     = 600000,
     forcepages  = false
   ) {
+    if (pages == []) {
+      let dummy = new RookEmbed(client, {"description":"No pages sent!"})
+      await dummy.init(this.props)
+      pages.push(dummy)
+    }
     if ((!this.channel) && interaction) {
       this.channel = interaction.channel
     }
@@ -803,15 +776,15 @@ class RookCommand {
     try {
       if (interaction) {
         if (needsDeferred && needsReplied) {
-          console.log(`/${this.name} Send: Deferring reply`)
+          console.log(`/${this.name}: Send: Deferring reply`)
           await interaction.deferReply()
         }
         if (!needsReplied) {
-          console.log(`/${this.name} Send: Fetching reply`)
+          console.log(`/${this.name}: Send: Fetching reply`)
           reply = await interaction.fetchReply()
         }
       } else {
-        console.log(`/${this.name} Send: No Interaction to defer?`)
+        console.log(`/${this.name}: Send: No Interaction to defer?`)
       }
     } catch(err) {
       console.log(`/${this.name} Send: Failed to defer Reply?`)
@@ -857,12 +830,15 @@ class RookCommand {
             return interaction.followUp(this_page)
           }
         } else {
+          console.log("No interaction")
           destination = "" +
             `'${this.channel.guild.name} (${this.channel.guild.id})` +
             "/" +
             `${this.channel.name} (${this.channel.id})'` +
             "/" +
-            `https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}`
+            `https://discord.com/channels/${this.channel.guild.id}/${this.channel.id}` +
+            ""
+          console.log("Destination:",destination)
           console.log(`/${this.name}: Sending embed to ${destination}`)
           return this.channel.send(this_page)
         }
@@ -1000,7 +976,7 @@ class RookCommand {
   /**
    * Run the command
    *
-   * @param {Client}                client      Discord Client object
+   * @param {RookClient}            client      Discord Client object
    * @param {CommandInteraction}    interaction Interaction that called the command
    * @param {string}                cmd         Command name/alias sent
    * @param {Array.<CommandOption>} options     Command Options
@@ -1017,6 +993,7 @@ class RookCommand {
     execOptions={}
   ) {
     let reply = null
+    await this.getProfile(client)
 
     // @ts-ignore
     if (interaction?.id) {
@@ -1038,7 +1015,7 @@ class RookCommand {
       }
     }
 
-    if ((!execOptions?.skipBody) && interaction) {
+    if (!execOptions?.skipBody) {
       try {
         // Build the thing
         let buildResult = await this.build(
@@ -1065,23 +1042,25 @@ class RookCommand {
     // Toss it in pages as a single page
     if(this.pages.length == 0) {
       if(this.props?.full && this.props.full) {
+        let embed = new RookEmbed(client, {...this.props})
+        await embed.init(client, {...this.props})
         // @ts-ignore
-        this.pages.push(new RookEmbed({...this.props}))
+        this.pages.push(embed)
       } else {
+        let slimbed = new SlimEmbed(client, {...this.props})
+        await slimbed.init(client, {...this.props})
         // @ts-ignore
-        this.pages.push(new SlimEmbed({...this.props}))
+        this.pages.push(slimbed)
       }
     }
 
     // this.null is to be set if we've already sent the page(s) somewhere else
     // Not setting this.null after sending the page(s) will send the page(s) again
-    if (interaction) {
-      if ((!(this?.null)) || (this?.null && (!(this.null)))) {
-        try {
-          await this.send(interaction, this.pages, execOptions)
-        } catch(e) {
-          // do nothing
-        }
+    if ((!(this?.null)) || (this?.null && (!(this.null)))) {
+      try {
+        await this.send(client, interaction, this.pages, execOptions)
+      } catch(e) {
+        // do nothing
       }
     }
   }
@@ -1089,7 +1068,7 @@ class RookCommand {
   /**
    * Test the function
    *
-   * @param {Client}              client      Client Object
+   * @param {RookClient}          client      Client Object
    * @param {CommandInteraction}  interaction Interaction that called the command
    * @param {string}              cmd         Command name/alias
    */
@@ -1136,7 +1115,9 @@ class RookCommand {
         //   this.props.description = "** **"
         // }
 
-        this.pages.push(new RookEmbed({...this.props}))
+        let a_page = new RookEmbed(client, {...this.props})
+        await a_page.init(client, {...this.props})
+        this.pages.push(a_page)
 
         i += 1
       }
@@ -1149,6 +1130,7 @@ class RookCommand {
         try {
           await this.send(
             interaction,
+            // @ts-ignore
             this.pages,
             { independent: i != 0 }
           )

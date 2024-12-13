@@ -6,10 +6,10 @@ const colors = require('../../dbs/colors.json')
 
 /**
  * Logs deleted messages from the server.
- * @param {Client} client
+ * @param {RookClient} client
  * @param {Message} deletedMessage
  */
-module.exports = async (client, deletedMessage) => {
+module.exports = async (client, profileName, deletedMessage) => {
   try {
     // If the message is partial, fetch the full message (if possible)
     if (deletedMessage.partial) {

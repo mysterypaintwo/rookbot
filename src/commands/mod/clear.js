@@ -3,7 +3,7 @@ const { ModCommand } = require('../../classes/command/modcommand.class')
 const fs = require('fs')
 
 module.exports = class ClearCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "clear",
       category: "mod",
@@ -14,6 +14,7 @@ module.exports = class ClearCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

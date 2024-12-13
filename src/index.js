@@ -1,8 +1,25 @@
 require('@dotenvx/dotenvx').config()
-const { Client, IntentsBitField } = require('discord.js')
+const { IntentsBitField } = require('discord.js')
+const { RookClient } = require('./classes/objects/rclient.class')
 const eventHandler = require('./handlers/eventHandler')
+const { program } = require('commander')
+const PACKAGE = require("../package.json")
 
-const client = new Client(
+console.log("")
+console.log("Bot Main:")
+console.log(PACKAGE.name, "v" + PACKAGE.version)
+
+program
+  .option(
+    "-p, --profile <profile>", "Profile", "default"
+  )
+  .parse(process.argv)
+
+const options = program.opts()
+console.log("Options:")
+console.log(JSON.stringify(options, null, "  "))
+
+const client = new RookClient(
   {
     intents: [
       IntentsBitField.Flags.Guilds,
@@ -10,7 +27,8 @@ const client = new Client(
       IntentsBitField.Flags.GuildMessages,
       IntentsBitField.Flags.MessageContent
     ]
-  }
+  },
+  options.profile
 );
 
 (async () => {
@@ -20,12 +38,15 @@ const client = new Client(
   // Register Events
   console.log("---")
   await eventHandler(client)
+  client.guild = await client.guilds.cache.find(
+    g => g.id === client.guildID
+  )
 
   if (process.env.GITHUB_WORKFLOW) {
     console.log(process.env.GITHUB_WORKFLOW)
     setTimeout(async () => {
       const getLocalCommands = require('./utils/getLocalCommands')
-      const localCommands = getLocalCommands()
+      const localCommands = getLocalCommands(client)
       try {
         let commandNames = [
           "uptime",
@@ -49,9 +70,8 @@ const client = new Client(
                 reply: async (props) => {
                   let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
                   let channelID = channelIDs["bot-console"]
-                  let guild = await client.guilds.cache.find(g => g.id === process.env.GUILD_ID)
-                  if (guild) {
-                    let channel = await guild.channels.cache.find(c => c.id === channelID)
+                  if (client.guild) {
+                    let channel = await client.guild.channels.cache.find(c => c.id === channelID)
                     await channel.send(props)
                   }
                 },

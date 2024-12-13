@@ -41,7 +41,7 @@ class SlimEmbed extends RookEmbed {
    * Constructor
    * @param {(EmbedProps | Object.<any>)} props Local list of command properties
    */
-  constructor(props = {}) {
+  constructor(client, props = {}) {
     // If we've got no title, set default
     if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
       if(!(props?.description)) {
@@ -58,7 +58,7 @@ class SlimEmbed extends RookEmbed {
     props.footer    = { msg: "<NONE>" }
     props.timestamp = false
 
-    super(props)
+    super(client, props)
   }
 }
 

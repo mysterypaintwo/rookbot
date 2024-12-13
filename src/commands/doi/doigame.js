@@ -2,7 +2,7 @@ const { serverGameName_base64encoded } = require('../../../config.json')
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class DOIGameCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     // Decode the base64 string
     const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8')
     let comprops = {
@@ -16,6 +16,7 @@ module.exports = class DOIGameCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

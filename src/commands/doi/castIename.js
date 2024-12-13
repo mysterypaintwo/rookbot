@@ -2,7 +2,7 @@ const { changeNickname } = require('../../utils/changeNickname')  // Import the 
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class CastleNameCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "castlename",
       category: "doi",
@@ -13,6 +13,7 @@ module.exports = class CastleNameCommand extends RookCommand {
     }
     let props = {}
     super(
+      client,
       {...comprops},
       {...props}
     )

@@ -13,7 +13,7 @@ function ksort(obj){
 }
 
 module.exports = class BotGuildsCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "botguilds",
       category: "bot",
@@ -34,6 +34,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
       caption: { text: "Bot Guilds" }
     }
     super(
+      client,
       {...comprops},
       {...props}
     )

@@ -4,7 +4,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class');
 module.exports = {
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
@@ -20,7 +20,7 @@ module.exports = {
         },
         description: `I don't have permission to send messages in ${targetChannel}.`
       }
-      const embed = new RookEmbed(props)
+      const embed = new RookEmbed(client, props)
       await interaction.reply({
         embeds: [ embed ],
         ephemeral: true,
@@ -40,7 +40,7 @@ module.exports = {
         },
         description: `Message successfully sent to ${targetChannel}.`
       }
-      const embed = new RookEmbed(props)
+      const embed = new RookEmbed(client, props)
       await interaction.reply({
         embeds: [ embed ],
         ephemeral: true,
@@ -54,7 +54,7 @@ module.exports = {
         },
         description: `There was an error trying to send the message to ${targetChannel}.`
       }
-      const embed = new RookEmbed(props)
+      const embed = new RookEmbed(client, props)
       await interaction.reply({
         embeds: [ embed ],
         ephemeral: true,

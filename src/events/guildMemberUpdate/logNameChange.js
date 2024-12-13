@@ -6,11 +6,11 @@ const colors = require('../../dbs/colors.json')
 
 /**
  * Logs changes to a user's nickname in the server.
- * @param {Client} client
+ * @param {RookClient} client
  * @param {GuildMember} oldMember
  * @param {GuildMember} newMember
  */
-module.exports = async (client, oldMember, newMember) => {
+module.exports = async (client, profileName, oldMember, newMember) => {
   try {
     // Check if the nickname has changed
     if (oldMember.nickname === newMember.nickname) {

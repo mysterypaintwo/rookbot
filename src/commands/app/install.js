@@ -10,7 +10,7 @@ const fs = require('fs')
  * @public
  */
 module.exports = class InstallCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "install",
       category: "app",
@@ -24,6 +24,7 @@ module.exports = class InstallCommand extends BotDevCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

@@ -37,11 +37,70 @@ class RookEmbed extends EmbedBuilder {
    * @property {{bot: Player, user: Player, target: Player}} players  Players
    */
 
+  async init(client, props) {
+    this.GLOBALS = await client.profile
+
+    if (
+      (!(props?.color)) ||
+      (props?.color && props.color.trim() == "")
+    ) {
+      switch (props?.color) {
+        default:
+          this.props.color = this?.defaults?.stripe
+          break
+      }
+    // } else {
+    //   this.props.color = this.defaults.stripe
+    }
+
+    // Inbound footer message
+    let haveFooterMsg = props?.footer?.msg
+
+    // Inbound footer message and not "<NONE>"
+    let footerMsgNotNone = haveFooterMsg && (props.footer.msg.trim() != "") && (props.footer.msg.trim() != "<NONE>")
+
+    // Hack in my stuff to differentiate
+    if (
+      this.DEV &&
+      this.GLOBALS?.stripe &&
+      this.GLOBALS?.footer
+    ) {
+      // Custom user footer
+      this.props.color = this.GLOBALS.stripe
+      this.props.footer = this.GLOBALS.footer
+      this.setTimestamp()
+    } else if(
+      (!haveFooterMsg) ||
+      (haveFooterMsg && (!footerMsgNotNone))
+    ) {
+      // Default footer
+      if (this.GLOBALS?.footer) {
+        this.props.footer = this.GLOBALS.footer
+      }
+    }
+
+    // Stripe
+    this.setColor(this.props.color || "#000000")
+
+    if (props?.footer?.msg) {
+      if (!(props.footer.msg.includes(this.GLOBALS.PACKAGE?.version))) {
+        props.footer.msg += ` [v${this.GLOBALS.PACKAGE?.version}]`
+      }
+      this.setFooter(
+        {
+          text: props.footer.msg,
+          iconURL: props.footer.image
+        }
+      )
+    }
+
+  }
+
   /**
    * Constructor
    * @param {(EmbedProps | Object.<any>)} props Local list of command properties
    */
-  constructor(props = {}) {
+  constructor(client, props = {}) {
     // If we've got no title, set default
     if (
       (
@@ -68,73 +127,16 @@ class RookEmbed extends EmbedBuilder {
       props.timestamp = true
     }
 
+
     super()
 
-    let profileName = "default"
-    this.defaults = {}
-    try {
-      /**
-       * Profile properties
-       * @type {Object.<string, any>}
-       */
-      this.defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-    } catch(err) {
-      console.log("🔴REmbed: DEFAULTS manifest not found!")
-      process.exit(1)
-    }
-
-    this.GLOBALS = {}
-    try {
-      /**
-       * Global properties
-       * @type {Object.<string, any>}
-       */
-      if (fs.existsSync("./src/PROFILE.json")) {
-        this.GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡REmbed: PROFILE manifest not found! Using defaults!")
-      }
-      if (
-        this.GLOBALS?.selectedprofile &&
-        this.GLOBALS?.profiles &&
-        this.GLOBALS.selectedprofile in this.GLOBALS.profiles
-      ) {
-        this.GLOBALS = this.GLOBALS.profiles[this.GLOBALS.selectedprofile]
-      } else {
-        this.GLOBALS = this.defaults
-      }
-    } catch(err) {
-      console.log("🔴REmbed: PROFILE manifest not found!")
-      process.exit(1)
-    }
-
-    this.PACKAGE = {}
-    try {
-      /**
-       * Package properties
-       * @type {Object.<string, any>}
-       */
-      this.PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
-    } catch(err) {
-      console.log("🔴REmbed: PACKAGE manifest not found!")
-      process.exit(1)
-    }
+    this.props = {}
 
     /**
      * Development Mode?
      * @type {boolean}
      */
     this.DEV = process.env.ENV_ACTIVE === "development"
-
-    if ((!(props?.color)) || (props?.color && props.color.trim() == "")) {
-      switch (props.color) {
-        default:
-          props.color = this.defaults.stripe
-          break
-      }
-    // } else {
-    //   props.color = this.defaults.stripe
-    }
 
     // Inbound footer message
     let haveFooterMsg = props?.footer?.msg
@@ -151,33 +153,11 @@ class RookEmbed extends EmbedBuilder {
       if(this.DEV || havePages) {
         // If we need to repurpose the footer
         // Append sent footer message to description
-        if(props.description != "") {
-          props.description += "\n\n"
+        if(this.props.description != "") {
+          this.props.description += "\n\n"
         }
-        props.description += `>>${props.footer.msg}`
+        this.props.description += `>>${props.footer.msg}`
       }
-    }
-
-    // Hack in my stuff to differentiate
-    if (this.DEV) {
-      // Custom user footer
-      props.color = this.GLOBALS["stripe"]
-      props.footer = this.GLOBALS.footer
-      this.setTimestamp()
-    } else if((!haveFooterMsg) || (haveFooterMsg && (!footerMsgNotNone))) {
-      // Default footer
-      props.footer = this.defaults.footer
-    }
-    if (props?.footer?.msg) {
-      if (!(props.footer.msg.includes(this.PACKAGE.version))) {
-        props.footer.msg += ` [v${this.PACKAGE.version}]`
-      }
-      this.setFooter(
-        {
-          text: props.footer.msg,
-          iconURL: props.footer.image
-        }
-      )
     }
 
     // ERROR
@@ -186,7 +166,7 @@ class RookEmbed extends EmbedBuilder {
       (props?.title?.text && props.title.text.toLowerCase().includes("error")) ||
       (props?.description && props.description.toLowerCase().includes("***error***"))
     ) {
-      props.color = "#ff0000" // RED
+      this.props.color = "#ff0000" // RED
     }
 
     // Avatars
@@ -194,7 +174,10 @@ class RookEmbed extends EmbedBuilder {
     //  Custom Thumbnail: Bot as Author
     //  Custom Thumbnail & Custom Author: No Bot
 
-    let bot = { name: "Bot", avatar: this.defaults.thumbnail.trim() }
+    let bot = {
+      name: "Bot",
+      avatar: client.profile?.defaults?.thumbnail.trim()
+    }
     if (!(props?.players)) {
       props.players = {
         bot: bot
@@ -247,12 +230,9 @@ class RookEmbed extends EmbedBuilder {
 
     if (props?.players?.user?.username) {
       if (eggs[props.players.user.username]) {
-        props.color = eggs[props.players.user.username]
+        this.props.color = eggs[props.players.user.username]
       }
     }
-
-    // Stripe
-    this.setColor(props.color)
 
     // Ephemeral
     if(props?.ephemeral && props.ephemeral) {

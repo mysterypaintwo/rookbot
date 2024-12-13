@@ -12,7 +12,7 @@ async function get_url(in_url) {
 }
 
 module.exports = class HolyImageCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     // let gameIDs     = await get_url(`http://alttp.mymm1.com/holyimage/games.json`)
     // let gameIDsPlus = await get_url(`http://alttp.mymm1.com/holyimage/metadata.php?mode=gameIDs&expand=1`)
 
@@ -45,6 +45,7 @@ module.exports = class HolyImageCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -52,7 +53,7 @@ module.exports = class HolyImageCommand extends RookCommand {
 
   /**
    * Sends an embed message in response to a slash command interaction.
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

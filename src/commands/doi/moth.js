@@ -3,7 +3,7 @@ const { RookCommand } = require('../../classes/command/rcommand.class')
 const path = require('path')
 
 module.exports = class MothCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "moth",
       category: "doi",
@@ -15,13 +15,14 @@ module.exports = class MothCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

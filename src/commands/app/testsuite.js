@@ -3,7 +3,7 @@ const { BotDevCommand } = require('../../classes/command/botdevcommand.class')
 const getLocalCommands = require('../../utils/getLocalCommands')
 
 module.exports = class TestSuiteCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "testsuite",
       category: "botdev",
@@ -28,17 +28,18 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
-    const localCommands = getLocalCommands()
+    const localCommands = getLocalCommands(client)
     let commandName = options["command-name"]
 
     try {

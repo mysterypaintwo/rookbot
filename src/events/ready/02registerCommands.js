@@ -8,7 +8,7 @@ module.exports = async (client) => {
   let help = {}
   try {
     const testGuildID = process.env.GUILD_ID
-    const localCommands = getLocalCommands()
+    const localCommands = getLocalCommands(client)
 
     // Determine if we are in development or production mode
     let isDevelopment = process.env.ENV_ACTIVE === 'development'
@@ -28,6 +28,7 @@ module.exports = async (client) => {
     }
 
     const applicationCommands = await commandsManager.fetch()
+    client.commands = {}
 
     for (const localCommand of localCommands) {
       let {
@@ -68,6 +69,7 @@ module.exports = async (client) => {
           console.log(`🗑 Deleting: "${name}"`)
           try {
             await commandsManager.delete(existingCommand.id)
+            delete client.commands[name]
           } catch (error) {
             console.error(`❌ Failed to delete: "${name}":`, error.message)
           }
@@ -78,17 +80,20 @@ module.exports = async (client) => {
           console.log(`🔁 Updating: "${name}"`)
           try {
             await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
+            client.commands[name] = commandsManager.get(existingCommand.id)
           } catch (error) {
             if (error.code === 429) {
               console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
               await wait(error.retry_after || 1000)
               await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
+              client.commands[name] = commandsManager.get(existingCommand.id)
             } else {
               console.error(`❌ Failed to edit: "${name}":`, error.message)
             }
           }
         } else {
           console.log(`✅ Current: "${name}"`)
+          client.commands[name] = existingCommand
         }
       } else {
         if (deleted) {
@@ -129,12 +134,14 @@ module.exports = async (client) => {
             access: access,
             segment: "new"
           }
-          await commandsManager.create({ name, description, options, autocomplete })
+          let newCommand = await commandsManager.create({ name, description, options, autocomplete })
+          client.commands[name] = newCommand
         } catch (error) {
           if (error.code === 429) {
             console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
             await wait(error.retry_after || 1000)
-            await commandsManager.create({ name, description, options, autocomplete })
+            let newCommand = await commandsManager.create({ name, description, options, autocomplete })
+            client.commands[name] = newCommand
           } else {
             console.error(`❌ Failed to register: "${name}":`, error.message)
           }

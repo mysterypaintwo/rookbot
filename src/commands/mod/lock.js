@@ -6,7 +6,7 @@ const colors = require('../../dbs/colors.json')
 // Multiple messages
 
 module.exports = class LockCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "lock",
       category: "mod",
@@ -25,13 +25,14 @@ module.exports = class LockCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    * Locks a specified channel, preventing the @everyone role from sending messages.
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
@@ -69,7 +70,7 @@ module.exports = class LockCommand extends ModCommand {
             { name: 'Locked By',      value: `${interaction.user}\n(ID: \`${interaction.user.id}\`)`, inline: true }
           ]
         }
-        const embed = new RookEmbed(props)
+        const embed = new RookEmbed(client, props)
         logs.send({ embeds: [ embed ] });
       } else {
         console.log("Logs channel not found.")

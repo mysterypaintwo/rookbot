@@ -4,7 +4,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class')
 const colors = require('../../dbs/colors.json')
 
 module.exports = class TimeoutCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "timeout",
       category: "mod",
@@ -40,13 +40,14 @@ module.exports = class TimeoutCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {
@@ -109,7 +110,7 @@ module.exports = class TimeoutCommand extends ModCommand {
               { name: 'Timeout Duration', value: `${timeoutDuration} ${plural}`,                      inline: true }
             ]
           }
-          const embed = new RookEmbed(props)
+          const embed = new RookEmbed(client, props)
 
           logs.send({ embeds: [ embed ] })
         } else {

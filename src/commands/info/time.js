@@ -2,7 +2,7 @@ const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const tz = require('timezone')
 
 module.exports = class TimeCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "time",
       category: "info",
@@ -15,6 +15,7 @@ module.exports = class TimeCommand extends RookCommand {
     }
 
     super(
+      client,
       {...comprops},
       {...props}
     )

@@ -9,7 +9,7 @@ const { AdminCommand } = require('./admincommand.class')
  * @public
  */
 class BotDevCommand extends AdminCommand {
-  constructor(comprops, props) {
+  constructor(client, comprops, props) {
     // BotPerms: Administrator
     comprops.botPermssions = [PermissionFlagsBits.Administrator]
     // Category: BotDev
@@ -17,6 +17,7 @@ class BotDevCommand extends AdminCommand {
 
     // Create parent object
     super(
+      client,
       {...comprops},
       {...props}
     )

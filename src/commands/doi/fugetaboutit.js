@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
@@ -26,7 +26,7 @@ module.exports = {
         },
         description: "There as an error uploading the video."
       }
-      const embed = new RookEmbed(props)
+      const embed = new RookEmbed(client, props)
       console.log(`There was an error when uploading the video: ${error.stack}`);
       // If error occurs, use an ephemeral reply to privately inform the user
       await interaction.followUp({ embeds: [ embed ], ephemeral: true });

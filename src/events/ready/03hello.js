@@ -1,7 +1,6 @@
-const HelloCommand = require('../../commands/app/hello.js')
-
-module.exports = async (client) => {
-  const cmd = new HelloCommand()
-  cmd.execute(client)
+module.exports = async (client, profileName) => {
+  let cmd_defn = require('../../commands/app/hello')
+  let cmd_obj = new cmd_defn(client, profileName)
+  await cmd_obj.execute(client)
   return
 }

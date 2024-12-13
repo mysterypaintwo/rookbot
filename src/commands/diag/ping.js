@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class PingCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "ping",
       category: "diagnostic",
@@ -14,6 +14,7 @@ module.exports = class PingCommand extends RookCommand {
       title: { text: "Pong!" }
     }
     super(
+      client,
       {...comprops},
       {...props}
     )

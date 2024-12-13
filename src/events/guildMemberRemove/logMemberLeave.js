@@ -6,10 +6,10 @@ const colors = require('../../dbs/colors.json')
 
 /**
  * Logs when a member leaves the server and saves it to a log file.
- * @param {Client} client
+ * @param {RookClient} client
  * @param {GuildMember} oldMember
  */
-module.exports = async (client, oldMember) => {
+module.exports = async (client, profileName, oldMember) => {
   try {
     // Fetch the log channel using the oldMember's guild ID
     const guildID = oldMember.guild.id

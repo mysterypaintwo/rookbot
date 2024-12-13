@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.j
 const { ModCommand } = require('../../classes/command/modcommand.class.js')
 
 module.exports = class MuteCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "unmute",
       category: "mod",
@@ -49,6 +49,7 @@ module.exports = class MuteCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

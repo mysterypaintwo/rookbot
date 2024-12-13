@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class BotSourceCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "botsrc",
       category: "bot",
@@ -25,6 +25,7 @@ module.exports = class BotSourceCommand extends RookCommand {
       image: "https://github.com/fluidicon.png"
     }
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -32,7 +33,7 @@ module.exports = class BotSourceCommand extends RookCommand {
 
   /**
    * Sends an embed message with a link to the bot\'s GitHub repository.
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

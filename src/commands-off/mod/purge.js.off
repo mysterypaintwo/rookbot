@@ -4,7 +4,7 @@ const { RookEmbed } = require('../../classes/embed/rembed.class')
 module.exports = {
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   execute: async (client, interaction) => {
@@ -19,7 +19,7 @@ module.exports = {
         },
         description: "Please specify a number between 1 and 100."
       }
-      const embed = new RookEmbed(props);
+      const embed = new RookEmbed(client, props);
       await interaction.editReply({ embeds: [embed], ephemeral: true })
       return;
     }
@@ -45,7 +45,7 @@ module.exports = {
               { name: 'Amount', value: `${deletedMessages.size}`, inline: false }
             ]
           }
-          const embed = new RookEmbed(props)
+          const embed = new RookEmbed(client, props)
           logs.send({ embeds: [embed] })
         } else {
           console.log("Logs channel not found.")
@@ -60,7 +60,7 @@ module.exports = {
         },
         description: `Successfully purged ${deletedMessages.size} messages in this channel.`
       }
-      const embed2 = new RookEmbed(props2)
+      const embed2 = new RookEmbed(client, props2)
       await interaction.followUp({ embeds: [embed2], ephemeral: true })
     } catch (error) {
       console.log(`There was an error when purging messages: ${error.stack}`)
@@ -71,7 +71,7 @@ module.exports = {
         },
         description: "I couldn't delete those messages. Make sure they're not older than 14 days."
       }
-      const embed = new RookEmbed(props);
+      const embed = new RookEmbed(client, props);
       await interaction.editReply({ embeds: [embed], ephemeral: true })
     }
   },

@@ -16,7 +16,7 @@ function isValidURLFromDomain(input, domain) {
 }
 
 module.exports = class Z3M3AnnounceCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "smz3",
       category: "rando",
@@ -49,6 +49,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
     }
 
     super(
+      client,
       {...comprops},
       {...props}
     )

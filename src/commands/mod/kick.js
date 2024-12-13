@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType } = require('discord.js');
 const { ModCommand } = require('../../classes/command/modcommand.class')
 
 module.exports = class KickCommand extends ModCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "kick",
       category: "mod",
@@ -30,6 +30,7 @@ module.exports = class KickCommand extends ModCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )

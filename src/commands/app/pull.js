@@ -10,7 +10,7 @@ const fs = require('fs')
  * @public
  */
 module.exports = class PullCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "pull",
       category: "app",
@@ -26,6 +26,7 @@ module.exports = class PullCommand extends BotDevCommand {
       title: { text: "Pull", emoji: "⏫" }
     }
     super(
+      client,
       {...comprops},
       {...props}
     )

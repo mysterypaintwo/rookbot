@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class MentionCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "mention",
       category: "meta",
@@ -43,6 +43,7 @@ module.exports = class MentionCommand extends RookCommand {
     }
 
     super(
+      client,
       {...comprops},
       {...props}
     )
@@ -50,7 +51,7 @@ module.exports = class MentionCommand extends RookCommand {
 
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async action(client, interaction, cmd, options) {

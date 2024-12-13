@@ -6,11 +6,11 @@ const colors = require('../../dbs/colors.json')
 
 /**
  * Logs edited messages from the server.
- * @param {Client} client
+ * @param {RookClient} client
  * @param {Message} oldMessage
  * @param {Message} newMessage
  */
-module.exports = async (client, oldMessage, newMessage) => {
+module.exports = async (client, profileName, oldMessage, newMessage) => {
   try {
     // Check for invalid or undefined data
     if (!newMessage) {

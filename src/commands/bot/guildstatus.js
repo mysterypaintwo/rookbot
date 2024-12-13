@@ -1,7 +1,7 @@
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 
 module.exports = class GuildStatusCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "guildstatus",
       category: "bot",
@@ -12,6 +12,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
     }
     let props = {}
     super(
+      client,
       {...comprops},
       {...props}
     )

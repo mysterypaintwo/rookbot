@@ -6,10 +6,10 @@ const colors = require('../../dbs/colors.json')
 
 /**
  * Logs when a new member joins the server and saves it to a log file.
- * @param {Client} client
+ * @param {RookClient} client
  * @param {GuildMember} newMember
  */
-module.exports = async (client, newMember) => {
+module.exports = async (client, profileName, newMember) => {
   try {
     // Ensure the member's data is fully fetched
     const fetchedMember = await newMember.guild.members.fetch(newMember.user.id)

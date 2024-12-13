@@ -1,58 +1,10 @@
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const getProfile = require('../../utils/getProfile.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = async (client, interaction) => {
-  let profileName = "default"
-  let defaults = {}
-  try {
-    /**
-     * Profile properties
-     * @type {Object.<string, any>}
-     */
-    defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-  } catch(err) {
-    console.log("🔴Exit Sequence: DEFAULTS manifest not found!")
-    process.exit(1)
-  }
-
-  let GLOBALS = {}
-  try {
-    /**
-     * Global properties
-     * @type {Object.<string, any>}
-     */
-    if (fs.existsSync("./src/PROFILE.json")) {
-      GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-    } else {
-      console.log("🟡Exit Sequence: PROFILE manifest not found! Using defaults!")
-    }
-    if (
-      GLOBALS?.selectedprofile &&
-      GLOBALS?.profiles &&
-      GLOBALS.selectedprofile in GLOBALS.profiles
-    ) {
-      profileName = GLOBALS.selectedprofile
-      GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
-    } else {
-      GLOBALS = defaults
-    }
-  } catch(err) {
-    console.log("🔴Exit Sequence: PROFILE manifest not found!")
-    process.exit(1)
-  }
-
-  let PACKAGE = {}
-  try {
-    /**
-     * Package properties
-     * @type {Object.<string, any>}
-     */
-    PACKAGE = JSON.parse(fs.readFileSync("./package.json","utf8"))
-  } catch(err) {
-    console.log("🔴Exit Sequence: PACKAGE manifest not found!")
-    process.exit(1)
-  }
+module.exports = async (client, profileName, interaction) => {
+  let GLOBALS = getProfile(profileName)
 
   let BRANCH = ""
   let COMMIT = ""
@@ -275,7 +227,7 @@ module.exports = async (client, interaction) => {
       let channelID = channelIDs["bot-console"]
       let guild = await client.guilds.cache.find(g => g.id === guildID)
       let channel = await guild?.channels.cache.find(c => c.id === channelID) || interaction.channel
-      let embed = await new RookEmbed(props)
+      let embed = await new RookEmbed(client, props)
       await channel.send({ embeds: [ embed ] })
     }
   }

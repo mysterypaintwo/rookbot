@@ -7,7 +7,7 @@ const colors = require('../../dbs/colors.json')
 // Multiple messages
 
 module.exports = class ShutdownCommand extends BotDevCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "shutdown",
       category: "app",
@@ -23,13 +23,14 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       color: colors["bad"]
     }
     super(
+      client,
       {...comprops},
       {...props}
     )
   }
   /**
    *
-   * @param {Client} client
+   * @param {RookClient} client
    * @param {Interaction} interaction
    */
   async execute(client, interaction) {

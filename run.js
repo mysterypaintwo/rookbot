@@ -2,21 +2,29 @@ const { program } = require('commander')
 const PACKAGE = require('./package.json')
 const shell = require('shelljs')
 
+console.log("")
+console.log("Bot Runner:")
+console.log(PACKAGE.name, "v" + PACKAGE.version)
+
 program
   .name(PACKAGE.name)
   .version(PACKAGE.version)
   .usage("[OPTIONS]...")
   // Profile Name
   .option(
+    "-p, --profile <profile>", "Profile", "default"
+  )
+  // Long?
+  .option(
     "-l, --long", "Long?", false
   )
   .parse(process.argv)
 
 const options = program.opts()
-// console.log(JSON.stringify(options, null, "  "))
+console.log("Options:")
+console.log(JSON.stringify(options, null, "  "))
 
 let QUICK = !options.long
-
 if (!QUICK) {
   shell.exec("node ./src/res/ci/common/ver.js")
   console.log()
@@ -30,6 +38,9 @@ if (!QUICK) {
 let TRACE_WARNINGS = false
 let TRACE_DEPRECATIONS = true
 let UNHANDLED_REJECTIONS = false
+let args = [
+  `-p ${options.profile}`
+]
 
 let command = "node "
 if (TRACE_WARNINGS) {
@@ -41,6 +52,9 @@ if (TRACE_DEPRECATIONS) {
 if (UNHANDLED_REJECTIONS) {
   command += "--unhandled-rejections=strict "
 }
-command += "./src/index.js"
+command += "./src/index.js "
+command += args.join(" ")
 
+command = command.trim()
+console.log("CLI Command:", command)
 shell.exec(command)

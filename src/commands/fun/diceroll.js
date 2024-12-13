@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class DiceRollCommand extends RookCommand {
-  constructor() {
+  constructor(client) {
     let comprops = {
       name: "diceroll",
       category: "fun",
@@ -34,6 +34,7 @@ module.exports = class DiceRollCommand extends RookCommand {
     let props = {}
 
     super(
+      client,
       {...comprops},
       {...props}
     )
