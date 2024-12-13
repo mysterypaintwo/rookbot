@@ -62,7 +62,7 @@ module.exports = class ExitCommand extends BotDevCommand {
     }
 
     let this_embed = new RookEmbed(client, this.props)
-    await this_embed.init()
+    await this_embed.init(client, this.props)
     await interaction.reply({ embeds: [ this_embed ] })
 
     let command = await new UptimeCommand()
