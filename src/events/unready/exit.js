@@ -4,7 +4,7 @@ const shell = require('shelljs')
 const fs = require('fs')
 
 module.exports = async (client, profileName, interaction) => {
-  let GLOBALS = getProfile(profileName)
+  let GLOBALS = await getProfile(profileName)
 
   let BRANCH = ""
   let COMMIT = ""
@@ -49,7 +49,7 @@ module.exports = async (client, profileName, interaction) => {
 
   console_output.push(
     (user ? user.username : "") +
-    ` v${GLOBALS.PACKAGE.version} is Offline!`
+    ` v${GLOBALS?.PACKAGE?.version} is Offline!`
   )
   props = {
     title: {
