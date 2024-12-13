@@ -228,6 +228,7 @@ module.exports = async (client, profileName, interaction) => {
       let guild = await client.guilds.cache.find(g => g.id === guildID)
       let channel = await guild?.channels.cache.find(c => c.id === channelID) || interaction.channel
       let embed = await new RookEmbed(client, props)
+      embed.init(client, props)
       await channel.send({ embeds: [ embed ] })
     }
   }

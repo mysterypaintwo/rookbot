@@ -69,7 +69,7 @@ module.exports = class ExitCommand extends BotDevCommand {
     await command.execute(client)
     this.null = true
 
-    await unready(client, interaction)
+    await unready(client, this.profileName, interaction)
 
     console.log(`!!! EXIT`)
     process.exit(1337)
