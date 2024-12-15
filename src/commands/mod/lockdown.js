@@ -97,7 +97,7 @@ module.exports = class LockdownCommand extends ModCommand {
       const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs) {
         const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1);
-        const embed = new RookEmbed({
+        const embed = new RookEmbed(client, {
           color: action === 'lock' ? '#FF0000' : '#00FF00',
           title: {
             text: `🔒🔒 [Log] Lockdown \(${capitalizedAction}\)`

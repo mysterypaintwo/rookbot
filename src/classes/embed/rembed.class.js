@@ -77,6 +77,8 @@ class RookEmbed extends EmbedBuilder {
    * @property  {EmbedFooter}         [footer]      Embed Footer
    * @property  {number | null}       [timestamp]   Embed Timestamp
    * @property  {{bot:EmbedPlayer,user:EmbedPlayer,target:EmbedPlayer}} [players]     Embed Players
+   * @property  {number}              [flags]       Embed Flags
+   * @property  {boolean}             [ephemeral]   Ephemeral?
    * @property  {boolean}             [full]        Full Embed?
    */
 
@@ -129,6 +131,9 @@ class RookEmbed extends EmbedBuilder {
     if (typeof this.props.description == "object") {
       this.props.description = this.props.description.join("\n")
     }
+
+    // Get Ephemeral figured out
+    this.ephemeral = this.props?.ephemeral && this.props.ephemeral
 
     // Get full-size figured out
     if (!this.props?.full) {

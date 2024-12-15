@@ -27,7 +27,7 @@ module.exports = async (client, oldMember, newMember) => {
     // Prepare the log embed
     let oldNick = oldMember.nickname ?? "No nickname"
     let newNick = newMember.nickname ?? newMember.user.displayName
-    const embed = new RookEmbed({
+    const embed = new RookEmbed(client, {
       color: colors["info"], // Gold color for nickname changes
       title: {
         text: '✏️ [Log] Nickname Changed'

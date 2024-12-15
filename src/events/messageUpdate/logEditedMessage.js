@@ -67,7 +67,7 @@ module.exports = async (client, oldMessage, newMessage) => {
     }
     const logChannel = client.channels.cache.get(guildChannels[log_type])
 
-    const embed = new RookEmbed({
+    const embed = new RookEmbed(client, {
       color: colors["info"], // Orange for message updates
       title: {
         text: '✏️ [Log] Message Edited'

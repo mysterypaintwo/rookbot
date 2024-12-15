@@ -30,7 +30,7 @@ module.exports = async (client, newMember) => {
     }
 
     // Prepare the log embed
-    const logEmbed = new RookEmbed({
+    const logEmbed = new RookEmbed(client, {
       color: colors["good"], // Green for new members joining
       title: {
         text: '👋 [Log] Member Joined'

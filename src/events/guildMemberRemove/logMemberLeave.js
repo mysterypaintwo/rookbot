@@ -29,7 +29,7 @@ module.exports = async (client, oldMember) => {
     const leftAt = new Date()
 
     // Prepare the log embed
-    const logEmbed = new RookEmbed({
+    const logEmbed = new RookEmbed(client, {
       color: colors["bad"], // Red for member leaving
       title: {
         text: '🚶‍♂️🚪 [Log] Member Left'

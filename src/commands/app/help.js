@@ -62,7 +62,7 @@ module.exports = class HelpCommand extends RookCommand {
     let command = options["command-name"] ?? null
     let section = options["section-name"] ?? null
 
-    this.props.description = ""
+    this.props.description = " "
 
     if(command) {
       for(let [sectionName, sectionCmds] of Object.entries(helpJSON)) {

@@ -38,7 +38,8 @@ module.exports = class UnlockCommand extends ModCommand {
   async action(client, interaction, options) {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
-    const channel = options['channel'];
+    const channelID = options['channel'];
+    const channel = client.channels.cache.get(channelID)
 
     try {
       if (!this.DEV) {
@@ -54,17 +55,16 @@ module.exports = class UnlockCommand extends ModCommand {
         title: { text: '[ModPost] Channel Unlocked!', emoji: '🟡' },
         description: (this.DEV ? "DEV: " : "") + `<#${channel.id}> has been **unlocked**.`,
       }
-      const embed = new RookEmbed(embedProps);
-      channel.send({ embeds: [embed] });
+      const embed = new RookEmbed(client, embedProps);
+      channel.send({ embeds: [ embed ] });
+      console.log(`/${this.name}: ModPost`)
 
       // Log the action in the logs channel (private)
       const logs = client.channels.cache.get(guildChannels["logging"]);
       if (logs && !this.DEV) {
         let props = {
           color: colors["success"],
-          title: {
-            text: "🔓 [Log] Channel Unlocked"
-          },
+          title: { text: "[Log] Channel Unlocked", emoji: "🔒" },
           fields: [
             [
               { name: 'Channel Unlocked', value: `<#${channel.id}>\n(ID: ${channel.id})` },
@@ -74,6 +74,7 @@ module.exports = class UnlockCommand extends ModCommand {
         }
         const embed = new RookEmbed(client, props)
         logs.send({ embeds: [ embed ] });
+        console.log(`/${this.name}: LogPost`)
       } else {
         console.log("Logs channel not found.");
       }

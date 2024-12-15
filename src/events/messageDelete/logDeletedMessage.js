@@ -104,7 +104,7 @@ module.exports = async (client, deletedMessage) => {
     )
 
     // Prepare the log embed
-    const logEmbed = new RookEmbed({
+    const logEmbed = new RookEmbed(client, {
       color: colors["bad"], // Orange for message updates
       title: {
         text: '🚮 [Log] Message Deleted'

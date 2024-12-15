@@ -68,6 +68,7 @@ class ModCommand extends AdminCommand {
     let addRole = 0
     let remRole = 0
     let matches = null
+    let success = false
 
     if (Object.keys(roles).includes("add")) {
       addRole = roles["add"]
@@ -92,7 +93,13 @@ class ModCommand extends AdminCommand {
         )
       }
       if (addRole && addRole != 0) {
-        await user.roles.add(addRole.id)
+        try {
+          await user.roles.add(addRole.id)
+          success = true
+        } catch(e) {
+          console.log(e)
+          success = false
+        }
       }
     }
     if (Object.keys(roles).includes("remove")) {
@@ -118,15 +125,23 @@ class ModCommand extends AdminCommand {
         )
       }
       if (remRole && remRole != 0) {
-        await user.roles.remove(remRole.id)
+        try {
+          await user.roles.remove(remRole.id)
+          success = true
+        } catch(e) {
+          console.log(e)
+          success = false
+        }
       }
     }
 
     if (addRole == 0 && remRole == 0) {
       this.error = true
       this.props.description = "No roles found."
-      return
+      return false
     }
+
+    return success
   }
 
   /**
@@ -158,6 +173,7 @@ class ModCommand extends AdminCommand {
    * @param {string}              voice   Un/Mute?
    */
   async voice_user(message, user, voice) {
+    let success = false
     // Member Role Name
     let MEMBER_ROLE = this?.ROLES?.member ? this.ROLES.member[0]  : null
     // Muted Role Name
@@ -176,13 +192,13 @@ class ModCommand extends AdminCommand {
       if (!mainRole) {
         this.error = true
         this.props.description = `${MEMBER_ROLE} Member Role not found in server.`
-        return
+        return false
       }
       // If no Muted Role
       if (!muteRole) {
         this.error = true
         this.props.description = `${MUTED_ROLE} Muted Role not found in server.`
-        return
+        return false
       }
 
       let roles = {
@@ -206,11 +222,13 @@ class ModCommand extends AdminCommand {
           remove: muteRole
         }
       }
-      this.adjust_roles(message, user, roles)
+      sucess = this.adjust_roles(message, user, roles)
       this.props.description = `<@${user.id}> has been ${voice}d`
     } else {
       this.props.description = `<@${user.id}> *would be* **${voice}d** if this wasn't in DEV Mode`
     }
+
+    return success
   }
   /**
    * Mute a User
@@ -219,7 +237,7 @@ class ModCommand extends AdminCommand {
    * @param {User}                user    User that we're modifying
    */
   async mute_user(message, user) {
-    await this.voice_user(message, user, "mute")
+    return await this.voice_user(message, user, "mute")
   }
   /**
    * Unmute a User
@@ -228,10 +246,12 @@ class ModCommand extends AdminCommand {
    * @param {User}                user    User that we're modifying
    */
   async unmute_user(message, user) {
-    await this.voice_user(message, user, "unmute")
+    return await this.voice_user(message, user, "unmute")
   }
 
   async action(client, interaction, options) {
+    let lastingError = false
+
     // Get Guild ID
     const guildID = interaction.guild.id;
     // Get Guild Channels
@@ -335,32 +355,34 @@ class ModCommand extends AdminCommand {
     const user = guildMember?.user || targetUser
 
     // Attempt to ACTION the user
+    let success = false
     try {
       // ACTION the user
       if (!this.DEV) {
         switch(this.name) {
           case "role_add":
-            await this.add_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
+            success = await this.add_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
             break
           case "role_remove":
-            await this.remove_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
+            success = await this.remove_role(interaction, guildMember, interaction.options.getString("role").replace(/[<@&>]/g, ""))
             break
           case "ban":
-            await interaction.guild.members.ban(targetUserId, { reason })
+            success = await interaction.guild.members.ban(targetUserId, { reason })
             break
           case "kick":
-            await interaction.guild.members.kick(targetUserId, { reason })
+            success = await interaction.guild.members.kick(targetUserId, { reason })
             break
           case "mute":
-            this.mute_user(interaction, guildMember, reason)
+            success = this.mute_user(interaction, guildMember, reason)
             break
           case "unban":
-            await interaction.guild.members.unban(targetUserId)
+            success = await interaction.guild.members.unban(targetUserId)
             break
           case "unmute":
-            this.unmute_user(interaction, guildMember, reason)
+            success = this.unmute_user(interaction, guildMember, reason)
             break
           case "warn":
+            success = true
             // await interaction.guild.members.warn(targetUserId)
             break
         }
@@ -369,32 +391,33 @@ class ModCommand extends AdminCommand {
       // Determine the name to display (use nickname if available, otherwise default to tag or username)
       const targetUserName = guildMember?.nickname || targetUser.username;
 
-      // Public ModPost for ACTION
-      props.public.color = colors["success"]
-      props.public.title = {
-        emoji: "🟢",
-        text: "[ModPost] Success!"
-      }
-      props.public.description = [
-        (this.DEV ? "DEV: " : "") +
-        `User **${targetUserName}** has been **${tenses.past}**.`,
-        "(" +
-        // `ID: \`${targetUserId}\`; ` +  // Don't add userID to ModPost
-        reason +
-        ")"
-      ]
-      embeds.public = new RookEmbed(client, props.public)
-      await embeds.public.init(props.public)
-      interaction.editReply(
-        {
-          embeds: [ embeds.public ]
+      if (success) {
+        // Public ModPost for ACTION
+        props.public.color = colors["success"]
+        props.public.title = {
+          emoji: "🟢",
+          text: "[ModPost] Success!"
         }
-      )
-      this.null = true
-      this.props.null = true
-      console.log(`/${this.name}: ModPost`)
+        props.public.description = [
+          (this.DEV ? "DEV: " : "") +
+          `User **${targetUserName}** has been **${tenses.past}**.`,
+          "(" +
+          // `ID: \`${targetUserId}\`; ` +  // Don't add userID to ModPost
+          reason +
+          ")"
+        ]
+        embeds.public = await new RookEmbed(client, props.public)
+        interaction.editReply(
+          {
+            embeds: [ embeds.public ]
+          }
+        )
+        this.null = true
+        this.props.null = true
+        console.log(`/${this.name}: ModPost`)
+      }
 
-      if (!this.DEV) {
+      if (success && (!this.DEV || true)) {
         // DM post for ACTION
         try {
           let dm_desc = `You have been ${tenses.past} from the ${interaction.guild.name} server. (${reason})`
@@ -415,13 +438,14 @@ class ModCommand extends AdminCommand {
             },
             description: dm_desc
           }
-          embeds.dm = new RookEmbed(client, props.dm)
-          await embeds.dm.init(props.dm)
-          await targetUser.send(
-            {
-              embeds: [ embeds.dm ]
-            }
-          )
+          embeds.dm = await new RookEmbed(client, props.dm)
+          if (!this.DEV) {
+            await targetUser.send(
+              {
+                embeds: [ embeds.dm ]
+              }
+            )
+          }
           console.log(`/${this.name}: DM Post`)
 
           // Reply to Mod for DM about ACTION
@@ -429,17 +453,16 @@ class ModCommand extends AdminCommand {
             color: colors["success"],
             title: {
               emoji: "🟢",
-              text: "Success!"
+              text: "[YouPost] Success!"
             },
             description: [
-              `✅ User **${targetUserName}** successfully ${tenses.past} via DMs!`,
+              `✅ User **${targetUserName}** successfully **${tenses.past}** via DMs!`,
               "",
               `Message: ${props.dm.description}`
             ],
             ephemeral: true
           }
-          embeds.mod = new RookEmbed(client, props.mod)
-          await embeds.mod.init(props.mod)
+          embeds.mod = await new RookEmbed(client, props.mod)
           interaction.followUp(
             {
               embeds: [ embeds.mod ],
@@ -452,15 +475,14 @@ class ModCommand extends AdminCommand {
           console.log(`Failed to DM user: ${dmError.message}`);
           props.mod = {
             color: colors["red"],
-            title: { text: "Error" },
+            title: { text: "[YouPost] Error" },
             description: [
               `I couldn't send the DM to the user (ID: ${targetUserId}).`,
               `They might have DMs disabled.`
             ],
             ephemeral: true
           }
-          embeds.mod = new RookEmbed(client, props.mod)
-          await embeds.mod.init(props.mod)
+          embeds.mod = await new RookEmbed(client, props.mod)
           interaction.followUp(
             {
               embeds: [ embeds.mod ],
@@ -470,7 +492,7 @@ class ModCommand extends AdminCommand {
         }
       }
 
-      if (!this.DEV || true) {
+      if (success && (!this.DEV || true)) {
         // LogPost for ACTION
         let log_type = "logging"
         let log_check = `logging-${this.name}`
@@ -489,8 +511,10 @@ class ModCommand extends AdminCommand {
               text: "[Log] User " + tenses.past.ucfirst()
             },
             fields: [
-              { name: 'User ' + tenses.past.ucfirst(),  value: `${targetUser}\n(ID: \`${targetUserId}\`)`,              inline: true },
-              { name: tenses.past.ucfirst() + ' By',    value: `${interaction.user}\n(ID: \`${interaction.user.id}\`)`, inline: true }
+              [
+                { name: 'User ' + tenses.past.ucfirst(),  value: `${targetUser}\n(ID: \`${targetUserId}\`)` },
+                { name: tenses.past.ucfirst() + ' By',    value: `${interaction.user}\n(ID: \`${interaction.user.id}\`)` }
+              ]
             ]
           }
           if (
@@ -502,15 +526,15 @@ class ModCommand extends AdminCommand {
             ].includes(this.name)
           ) {
             props.log.fields.push(
-              {
-                name: "Reason",
-                value: reason,
-                inline: false
-              }
+              [
+                {
+                  name: "Reason",
+                  value: reason
+                }
+              ]
             )
           }
-          embeds.log = new RookEmbed(client, props.log)
-          await embeds.log.init(props.log)
+          embeds.log = await new RookEmbed(client, props.log)
           logs.send({ embeds: [ embeds.log ] })
           console.log(`/${this.name}: LogPost`)
         } else {
@@ -533,27 +557,38 @@ class ModCommand extends AdminCommand {
           `Reason:  ${reason}`,
           '--------------------------------'
         ].join("\n") + "\n"
-        fs.appendFileSync(logFilePath, logEntry, "utf8")
+        if (!this.DEV) {
+          fs.appendFileSync(logFilePath, logEntry, "utf8")
+        }
         console.log(`/${this.name}: LogFile`)
       }
     } catch (error) {
+      lastingError = error
+      success = false
+    }
+
+    if (!success) {
       // Reply to Mod if error for ACTION
-      console.log(`There was an error when ${tenses.active}: ${error.stack}`)
+      let msg = `There was an error when ${tenses.active}`
+      if (lastingError) {
+        msg += `: ${lastingError.stack}`
+      }
+      console.log(msg)
+      props.mod.title = { text: "[YouPost]" }
       props.mod.error = true
       props.mod.ephemeral = true
-      props.mod.description = `I couldn't ${tenses.present} that user (ID: \`${targetUserId}\`).`
-      embeds.mod = new RookEmbed(client, props.mod)
-      await embeds.mod.init(props.mod)
-      interaction.followUp(
-        {
-          embeds: [ embeds.mod ],
-          flags: MessageFlags.Ephemeral
-        }
+      props.mod.description = `I couldn't ${tenses.present} ${targetUser} (ID: \`${targetUserId}\`).`
+      embeds.mod = await new RookEmbed(client, props.mod)
+      await this.send(
+        client,
+        interaction,
+        [ embeds.mod ]
       )
+      this.null = true
     }
   }
 
-  async build(client, interaction, cmd, coptions={}) {
+  async build(client, interaction, coptions={}) {
     console.log(`/${this.name}: Mod Build`)
 
     // Get list of roles
