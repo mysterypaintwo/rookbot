@@ -51,10 +51,7 @@ const client = new RookClient(
       const getLocalCommands = require('./utils/getLocalCommands')
       const localCommands = getLocalCommands(client)
       try {
-        let commandNames = [
-          "uptime",
-          "exit"
-        ]
+        let commandNames = [ "exit" ]
         for(let commandName of commandNames) {
           const commandObject = localCommands.find(
             cmd => cmd.name === commandName
