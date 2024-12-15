@@ -42,7 +42,7 @@ module.exports = class ShutdownCommand extends BotDevCommand {
       if (
         !isDeferred &&
         !hasReply &&
-        interaction.hasOwn("deferReply") &&
+        Object.hasOwn(interaction, "deferReply") &&
         typeof interaction.deferReply === "function"
       ) {
         // await interaction.deferReply()
