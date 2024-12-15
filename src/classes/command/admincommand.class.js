@@ -1,5 +1,5 @@
 const { PermissionFlagsBits } = require('discord.js')
-const { RookCommand } = require('./rcommand.class')
+const { RookCommand } = require('../command/rcommand.class')
 const fs = require('fs')
 
 /**
@@ -12,7 +12,7 @@ const fs = require('fs')
 class AdminCommand extends RookCommand {
   constructor(client, comprops, props) {
     // BotPerms: Administrator
-    comprops.botPermssions = [PermissionFlagsBits.Administrator]
+    comprops.botPermissions = [PermissionFlagsBits.Administrator]
     // Category: Admin
     comprops.access = comprops?.access ? comprops.access : "Admin"
 
@@ -42,7 +42,8 @@ class AdminCommand extends RookCommand {
   }
 
   // Build the response
-  async build(client, interaction, cmd, options) {
+  async build(client, interaction, coptions={}) {
+    console.log(`/${this.name}: Admin Build`)
     if (interaction) {
       // Get list of roles
       this.ROLES = JSON.parse(fs.readFileSync(`./src/dbs/${interaction.guild.id}/roles.json`, "utf8"))
@@ -66,34 +67,18 @@ class AdminCommand extends RookCommand {
       }
     }
 
-    let actionResult = false
-
-    if(!(this.error)) {
-      // Process arguments
-      await this.processArgs(
-        client,
-        interaction,
-        this.flags,
-        options
-      )
-
+    if (!(this.error)) {
       for (let option of this.options) {
-        if (!(options.hasOwnProperty(option.name))) {
-          // @ts-ignore
+        if ((!(coptions.hasOwnProperty(option.name)))) {
           let thisOption = interaction.options.get(option.name)
           if (thisOption) {
-            options[option.name] = thisOption.value
+            coptions[option.name] = thisOption.value
           }
         }
       }
-
-      actionResult = await this.action(
-        client,
-        interaction,
-        cmd,
-        options
-      )
     }
+
+    let actionResult = await this.action(client, interaction, coptions)
 
     return actionResult && !this.error
   }

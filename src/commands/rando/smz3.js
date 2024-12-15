@@ -55,7 +55,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 
@@ -211,25 +211,31 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
         avatar: "http://alttp.mymm1.com/holyimage/images/alttpo/smz3.png"
       }
       this.props.fields = [
-        { name: 'Group Name', value: groupName, inline: false },
-        {
-          name: 'Scripts',
-          value: '[2022 (`alttpo-client-win64-stable-20220213.1`)](https://dev.azure.com/ALttPO/alttpo/_build/results?buildId=693&view=artifacts&pathAsName=false&type=publishedArtifacts)',
-          inline: false,
-        },
-        {
-          name: '__Start Game Reminder__',
-          value: 'Please wait on the Start Game with everyone until the game begins.',
-          inline: false,
-        },
-        {
-          name: 'Game Start Time',
-          value: `The game will begin at ${timestamp}.`,
-          inline: false,
-        }
+        [
+          { name: 'Group Name', value: groupName }
+        ],
+        [
+          {
+            name: 'Scripts',
+            value: '[2022 (`alttpo-client-win64-stable-20220213.1`)](https://dev.azure.com/ALttPO/alttpo/_build/results?buildId=693&view=artifacts&pathAsName=false&type=publishedArtifacts)',
+          }
+        ],
+        [
+          {
+            name: '__Start Game Reminder__',
+            value: 'Please wait on the Start Game with everyone until the game begins.',
+          }
+        ],
+        [
+          {
+            name: 'Game Start Time',
+            value: `The game will begin at ${timestamp}.`,
+            inline: false,
+          }
+        ]
       ]
       this.props.footer = {
-        msg: randomFooterText
+        text: randomFooterText
       }
 
       // Construct the content for the channel message

@@ -46,7 +46,7 @@ module.exports = class LockdownCommand extends ModCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
 
@@ -103,18 +103,21 @@ module.exports = class LockdownCommand extends ModCommand {
             text: `🔒🔒 [Log] Lockdown \(${capitalizedAction}\)`
           },
           fields: [
-            {
-              name: `Public Channels ${action}ed`,
-              value:
-                processedChannels.length > 0
-                  ? processedChannels.map(id => `<#${id}>`).join('\n')
-                  : 'No channels were processed.',
-            },
-            {
-              name: `Action Performed By`,
-              value: `${interaction.user}\n(ID: ${interaction.user.id})`,
-              inline: true,
-            },
+            [
+              {
+                name: `Public Channels ${action}ed`,
+                value:
+                  processedChannels.length > 0
+                    ? processedChannels.map(id => `<#${id}>`).join('\n')
+                    : 'No channels were processed.',
+              }
+            ],
+            [
+              {
+                name: `Action Performed By`,
+                value: `${interaction.user}\n(ID: ${interaction.user.id})`,
+              }
+            ]
           ]
         });
         logs.send({ embeds: [embed] });

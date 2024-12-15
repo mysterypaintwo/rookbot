@@ -20,7 +20,7 @@ module.exports = class UptimeCommand extends RookCommand {
       {...props}
     )
   }
-  async action(client, interaction, cmd, options) {
+  async action(client) {
     function timeConversion(duration = 0) {
       const portions = []
       const msInSec = 1000

@@ -32,7 +32,10 @@ const client = new RookClient(
 );
 
 (async () => {
-  // Create Client Object
+  // Initialize Client Object
+  await client.init()
+
+  // Log in Client Object
   await client.login(process.env.TOKEN)
 
   // Register Events
@@ -54,7 +57,7 @@ const client = new RookClient(
         ]
         for(let commandName of commandNames) {
           const commandObject = localCommands.find(
-            (cmd) => cmd.name === commandName
+            cmd => cmd.name === commandName
           )
           if (commandObject) {
             await commandObject.execute(
@@ -71,7 +74,9 @@ const client = new RookClient(
                   let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
                   let channelID = channelIDs["bot-console"]
                   if (client.guild) {
-                    let channel = await client.guild.channels.cache.find(c => c.id === channelID)
+                    let channel = await client.guild.channels.cache.find(
+                      c => c.id === channelID
+                    )
                     await channel.send(props)
                   }
                 },

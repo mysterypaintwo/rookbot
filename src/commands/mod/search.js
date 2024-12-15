@@ -74,7 +74,7 @@ module.exports = class SearchCommand extends ModCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     let searchType = options["search-type"]
     let targetUserInput = options["target-id"]
     let targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
@@ -147,23 +147,27 @@ module.exports = class SearchCommand extends ModCommand {
           let field_value = logLine.substring(logLine.indexOf(": ") + ": ".length)
           field_value = field_value.replace(/([\d]{5,})/, "`$1`")
           this_props.fields.push(
-            {
-              name: field_name,
-              value: field_value
-            }
+            [
+              {
+                name: field_name,
+                value: field_value
+              }
+            ]
           )
         } else if(logLine.indexOf("Z]") > -1) {
           let timestamp = Date.parse(logLine.replace("[","").replace("]",""))
           let timestr = time(parseInt(timestamp / 1000), TimestampStyles.LongDateTime)
           this_props.fields.push(
-            {
-              name: "Time",
-              value: timestr
-            }
+            [
+              {
+                name: "Time",
+                value: timestr
+              }
+            ]
           )
         }
       }
-      this.pages.push(new RookEmbed(this_props))
+      this.pages.push(this_props)
       i = i +1
     }
   }

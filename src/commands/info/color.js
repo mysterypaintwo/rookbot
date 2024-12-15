@@ -31,7 +31,7 @@ module.exports = class ColorCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const hexInput = options.hex.replace('#', '').toUpperCase()
 
     // Validate hex string
@@ -56,8 +56,10 @@ module.exports = class ColorCommand extends RookCommand {
       },
       image: `https://png-pixel.com/${dims}-${hexInput.toLowerCase()}ff.png`,
       fields: [
-        { name: 'Hex', value: `\`#${hexInput}\``,   inline: true },
-        { name: 'RGB', value: `(${r}, ${g}, ${b})`, inline: true }
+        [
+          { name: 'Hex', value: `\`#${hexInput}\`` },
+          { name: 'RGB', value: `(${r}, ${g}, ${b})` }
+        ]
       ]
     }
 

@@ -34,6 +34,16 @@ module.exports = class ShutdownCommand extends BotDevCommand {
    * @param {Interaction} interaction
    */
   async execute(client, interaction) {
+    this.channel = await this.getChannel(client)
+
+    if (interaction) {
+      let isDeferred = interaction?.deferred && interaction.deferred
+      let hasReply = interaction?.replied && interaction.replied
+      if (!isDeferred && !hasReply) {
+        // await interaction.deferReply()
+      }
+    }
+
     let action = "Shutting Down"
 
     console.log(`!!! Bot Shutdown by: ${interaction.member.user.tag} !!!`)
@@ -65,10 +75,11 @@ module.exports = class ShutdownCommand extends BotDevCommand {
         processed_pm2 = true
       })
     } catch (err) {
-      // do nothing
+      console.log("🟡PM2: No PM2!")
     }
 
     if (!processed_pm2) {
+      console.log(`🟡/${this.name}: Skipping PM2!`)
       // Entities
       let entities = {
         bot: { name: client.user.name, avatar: client.user.avatarURL(), username: client.user.username },
@@ -82,11 +93,15 @@ module.exports = class ShutdownCommand extends BotDevCommand {
 
       this.props.description = `${action} <@${client.user.id}>`
 
-      await interaction.reply({ embeds: [ new RookEmbed(this.props) ] })
-
-      let command = await new UptimeCommand()
-      await command.execute(client)
+      let this_embed = await new RookEmbed(client, this.props)
+      await interaction.reply({ embeds: [ this_embed ] })
       this.null = true
+      // if (interaction) {
+      //   interaction.deleteReply()
+      // }
+
+      let command = await new UptimeCommand(client)
+      await command.execute(client, interaction)
 
       await unready(client, interaction)
 

@@ -1,11 +1,8 @@
 const manageCommands = require('../../utils/manageCommands.js')
 const getProfile = require('../../utils/getProfile.js')
 
-module.exports = async (client, profileName) => {
-  let GLOBALS = getProfile(
-    profileName ||
-    client.profileName
-  )
+module.exports = async (client) => {
+  let GLOBALS = client.profile
 
   // Optional: Delete commands if enabled in the profile
   if (GLOBALS.deleteCommands) {

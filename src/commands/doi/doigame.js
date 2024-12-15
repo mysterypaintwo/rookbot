@@ -22,7 +22,7 @@ module.exports = class DOIGameCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     // Decode the base64 string
     const serverGameName = Buffer.from(serverGameName_base64encoded, 'base64').toString('utf-8')
 
@@ -38,8 +38,12 @@ module.exports = class DOIGameCommand extends RookCommand {
         },
         description: `You can download ${serverGameName} below!`,
         fields: [
-          { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${guildMeta['downloads']})`, inline: false },
-          { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${guildMeta['supportpost']}).`, inline: false }
+          [
+            { name: 'Download Link', value: `[__Click here to download the Latest Game Version__](${guildMeta['downloads']})`, inline: false }
+          ],
+          [
+            { name: 'Need Help?', value: `For more detailed setup instructions, please refer to [our Support Thread](${guildMeta['supportpost']}).`, inline: false }
+          ]
         ]
       }
     } catch (error) {

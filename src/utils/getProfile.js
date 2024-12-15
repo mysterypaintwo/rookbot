@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const getProfile = async (profileName="default") => {
+const getProfile = (profileName="default") => {
   let profile = {}
   let defaults = {}
 

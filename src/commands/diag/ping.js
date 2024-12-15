@@ -1,3 +1,4 @@
+const { ChatInputCommandInteraction } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class')
 
 module.exports = class PingCommand extends RookCommand {
@@ -20,9 +21,16 @@ module.exports = class PingCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd) {
-    const reply = await interaction.fetchReply()
+  /**
+   * Do the thing!
+   * @param {RookClient}            client  Client Object
+   * @param {ChatInputCommandInteraction | null} interaction Interaction that called this command
+   * @returns
+   */
+  async action(client, interaction) {
+    console.log(`/${this.name}: Action`)
 
+    const reply = await interaction.fetchReply()
     const ping = reply.createdTimestamp - interaction.createdTimestamp
 
     // Entities
@@ -46,14 +54,16 @@ module.exports = class PingCommand extends RookCommand {
     }
 
     this.props.fields = [
-      {
-        name: "Client",
-        value: `${ping}ms`
-      },
-      {
-        name: "Websocket",
-        value: `${client.ws.ping}ms`
-      }
+      [
+        {
+          name: "Client",
+          value: `${ping}ms`
+        },
+        {
+          name: "Websocket",
+          value: `${client.ws.ping}ms`
+        }
+      ]
     ]
 
     return !this.error

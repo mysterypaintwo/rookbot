@@ -22,7 +22,7 @@ module.exports = class BotSourceCommand extends RookCommand {
           value: 'Explore the [source code](https://github.com/mysterypaintwo/rookbot), contribute, or learn more about how rookbot operates. Feel free to fork, report issues, or submit pull requests!'
         }
       ],
-      image: "https://github.com/fluidicon.png"
+      image: { image: "https://github.com/fluidicon.png" }
     }
     super(
       client,
@@ -33,10 +33,8 @@ module.exports = class BotSourceCommand extends RookCommand {
 
   /**
    * Sends an embed message with a link to the bot\'s GitHub repository.
-   * @param {RookClient} client
-   * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action() {
     // all done in constructor
     return !this.error
   }

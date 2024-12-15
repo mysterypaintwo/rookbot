@@ -62,7 +62,9 @@ module.exports = async (client) => {
         segment: "local"
       }
 
-      const existingCommand = applicationCommands.find(cmd => cmd.name === name)
+      const existingCommand = applicationCommands.find(
+        cmd => cmd.name === name
+      )
 
       if (existingCommand) {
         if (deleted) {
@@ -79,13 +81,27 @@ module.exports = async (client) => {
         if (areCommandsDifferent(existingCommand, localCommand)) {
           console.log(`🔁 Updating: "${name}"`)
           try {
-            await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
+            await commandsManager.edit(
+              existingCommand.id,
+              {
+                description,
+                options,
+                autocomplete
+              }
+            )
             client.commands[name] = commandsManager.get(existingCommand.id)
           } catch (error) {
             if (error.code === 429) {
               console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
               await wait(error.retry_after || 1000)
-              await commandsManager.edit(existingCommand.id, { description, options, autocomplete })
+              await commandsManager.edit(
+                existingCommand.id,
+                {
+                  description,
+                  options,
+                  autocomplete
+                }
+              )
               client.commands[name] = commandsManager.get(existingCommand.id)
             } else {
               console.error(`❌ Failed to edit: "${name}":`, error.message)
@@ -134,13 +150,27 @@ module.exports = async (client) => {
             access: access,
             segment: "new"
           }
-          let newCommand = await commandsManager.create({ name, description, options, autocomplete })
+          let newCommand = await commandsManager.create(
+            {
+              name,
+              description,
+              options,
+              autocomplete
+            }
+          )
           client.commands[name] = newCommand
         } catch (error) {
           if (error.code === 429) {
             console.warn(`⏳ Rate limit hit. Retrying for "${name}" after ${error.retry_after || 1000}ms.`)
             await wait(error.retry_after || 1000)
-            let newCommand = await commandsManager.create({ name, description, options, autocomplete })
+            let newCommand = await commandsManager.create(
+              {
+                name,
+                description,
+                options,
+                autocomplete
+              }
+            )
             client.commands[name] = newCommand
           } else {
             console.error(`❌ Failed to register: "${name}":`, error.message)

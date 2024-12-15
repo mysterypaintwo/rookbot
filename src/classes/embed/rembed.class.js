@@ -1,174 +1,170 @@
 const { EmbedBuilder } = require('discord.js')
-const fs = require('fs')
+const { RookClient } = require('../objects/rclient.class')
+
+function isNumeric(n) {
+  let isaN      = !isNaN(n)
+  let isBool    = typeof n === "boolean"
+  let isStr     = typeof n === "string"
+  let isNumStr  = (
+    isStr &&
+    ((n.replace(/\D/g, '') + "") == (n + ""))
+  )
+
+  return (isaN || isNumStr) && !isBool
+}
 
 /**
  * @class
- * @classdesc Build a Villains-branded Embed
+ * @classdesc Build a Rook-branded Embed
  * @this {RookEmbed}
  * @extends {EmbedBuilder}
  * @public
  */
 class RookEmbed extends EmbedBuilder {
   /**
-   * @typedef {Object} EmbedField
-   * @property {string} name Field Name
-   * @property {string} value Field Value
-   * @property {boolean} inline Inline?
+   * @typedef   {Object}  EmbedAuthor Embed Author (top line in white)
+   * @property  {string}  text        Author Text (Name)
+   * @property  {string}  [image]     Author Image (Avatar)
+   * @property  {string}  [url]       Author URL (Hyperlink)
    */
+
   /**
-   * @typedef {Object} Player Player
+   * @typedef   {Object}  EmbedThumbnail  Embed Thumbnail (image to right)
+   * @property  {string}  image           Thumbnail Image URL
+   */
+
+  /**
+   * @typedef   {Object}  EmbedTitle  Embed Title (top line below author, blue if URL added)
+   * @property  {string}  text        Title Text
+   * @property  {string}  [emoji]     Title Emoji
+   * @property  {string}  [url]       Title URL
+   */
+
+  /**
+   * @typedef   {Object}  EmbedField
+   * @property  {string}  name      Field Name
+   * @property  {string}  value     Field Value
+   * @property  {boolean} [inline]  Inline?
+   */
+
+  /**
+   * @typedef   {Object}  EmbedImage  Embed Image (image in description, after fields, before footer)
+   * @property  {string}  image       Image URL
+   */
+
+  /**
+   * @typedef   {Object}  EmbedFooter Embed Footer
+   * @property  {string}  text        Footer Text
+   * @property  {string}  [image]     Footer Image URL
+   */
+
+    /**
+   * @typedef {Object} EmbedPlayer Player
    * @property {string} name The name
    * @property {string} url The URL
    * @property {string} avatar The Avatar
    */
-  /**
-   * @typedef {Object} EmbedProps Embed Properties
-   * @property {boolean}                      full                    Print Full Embed
-   * @property {string}                       color                   Stripe color
-   * @property {{text: string}}               caption                 Caption text
-   * @property {{text: string, url: string}}  title                   Title text & url
-   * @property {string}                       thumbnail               Thumbnail url
-   * @property {string}                       description             Body text
-   * @property {Array.<EmbedField>}           fields                  Embed Fields
-   * @property {string}                       image                   Body Image
-   * @property {{msg: string, image: string}} footer                  Footer text & image
-   * @property {number | boolean}             timestamp               Timestamp for footer
-   * @property {boolean}                      error                   Print error format
-   * @property {{bot: Player, user: Player, target: Player}} players  Players
+
+    /**
+   * @typedef   {Object}              EmbedProps
+   * @property  {string}              [color]       Embed Color
+   * @property  {EmbedAuthor}         [author]      Embed Author
+   * @property  {EmbedThumbnail}      [thumbnail]   Embed Thumbnail
+   * @property  {EmbedTitle}          [title]       Embed Title
+   * @property  {string}              [description] Embed Description
+   * @property  {Array.<EmbedField>}  [fields]      Embed Fields
+   * @property  {EmbedImage}          [image]       Embed Image
+   * @property  {EmbedFooter}         [footer]      Embed Footer
+   * @property  {number | null}       [timestamp]   Embed Timestamp
+   * @property  {{bot:EmbedPlayer,user:EmbedPlayer,target:EmbedPlayer}} [players]     Embed Players
+   * @property  {boolean}             [full]        Full Embed?
    */
 
-  async init(client, props) {
-    this.GLOBALS = await client.profile
+  // Member properties
+  /** @type {EmbedProps} Embed Properties */
+  props;
 
+  /**
+   * Initialize sanity checks
+   * @param {RookClient} client
+   */
+  async init(client) {
+    // Get color figured out
     if (
-      (!(props?.color)) ||
-      (props?.color && props.color.trim() == "")
+      (!(this.props?.color)) ||
+      (this.props?.color && this.props.color.trim() == "")
     ) {
-      switch (props?.color) {
-        default:
-          this.props.color = this?.defaults?.stripe
-          break
-      }
-    // } else {
-    //   this.props.color = this.defaults.stripe
+      let color = client.profile?.stripe || "#000000"
+      let eggs  = require('../../dbs/eggs.json')
+      color     = eggs[this.props?.players?.user?.username] || color
+
+      this.props.color = color
     }
 
-    // Inbound footer message
-    let haveFooterMsg = props?.footer?.msg
-
-    // Inbound footer message and not "<NONE>"
-    let footerMsgNotNone = haveFooterMsg && (props.footer.msg.trim() != "") && (props.footer.msg.trim() != "<NONE>")
-
-    // Hack in my stuff to differentiate
-    if (
-      this.DEV &&
-      this.GLOBALS?.stripe &&
-      this.GLOBALS?.footer
-    ) {
-      // Custom user footer
-      this.props.color = this.GLOBALS.stripe
-      this.props.footer = this.GLOBALS.footer
-      this.setTimestamp()
-    } else if(
-      (!haveFooterMsg) ||
-      (haveFooterMsg && (!footerMsgNotNone))
-    ) {
-      // Default footer
-      if (this.GLOBALS?.footer) {
-        this.props.footer = this.GLOBALS.footer
-      }
-    }
-
-    // Stripe
-    this.setColor(this.props.color || "#000000")
-
-    if (props?.footer?.msg) {
-      if (!(props.footer.msg.includes(this.GLOBALS.PACKAGE?.version))) {
-        props.footer.msg += ` [v${this.GLOBALS.PACKAGE?.version}]`
-      }
-      this.setFooter(
+    // Get author figured out
+    if (this.props?.author) {
+      let author = {}
+      for (let [mprop, dprop] in Object.entries(
         {
-          text: props.footer.msg,
-          iconURL: props.footer.image
+          text:   "name",
+          image:  "iconURL",
+          url:    "url"
         }
-      )
+      )) {
+        if (this.props.author[mprop]) {
+          author[dprop] = this.props.author[mprop].trim()
+        }
+      }
+      this.props.author = author
     }
 
+    // Get description figured out
+    // All Hail the Bold Space
+    let noDesc    = (!(this.props?.description))
+    let undefDesc = (typeof this.props.description === "undefined")
+    let nullDesc  = (!(noDesc || undefDesc)) && (! this.props?.description)
+    if (noDesc || undefDesc || nullDesc) {
+      this.props.description = " "
+    }
+    if (typeof this.props.description == "object") {
+      this.props.description = this.props.description.join("\n")
+    }
+
+    // Get full-size figured out
+    if (!this.props?.full) {
+      this.props.full = true
+    }
+
+    // Get timestamp figured out
+    if (!this.props?.timestamp) {
+      this.props.timestamp = true
+    }
+
+    this.props.players = {
+      bot:    {},
+      user:   {},
+      target: {}
+    }
   }
 
   /**
    * Constructor
+   * @param {RookClient} client
    * @param {(EmbedProps | Object.<any>)} props Local list of command properties
    */
   constructor(client, props = {}) {
-    // If we've got no title, set default
-    if (
-      (
-        (!(props?.title?.text)) ||
-        (props?.title?.text && (props.title.text.trim() == "" || props.title.text.trim() == "<NONE>"))
-      ) &&
-      (props?.title?.url && props.title.url.trim() != "")
-    ) {
-      props.title.text = "Source"
-    }
-    // If the description is an array, join it with newlines
-    if (props?.description && Array.isArray(props.description)) {
-      props.description = props.description.join("\n")
-    }
-    // Get description figured out
-    // All Hail the Bold Space
-    let noDesc    = (!(props?.description))
-    let undefDesc = (typeof props.description === "undefined")
-    let nullDesc  = (!(noDesc || undefDesc)) && (! props?.description)
-    if (noDesc || undefDesc || nullDesc) {
-      props.description = "** **"
-    }
-    if (typeof props.timestamp === undefined) {
-      props.timestamp = true
-    }
-
-
     super()
 
-    this.props = {}
+    // Get props
+    this.props = {...props}
+    this.init(client)
 
-    /**
-     * Development Mode?
-     * @type {boolean}
-     */
-    this.DEV = process.env.ENV_ACTIVE === "development"
-
-    // Inbound footer message
-    let haveFooterMsg = props?.footer?.msg
-
-    // Inbound footer message and not "<NONE>"
-    let footerMsgNotNone = haveFooterMsg && (props.footer.msg.trim() != "") && (props.footer.msg.trim() != "<NONE>")
-
-    // We've got pages
-    let havePages = props?.pages
-
-    // Footer
-    if(footerMsgNotNone) {
-      // If we have an inbound footer
-      if(this.DEV || havePages) {
-        // If we need to repurpose the footer
-        // Append sent footer message to description
-        if(this.props.description != "") {
-          this.props.description += "\n\n"
-        }
-        this.props.description += `>>${props.footer.msg}`
-      }
+    // Set color
+    if (this.props?.color) {
+      this.setColor(this.props.color.trim())
     }
 
-    // ERROR
-    if (
-      (props.error) ||
-      (props?.title?.text && props.title.text.toLowerCase().includes("error")) ||
-      (props?.description && props.description.toLowerCase().includes("***error***"))
-    ) {
-      this.props.color = "#ff0000" // RED
-    }
-
+    // Set players
     // Avatars
     //  Default: Bot as Thumbnail
     //  Custom Thumbnail: Bot as Author
@@ -188,21 +184,21 @@ class RookEmbed extends EmbedBuilder {
 
     let avatars = {
       bot: {
-        type: "bot",
-        name: props.players.bot.name,
-        url: props?.players?.bot?.url && props.players.bot.url.trim() != "" ? props.players.bot.url.trim() : "http://example.com/bot",
+        type:   "bot",
+        name:   props.players.bot.name,
+        url:    props?.players?.bot?.url && props.players.bot.url.trim() != "" ? props.players.bot.url.trim() : "http://example.com/bot",
         avatar: props.players.bot.avatar
       },
       user: {
-        type: "user",
-        name: props?.players?.user?.name && props.players.user.name.trim() != "" ? props.players.user.name.trim() : "",
-        url: props?.players?.user?.url && props.players.user.url.trim() != "" ? props.players.user.url.trim() : "http://example.com/user",
+        type:   "user",
+        name:   props?.players?.user?.name && props.players.user.name.trim() != "" ? props.players.user.name.trim() : "",
+        url:    props?.players?.user?.url && props.players.user.url.trim() != "" ? props.players.user.url.trim() : "http://example.com/user",
         avatar: props?.players?.user?.avatar && props.players.user.avatar.trim() != "" ? props.players.user.avatar.trim() : ""
       },
       target: {
-        type: "target",
-        name: props?.players?.target?.name && props.players.target.name.trim() != "" ? props.players.target.name.trim() : "",
-        url: props?.players?.target?.url && props.players.target.url.trim() != "" ? props.players.target.url.trim() : "http://example.com/target",
+        type:   "target",
+        name:   props?.players?.target?.name && props.players.target.name.trim() != "" ? props.players.target.name.trim() : "",
+        url:    props?.players?.target?.url && props.players.target.url.trim() != "" ? props.players.target.url.trim() : "http://example.com/target",
         avatar: props?.players?.target?.avatar && props.players.target.avatar.trim() != "" ? props.players.target.avatar.trim() : ""
       },
       thumbnail: {},
@@ -224,75 +220,145 @@ class RookEmbed extends EmbedBuilder {
       }
     }
 
-    // Easter Eggs
-    // Set stripe based on user
-    let eggs = require('../../dbs/eggs.json')
-
-    if (props?.players?.user?.username) {
-      if (eggs[props.players.user.username]) {
-        this.props.color = eggs[props.players.user.username]
-      }
-    }
-
-    // Ephemeral
-    if(props?.ephemeral && props.ephemeral) {
-      this.ephemeral = props.ephemeral
-    }
-
-    // Title
-    if(props?.title?.text && props.title.text.trim() != "" && props.title.text.trim() != "<NONE>") {
-      if(props?.ephemeral && props.ephemeral) {
-        props.title.emoji = "🤫😶"
-      }
-      this.setTitle(
-        (props.title?.emoji ? (props.title.emoji + " ") : "") +
-        ((props?.ephemeral && props.ephemeral) ? "[YouPost] " : "") +
-        props.title.text
-      )
-      if (props?.title?.url && props.title.url.trim() != "") {
-        this.setURL(props.title.url.trim())
-      }
-    }
-
-    // Author
+    // Set author
     let author = {}
-    author.name = props?.caption?.text && props.caption.text.trim() != "" ? props.caption.text.trim() : avatars.author.name
-    author.url = props?.caption?.url && props.caption.url.trim() != "" ? props.caption.url.trim() : avatars.author.url
+    if (props?.caption?.text && props.caption.text.trim() != "") {
+      author.name = props.caption.text
+    } else if (avatars.author.name) {
+      author.name = avatars.author.name
+    } else {
+      author.name = ""
+    }
+    if (props?.caption?.url && props.caption.url.trim() != "") {
+      author.url = props.caption.url
+    } else if (avatars.author.url) {
+      author.url = avatars.author.url
+    }
     if (author && author.name != "") {
-      this.setAuthor(
-        {
-          name: author.name,
-          iconURL: avatars.author.avatar,
-          url: author.url
-        }
-      )
+      if (avatars?.author?.avatar) {
+        author.iconURL = avatars.author.avatar
+      }
+      this.setAuthor(author)
     }
 
-    // Thumbnail
+    // Set thumbnail
     this.setThumbnail(avatars.thumbnail.avatar)
 
-    // Body Description
-    this.setDescription(props.description)
+    // Set title
+    if (this.props?.title) {
+      let hasEmoji  = this.props.title?.emoji
+      let hasText   = this.props.title?.text
+      let hasURL    = this.props.title?.url
+      let text      = this.props.title?.text ? this.props.title.text : "No Title"
 
-    // Fields
-    if (props?.fields?.length) {
-      this.setFields(props.fields)
+      if (hasText || hasURL) {
+        if (hasEmoji) {
+          text = `${this.props.title.emoji}${text}`
+        }
+        this.setTitle(text.trim())
+        if (hasURL) {
+          this.setURL(this.props.title.url.trim())
+        }
+      }
     }
 
-    // Body Image
-    if (props?.image != "") {
-      this.setImage(props.image)
+    // Hack footer
+    if (client.profile?.DEV && client.profile.DEV) {
+      if (client.profile?.footer) {
+        if (this.props?.footer?.text) {
+          if (this.props.description != "") {
+            this.props.description += "\n\n"
+          }
+          this.props.description += ">>" + this.props.footer.text
+        }
+        this.props.footer = client.profile.footer
+      }
     }
 
-    // Timestamp
-    if(
-      (!props?.timestamp) ||
-      (
-        (props?.timestamp && props.timestamp) &&
-        (props?.timestamp && props.timestamp != "<NONE>")
-      )
+    // Set description
+    if (
+      this.props?.description &&
+      this.props.description &&
+      this.props.description != ""
     ) {
-      this.setTimestamp()
+      this.setDescription(this.props.description)
+    }
+
+    // Set fields
+    if (this.props?.fields) {
+      let fields = []
+      for (let fieldRow of this.props.fields) {
+        let i = 0
+        if (fieldRow && fieldRow.length > 0) {
+          for (let field of fieldRow) {
+            if (field) {
+              fields.push(
+                {
+                  name:   field.name.trim(),
+                  value:  field.value + "",
+                  inline: fieldRow.length > 1
+                }
+              )
+              i += 1
+            }
+          }
+          if (i > 1 && i < 3) {
+            for (; i < 3; i++) {
+              fields.push(
+                {
+                  name:   " ",
+                  value:  " ",
+                  inline: true
+                }
+              )
+            }
+          }
+        }
+      }
+      if (fields.length) {
+        this.setFields(fields)
+      }
+    }
+
+    // Set image
+    if (
+      this.props?.image?.image &&
+      this.props.image.image &&
+      this.props.image.image.trim() != ""
+    ) {
+      this.setImage(this.props.image.image.trim())
+    }
+
+    // Set footer
+    if (this.props?.footer) {
+      let hasText = this.props.footer?.text
+      let hasIcon = this.props.footer?.image
+
+      // All Hail the Bold Space
+      if (!hasText) {
+        this.props.footer.text = " "
+      }
+
+      if (hasText || hasIcon) {
+        this.setFooter(
+          {
+            text:    this.props.footer.text.trim(),
+            iconURL: this.props.footer.image.trim()
+          }
+        )
+      }
+    }
+
+    // Set timestamp
+    if (this.props?.timestamp) {
+      let doTimestamp = this.props?.timestamp
+      let isTimestamp = isNumeric(this.props.timestamp)
+
+      if (isTimestamp) {
+        this.setTimestamp(this.props.timestamp.trim())
+      } else if (doTimestamp) {
+        this.setTimestamp()
+      }
     }
   }
 }

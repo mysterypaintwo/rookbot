@@ -40,7 +40,7 @@ module.exports = class DiceRollCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const count = options.count
     const sides = options.sides ?? 6
 

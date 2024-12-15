@@ -57,7 +57,7 @@ module.exports = class HelpCommand extends RookCommand {
       {...props}
     )
   }
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     let helpJSON = require('../../res/app/manifests/help/help.json')
     let command = options["command-name"] ?? null
     let section = options["section-name"] ?? null
@@ -81,34 +81,32 @@ module.exports = class HelpCommand extends RookCommand {
 
     for(let [sectionName, sectionCmds] of Object.entries(helpJSON)) {
       for(let [cmdName, cmd] of Object.entries(sectionCmds)) {
-        let props = {
-          title: { text: `Help - ${sectionName} - ${cmdName}` },
-          description: "** **",
-          fields: [
+        let fields = [
+          [
             {
               name: "Name",
-              value: `\`/${cmd.name}\``,
-              inline: true
+              value: `\`/${cmd.name}\``
             },
             {
               name: "Category",
-              value: `\`${cmd.category}\``,
-              inline: true
-            },
+              value: `\`${cmd.category}\``
+            }
+          ],
+          [
             {
               name: "Description",
-              value: cmd.description || "** **",
-              inline: false
+              value: cmd.description || " "
             }
           ]
-        }
+        ]
         if (cmd?.access && cmd.access.toLowerCase() != "unset") {
-          props.fields.push(
-            {
-              name: "Access",
-              value: cmd.access,
-              inline: false
-            }
+          fields.push(
+            [
+              {
+                name: "Access",
+                value: cmd.access
+              }
+            ]
           )
         }
         if(cmd?.options && cmd.options.length > 0) {
@@ -118,19 +116,24 @@ module.exports = class HelpCommand extends RookCommand {
               if (option?.required && option.required) {
                 optionName += " - *required*"
               }
-              props.fields.push(
-                {
-                  name: optionName,
-                  value: option.description || "** **",
-                  inline: false
-                }
+              fields.push(
+                [
+                  {
+                    name: optionName,
+                    value: option.description || " "
+                  }
+                ]
               )
             }
           }
         }
-        let this_page = new RookEmbed(client, props)
-        this_page.init(client, props)
-        await this.pages.push(this_page)
+
+        let props = {
+          title: { text: `Help - ${sectionName} - ${cmdName}` },
+          description: " ",
+          fields: fields
+        }
+        this.pages.push(props)
       }
     }
 

@@ -23,7 +23,7 @@ module.exports = class CoinFlipCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action() {
     // Randomly choose between "Heads" and "Tails"
     const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails'
 

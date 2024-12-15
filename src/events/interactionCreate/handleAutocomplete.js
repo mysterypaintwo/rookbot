@@ -15,7 +15,7 @@ Array.prototype.remove = function(from, to) {
   return this.push.apply(this, rest)
 }
 
-module.exports = async (client, profileName, interaction) => {
+module.exports = async (client, interaction) => {
   if(interaction && interaction.isAutocomplete()) {
     let focused = await interaction.options.getFocused(true)
 

@@ -83,9 +83,13 @@ class ModCommand extends AdminCommand {
         if (matches) {
           addRole = matches[1]
         }
-        addRole = await message.guild.roles.cache.find(role => role.id === addRole)
+        addRole = await message.guild.roles.cache.find(
+          role => role.id === addRole
+        )
       } else if (isString(addRole)) {
-        addRole = await message.guild.roles.cache.find(role => role.name === addRole)
+        addRole = await message.guild.roles.cache.find(
+          role => role.name === addRole
+        )
       }
       if (addRole && addRole != 0) {
         await user.roles.add(addRole.id)
@@ -105,9 +109,13 @@ class ModCommand extends AdminCommand {
         if (matches) {
           remRole = matches[1]
         }
-        remRole = await message.guild.roles.cache.find(role => role.id === remRole)
+        remRole = await message.guild.roles.cache.find(
+          role => role.id === remRole
+        )
       } else if (isString(remRole)) {
-        remRole = await message.guild.roles.cache.find(role => role.name === remRole)
+        remRole = await message.guild.roles.cache.find(
+          role => role.name === remRole
+        )
       }
       if (remRole && remRole != 0) {
         await user.roles.remove(remRole.id)
@@ -223,7 +231,7 @@ class ModCommand extends AdminCommand {
     await this.voice_user(message, user, "unmute")
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     // Get Guild ID
     const guildID = interaction.guild.id;
     // Get Guild Channels
@@ -545,7 +553,9 @@ class ModCommand extends AdminCommand {
     }
   }
 
-  async build(client, interaction, cmd, options) {
+  async build(client, interaction, cmd, coptions={}) {
+    console.log(`/${this.name}: Mod Build`)
+
     // Get list of roles
     this.ROLES = JSON.parse(fs.readFileSync(`./src/dbs/${interaction.guild.id}/roles.json`, "utf8"))
     // Get Mod roles
@@ -567,34 +577,18 @@ class ModCommand extends AdminCommand {
       return
     }
 
-    let actionResult = false
-
-    if(!(this.error)) {
-      // Process arguments
-      await this.processArgs(
-        client,
-        interaction,
-        this.flags,
-        options
-      )
-
+    if (!(this.error)) {
       for (let option of this.options) {
-        if (!(options.hasOwnProperty(option.name))) {
-          // @ts-ignore
+        if ((!(coptions.hasOwnProperty(option.name)))) {
           let thisOption = interaction.options.get(option.name)
           if (thisOption) {
-            options[option.name] = thisOption.value
+            coptions[option.name] = thisOption.value
           }
         }
       }
-
-      actionResult = await this.action(
-        client,
-        interaction,
-        cmd,
-        options
-      )
     }
+
+    let actionResult = await this.action(client, interaction, coptions)
 
     return actionResult && !this.error
   }

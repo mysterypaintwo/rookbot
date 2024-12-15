@@ -50,7 +50,7 @@ module.exports = class TimeoutCommand extends ModCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const guildID = interaction.guild.id
     const guildChannels = require(`../../dbs/${guildID}/channels.json`)
     const targetUserInput = options["target-id"]
@@ -104,10 +104,16 @@ module.exports = class TimeoutCommand extends ModCommand {
               text: "⏰ [Log] User Timeout"
             },
             fields: [
-              { name: 'User',             value: `${targetUser}\n(ID: ${targetUserId})`,              inline: true },
-              { name: 'Timeout By',       value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true },
-              { name: 'Reason',           value: reason,                                              inline: false },
-              { name: 'Timeout Duration', value: `${timeoutDuration} ${plural}`,                      inline: true }
+              [
+                { name: 'User',             value: `${targetUser}\n(ID: ${targetUserId})` },
+                { name: 'Timeout By',       value: `${interaction.user}\n(ID: ${interaction.user.id})` }
+              ],
+              [
+                { name: 'Reason',           value: reason }
+              ]
+              [
+                { name: 'Timeout Duration', value: `${timeoutDuration} ${plural}` }
+              ]
             ]
           }
           const embed = new RookEmbed(client, props)

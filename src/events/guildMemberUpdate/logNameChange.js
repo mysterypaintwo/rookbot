@@ -10,7 +10,7 @@ const colors = require('../../dbs/colors.json')
  * @param {GuildMember} oldMember
  * @param {GuildMember} newMember
  */
-module.exports = async (client, profileName, oldMember, newMember) => {
+module.exports = async (client, oldMember, newMember) => {
   try {
     // Check if the nickname has changed
     if (oldMember.nickname === newMember.nickname) {
@@ -43,27 +43,34 @@ module.exports = async (client, profileName, oldMember, newMember) => {
         }
       },
       fields: [
-        {
-          name: 'User',
-          value: `<@${newMember.user.id}>` + " " +
-            `(ID: \`${newMember.user.id}\`)`
-        },
-        {
-          name: 'Guild',
-          value: newMember.guild.name + " " +
-            `(ID: \`${newMember.guild.id}\`)`
-        },
-        {
-          name: 'Old Nickname',
-          value: oldNick
-        },
-        {
-          name: 'New Nickname',
-          value: newNick // Use username if nickname is undefined
-        }
+        [
+          {
+            name: 'User',
+            value: `<@${newMember.user.id}>` + " " +
+              `(ID: \`${newMember.user.id}\`)`
+          }
+        ],
+        [
+          {
+            name: 'Guild',
+            value: newMember.guild.name + " " +
+              `(ID: \`${newMember.guild.id}\`)`
+          }
+        ],
+        [
+          {
+            name: 'Old Nickname',
+            value: oldNick
+          }
+        ],
+        [
+          {
+            name: 'New Nickname',
+            value: newNick // Use username if nickname is undefined
+          }
+        ]
       ]
     });
-
 
     // Fetch the log channel using its ID
     const guildID = newMember.guild.id
@@ -77,7 +84,7 @@ module.exports = async (client, profileName, oldMember, newMember) => {
 
     // Send the embed to the log channel, if found and valid
     if (logChannel?.isTextBased()) {
-      await logChannel.send({ embeds: [embed] })
+      await logChannel.send({ embeds: [ embed.toJSON() ] })
     } else {
       console.warn('Log channel not found or not a text-based channel.')
     }

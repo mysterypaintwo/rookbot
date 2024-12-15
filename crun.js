@@ -22,6 +22,10 @@ program
   .option(
     "-u, --user <username>", "Developer User Token .env to load"
   )
+  // Client ID & User ID
+  .option(
+    "--cu <client/user>", "Developer Client ID & User TOken .env to load"
+  )
   // Server ID
   .option(
     "-s, --server <username>", "Server Token .env to load"
@@ -57,15 +61,28 @@ if (bin.indexOf("WinGet") > -1 || uname.stdout.trim().indexOf("MINGW") > -1) {
 let envs = ""
 let args = []
 
-if (options.client) {
-  envs += `-f ./env/devs/.env.client.${options.client} `
+let haveCUser   = options.cu
+let haveUser    = options.user
+let haveClient  = options.client
+let haveServer  = options.server
+
+// CUser
+if (haveCUser && !haveUser && !haveClient) {
+  envs += `-f ./env/devs/.env.token.${options.cu} `
+  envs += `-f ./env/devs/.env.client.${options.cu} `
+} else {
+  if (haveUser && !haveServer) {
+    envs += `-f ./env/devs/.env.token.${options.user} `
+  }
+  if (!haveUser && haveServer) {
+    envs += `-f ./env/servers/.env.token.${options.server} `
+  }
+  if (haveClient) {
+    envs += `-f ./env/devs/.env.client.${options.client} `
+  }
 }
-if (options.user && !options.server) {
-  envs += `-f ./env/devs/.env.token.${options.user} `
-}
-if (options.server && !options.user) {
-  envs += `-f ./env/servers/.env.token.${options.server} `
-}
+
+// Dev | Prod
 if (options.environment) {
   let env = options.environment.startsWith("prod") ? "prod" : "dev"
   envs += `-f ./env/envs/.env.${env} `

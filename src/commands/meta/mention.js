@@ -54,7 +54,7 @@ module.exports = class MentionCommand extends RookCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     let targetInput   = options["target-id"]
     let targetId      = targetInput.replace(/[<#@&!>]/g, '');  // Remove <@>, <@!>, and >
     let targetType    = options["target-type"] || "channel"
@@ -117,22 +117,30 @@ module.exports = class MentionCommand extends RookCommand {
 
     if(!this.error) {
       this.props.fields = [
-        {
-          name: "Type",
-          value: targetType
-        },
-        {
-          name: "ID",
-          value: `\`${targetId}\``
-        },
-        {
-          name: "Mention",
-          value: targetMention
-        },
-        {
-          name: "Code",
-          value: `\`${targetMention}\``
-        }
+        [
+          {
+            name: "Type",
+            value: targetType
+          }
+        ],
+        [
+          {
+            name: "ID",
+            value: `\`${targetId}\``
+          }
+        ],
+        [
+          {
+            name: "Mention",
+            value: targetMention
+          }
+        ],
+        [
+          {
+            name: "Code",
+            value: `\`${targetMention}\``
+          }
+        ]
       ]
     }
 

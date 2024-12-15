@@ -19,7 +19,7 @@ module.exports = class CastleNameCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     // Get this Guild ID
     // Set Castle's User ID
     const guildID = interaction.guild.id

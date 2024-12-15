@@ -30,6 +30,7 @@ module.exports = class ExitCommand extends BotDevCommand {
       },
       color: colors["bad"]
     }
+
     super(
       client,
       {...comprops},
@@ -37,7 +38,17 @@ module.exports = class ExitCommand extends BotDevCommand {
     )
   }
 
-  async execute(client, interaction, cmd) {
+  async execute(client, interaction) {
+    this.channel = await this.getChannel(client)
+
+    if (interaction) {
+      let isDeferred = interaction?.deferred && interaction.deferred
+      let hasReply = interaction?.replied && interaction.replied
+      if (!isDeferred && !hasReply) {
+        // await interaction.deferReply()
+      }
+    }
+
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
 
     this.props.description = `Exiting <@${client.user.id}>`
@@ -61,15 +72,17 @@ module.exports = class ExitCommand extends BotDevCommand {
       target: entities.bot
     }
 
-    let this_embed = new RookEmbed(client, this.props)
-    await this_embed.init(client, this.props)
+    let this_embed = await new RookEmbed(client, this.props)
     await interaction.reply({ embeds: [ this_embed ] })
-
-    let command = await new UptimeCommand()
-    await command.execute(client)
     this.null = true
+    // if (interaction) {
+    //   interaction.deleteReply()
+    // }
 
-    await unready(client, this.profileName, interaction)
+    let command = await new UptimeCommand(client)
+    await command.execute(client, interaction)
+
+    await unready(client, interaction)
 
     console.log(`!!! EXIT`)
     process.exit(1337)

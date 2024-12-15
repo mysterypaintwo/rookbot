@@ -31,7 +31,7 @@ module.exports = class PullCommand extends BotDevCommand {
       {...props}
     )
   }
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     let BRANCH = ""
     let COMMITS = {
       current: "",

@@ -10,7 +10,7 @@ const colors = require('../../dbs/colors.json')
  * @param {Message} oldMessage
  * @param {Message} newMessage
  */
-module.exports = async (client, profileName, oldMessage, newMessage) => {
+module.exports = async (client, oldMessage, newMessage) => {
   try {
     // Check for invalid or undefined data
     if (!newMessage) {

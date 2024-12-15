@@ -18,25 +18,31 @@ module.exports = class EmbedCommand extends AdminCommand {
       description: "This is an embed description",
       color: "Random",
       fields: [
-        {
-          name: "Field title",
-          value: "Some random value",
-          inline: true
-        },
-        {
-          name: "2nd Field title",
-          value: "Some random value",
-          inline: true
-        },
-        {
-          name: "3rd Field title",
-          value: "Some random value",
-          inline: true
-        }
+        [
+          {
+            name: "Field title",
+            value: "Some random value",
+            inline: true
+          }
+        ],
+        [
+          {
+            name: "2nd Field title",
+            value: "Some random value",
+            inline: true
+          }
+        ],
+        [
+          {
+            name: "3rd Field title",
+            value: "Some random value",
+            inline: true
+          }
+        ]
       ],
-      image: "https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900",
+      image: { image: "https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900" },
       footer: {
-        msg: "Footer text",
+        text: "Footer text",
         image: "https://pbs.twimg.com/media/GcPyiUlasAEEtPJ?format=jpg&name=900x900"
       }
     }
@@ -50,10 +56,8 @@ module.exports = class EmbedCommand extends AdminCommand {
 
   /**
    * Sends an embed message in response to a slash command interaction.
-   * @param {RookClient} client
-   * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action() {
     // all done in constructor
     return !this.error
   }

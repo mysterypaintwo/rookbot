@@ -20,7 +20,7 @@ module.exports = class ClearCommand extends ModCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     this.props.title = {
       text: "Clearing messages..."
     }

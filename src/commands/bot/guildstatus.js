@@ -18,7 +18,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     // Entities
     let entities = {
       user: { name: interaction.user.displayName, avatar: interaction.user.avatarURL(), username: interaction.user.username },
@@ -30,7 +30,9 @@ module.exports = class GuildStatusCommand extends RookCommand {
       target: entities.guild
     }
 
-    let serverBoostEmoji = await interaction.guild.emojis.cache.find(emoji => emoji.name === "serverboost2")
+    let serverBoostEmoji = await interaction.guild.emojis.cache.find(
+      emoji => emoji.name === "serverboost2"
+    )
     if (!(serverBoostEmoji)) {
       serverBoostEmoji = "[*]"
     }
@@ -47,49 +49,57 @@ module.exports = class GuildStatusCommand extends RookCommand {
     if (interaction?.guild?.ownerId && interaction.guild.ownerId != "undefined") {
       // console.log(`Guild Owner: ${interaction.guild.ownerId}`)
       this.props.fields.push(
-        {
-          name: "Owner",
-          value: `<@${interaction.guild.ownerId}> (ID: \`${interaction.guild.ownerId}\`)`
-        }
+        [
+          {
+            name: "Owner",
+            value: `<@${interaction.guild.ownerId}> (ID: \`${interaction.guild.ownerId}\`)`
+          }
+        ]
       )
     }
 
     if (interaction?.guild?.vanityURLCode && interaction.guild.vanityURLCode != "") {
       let vanityURL = `https://discord.gg/${interaction.guild.vanityURLCode}`
       this.props.fields.push(
-        {
-          name: "Vanity URL",
-          value: `[${interaction.guild.vanityURLCode}](${vanityURL} '${vanityURL}')`
-        }
+        [
+          {
+            name: "Vanity URL",
+            value: `[${interaction.guild.vanityURLCode}](${vanityURL} '${vanityURL}')`
+          }
+        ]
       )
     }
 
     let created = Math.floor(interaction.guild.createdTimestamp / 1000)
     this.props.fields.push(
-      {
-        name: "Members",
-        value: interaction.guild.memberCount.toString(),
-        inline: true
-      },
-      {
-        name: "Server Level",
-        value: interaction.guild.premiumTier == 0 ? `${interaction.guild.premiumTier}` : `${serverBoostEmoji}`.repeat(interaction.guild.premiumTier),
-        inline: true
-      },
-      {
-        name: "Partnered",
-        value: interaction.guild.partnered ? "Yes" : "No",
-        inline: true
-      },
-      {
-        name: "Verified",
-        value: interaction.guild.verified ? "Yes" : "No",
-        inline: true
-      },
-      {
-        name: "Created",
-        value: `<t:${created}:f> (\`${created}\`)`,
-      }
+      [
+        {
+          name: "Members",
+          value: interaction.guild.memberCount.toString(),
+          inline: true
+        },
+        {
+          name: "Server Level",
+          value: interaction.guild.premiumTier == 0 ? `${interaction.guild.premiumTier}` : `${serverBoostEmoji}`.repeat(interaction.guild.premiumTier),
+          inline: true
+        },
+        {
+          name: "Partnered",
+          value: interaction.guild.partnered ? "Yes" : "No",
+          inline: true
+        },
+        {
+          name: "Verified",
+          value: interaction.guild.verified ? "Yes" : "No",
+          inline: true
+        }
+      ],
+      [
+        {
+          name: "Created",
+          value: `<t:${created}:f> (\`${created}\`)`,
+        }
+      ]
     )
 
     return !this.error

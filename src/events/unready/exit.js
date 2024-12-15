@@ -1,10 +1,9 @@
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
-const getProfile = require('../../utils/getProfile.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
-module.exports = async (client, profileName, interaction) => {
-  let GLOBALS = await getProfile(profileName)
+module.exports = async (client, interaction) => {
+  let GLOBALS = client.profile
 
   let BRANCH = ""
   let COMMIT = ""
@@ -59,18 +58,20 @@ module.exports = async (client, profileName, interaction) => {
   }
 
   if (DEV) {
+    props.color = "#AF0000"
     console_output.push(
       `vvv DEV MODE vvv`,
       `Footer Tag:  "${GLOBALS.name}"`
     )
   } else {
+    props.color = "#AF0000"
     console_output.push(
       `vvv PROD MODE vvv`,
       `Footer Tag:  "` + (user ? user.username : "") + '"'
     )
   }
   console_output.push(
-    `Profile Key: '${profileName}'`,
+    `Profile Key: '${GLOBALS.profileName}'`,
     `Branch Key:  <${BRANCH}>`,
     `Commit ID:   [${COMMIT}]`,
     "Bot is Unready!",
@@ -99,101 +100,93 @@ module.exports = async (client, profileName, interaction) => {
     id: await interaction?.guild?.id || process.env.GUILD_ID
   }
   if (server?.id) {
-    server.name = client?.guilds.cache.find(g => g.id === server.id)?.name || "Unknown Guild"
+    server.name = client?.guilds.cache.find(
+      g => g.id === server.id
+    )?.name || "Unknown Guild"
   }
 
   let uptime = client.uptime
   let launched = Math.floor((new Date() - uptime) / 1000)
   let offline = Math.floor(new Date() / 1000)
   props.fields = [
-    {
-      name: "Name",
-      value:
-        console_output[3].substring(console_output[3].indexOf(':') + 2)
-        .replace(
-          GLOBALS.name,
-          GLOBALS?.discord?.user?.id ?
-          `<@${GLOBALS.discord.user.id}>` :
-          GLOBALS.name
-        ),
-      inline: true
-    },
-    {
-      name: "Profile",
-      value:
-        console_output[4].substring(console_output[4].indexOf(':') + 2)
-        .replace(
-          `'${profileName}'`,
-          `\`${profileName}\``
-        ),
-      inline: true
-    },
-    {
-      name: " ",
-      value: " ",
-      inline: true
-    },
-    {
-      name: "Server Name",
-      value: server?.name ? server.name : "?",
-      inline: true
-    },
-    {
-      name: "Server ID",
-      value: `\`${server.id}\``,
-      inline: true
-    },
-    {
-      name: " ",
-      value: " ",
-      inline: true
-    },
-    {
-      name: "Branch",
-      value:
-        console_output[5].substring(console_output[5].indexOf(':') + 2)
-        .replace(
-          `<${BRANCH}>`,
-          `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
-        ),
-      inline: true
-    },
-    {
-      name: "Commit",
-      value:
-        console_output[6].substring(console_output[6].indexOf(':') + 2)
-        .replace(
-          `[${COMMIT}]`,
-          `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
-        ),
-      inline: true
-    },
-    {
-      name: " ",
-      value: " ",
-      inline: true
-    },
-    {
-      name: "Launched",
-      value: `<t:${launched}:f> (\`${launched}\`)`
-    },
-    {
-      name: "Exited",
-      value: `<t:${offline}:f> (\`${offline}\`)`
-    },
-    {
-      name: "Status",
-      value:
-        user ?
-          console_output[7]
-          .replace(
-            "Bot",
-            `<@${user.id}>`
-          ) :
-          console_output[7]
-    }
+    [
+      {
+        name: "Name",
+        value:
+          console_output[3].substring(console_output[3].indexOf(':') + 2)
+            .replace(
+              GLOBALS.name,
+              GLOBALS?.discord?.user?.id ?
+              `<@${GLOBALS.discord.user.id}>` :
+              GLOBALS.name
+            )
+      },
+      {
+        name: "Profile",
+        value:
+          console_output[4].substring(console_output[4].indexOf(':') + 2)
+            .replace(
+              `'${GLOBALS.profileName}'`,
+              `\`${GLOBALS.profileName}\``
+            )
+      }
+    ],
+    [
+      {
+        name: "Server Name",
+        value: server?.name ? server.name : "?"
+      },
+      {
+        name: "Server ID",
+        value: `\`${server.id}\``
+      }
+    ],
+    [
+      {
+        name: "Branch",
+        value:
+          console_output[5].substring(console_output[5].indexOf(':') + 2)
+            .replace(
+              `<${BRANCH}>`,
+              `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
+            )
+      },
+      {
+        name: "Commit",
+        value:
+          console_output[6].substring(console_output[6].indexOf(':') + 2)
+            .replace(
+              `[${COMMIT}]`,
+              `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
+            )
+      }
+    ],
+    [
+      {
+        name: "Launched",
+        value: `<t:${launched}:f> (\`${launched}\`)`
+      }
+    ]
+    [
+      {
+        name: "Exited",
+        value: `<t:${offline}:f> (\`${offline}\`)`
+      }
+    ],
+    [
+      {
+        name: "Status",
+        value:
+          user ?
+            console_output[7]
+            .replace(
+              "Bot",
+              `<@${user.id}>`
+            ) :
+            console_output[7]
+      }
+    ]
   ]
-
   console.log(console_output.join("\n"))
 
   if (client?.guilds) {
@@ -225,11 +218,18 @@ module.exports = async (client, profileName, interaction) => {
       let guildID = interaction?.guild?.id || process.env.GUILD_ID
       let channelIDs = require(`../../dbs/${guildID}/channels.json`)
       let channelID = channelIDs["bot-console"]
-      let guild = await client.guilds.cache.find(g => g.id === guildID)
-      let channel = await guild?.channels.cache.find(c => c.id === channelID) || interaction.channel
+      let guild = await client.guilds.cache.find(
+        g => g.id === guildID
+      )
+      let channel = await guild?.channels.cache.find(
+        c => c.id === channelID
+      ) || interaction.channel
       let embed = await new RookEmbed(client, props)
-      embed.init(client, props)
-      await channel.send({ embeds: [ embed ] })
+      await channel.send(
+        {
+          embeds: [ embed ]
+        }
+      )
     }
   }
 }

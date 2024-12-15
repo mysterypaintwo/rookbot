@@ -27,7 +27,7 @@ module.exports = (client) => {
           console.log(` Script: ${eventFile.split('\\').slice(-1)[0]}`)
         }
         const eventFunction = require(eventFile)
-        await eventFunction(client, client.profileName, ...args) // Pass all arguments to the event function
+        await eventFunction(client, ...args) // Pass all arguments to the event function
       }
     })
   }

@@ -1,17 +1,17 @@
 const getLocalCommands = require('../../utils/getLocalCommands')
 
-module.exports = async (client, profileName, interaction) => {
+module.exports = async (client, interaction) => {
   if (!interaction.isChatInputCommand()) return
 
   const roles = require('../../dbs/roles.json')
   const userIDs = require('../../dbs/userids.json')
   const guildIDs = require('../../dbs/guilds.json')
 
-  const localCommands = getLocalCommands()
+  const localCommands = getLocalCommands(client)
 
   try {
     const commandObject = localCommands.find(
-      (cmd) => cmd.name === interaction.commandName
+      cmd => cmd.name === interaction.commandName
     )
 
     if (!commandObject) return;

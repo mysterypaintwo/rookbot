@@ -35,7 +35,7 @@ module.exports = class UnlockCommand extends ModCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const guildID = interaction.guild.id;
     const guildChannels = require(`../../dbs/${guildID}/channels.json`);
     const channel = options['channel'];
@@ -66,8 +66,10 @@ module.exports = class UnlockCommand extends ModCommand {
             text: "🔓 [Log] Channel Unlocked"
           },
           fields: [
-            { name: 'Channel Unlocked', value: `<#${channel.id}>\n(ID: ${channel.id})`,    inline: true },
-            { name: 'Unlocked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})`, inline: true }
+            [
+              { name: 'Channel Unlocked', value: `<#${channel.id}>\n(ID: ${channel.id})` },
+              { name: 'Unlocked By',      value: `${interaction.user}\n(ID: ${interaction.user.id})` }
+            ]
           ]
         }
         const embed = new RookEmbed(client, props)

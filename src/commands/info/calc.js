@@ -36,7 +36,7 @@ module.exports = class CalcCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const expression = options.expression
 
     try {
@@ -45,8 +45,12 @@ module.exports = class CalcCommand extends RookCommand {
 
       // Create and send the embed
       this.props.fields = [
-        { name: "Expression", value: `\`${expression}\``, inline: false },
-        { name: "Result",     value: `\`${result}\``,     inline: false }
+        [
+          { name: "Expression", value: `\`${expression}\`` }
+        ],
+        [
+          { name: "Result",     value: `\`${result}\`` }
+        ]
       ]
     } catch (error) {
       console.error('Error evaluating expression:', error)

@@ -27,7 +27,7 @@ module.exports = class MemberCountCommand extends RookCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction) {
     try {
       // Fetch all members in the server to ensure the data is up-to-date
       const members = await interaction.guild.members.fetch()

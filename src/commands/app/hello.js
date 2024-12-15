@@ -35,7 +35,7 @@ module.exports = class HelloCommand extends RookCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client) {
     let BRANCH = ""
     let COMMIT = ""
 
@@ -79,24 +79,26 @@ module.exports = class HelloCommand extends RookCommand {
 
     console_output.push(
       (user ? user.username : "") +
-      ` v${this.GLOBALS.PACKAGE.version} is Online!`
+      ` v${this.profile.PACKAGE.version} is Online!`
     )
     this.props.title.text = console_output[1]
     this.props.title.url  = "https://github.com/mysterypaintwo/rookbot"
 
     if (this.DEV) {
+      this.props.color = "#FFAF00"
       console_output.push(
         `!!! DEV MODE !!!`,
-        `Footer Tag:  "${this.GLOBALS.name}"`
+        `Footer Tag:  "${this.profile.name}"`
       )
     } else {
+      this.props.color = "#00AF00"
       console_output.push(
         `\*\*\* PROD MODE \*\*\*`,
         `Footer Tag:  "` + (user ? user.username : "") + '"'
       )
     }
     console_output.push(
-      `Profile Key: '${this.GLOBALS.profileName}'`,
+      `Profile Key: '${this.profile.profileName}'`,
       `Branch Key:  <${BRANCH}>`,
       `Commit ID:   [${COMMIT}]`,
       "Bot is Ready!",
@@ -130,88 +132,77 @@ module.exports = class HelloCommand extends RookCommand {
     let uptime = client.uptime
     let launched = Math.floor((new Date() - uptime) / 1000)
     this.props.fields = [
-      {
-        name: "Name",
-        value:
-          console_output[3].substring(console_output[3].indexOf(':') + 2)
-          .replace(
-            this.GLOBALS.name,
-            this.GLOBALS?.discord?.user?.id ?
-            `<@${this.GLOBALS.discord.user.id}>` :
-            this.GLOBALS.name
-          ),
-        inline: true
-      },
-      {
-        name: "Profile",
-        value:
-          console_output[4].substring(console_output[4].indexOf(':') + 2)
-          .replace(
-            `'${this.GLOBALS.profileName}'`,
-            `\`${this.GLOBALS.profileName}\``
-          ),
-        inline: true
-      },
-      {
-        name: " ",
-        value: " ",
-        inline: true
-      },
-      {
-        name: "Server Name",
-        value: server?.name ? server.name : "?",
-        inline: true
-      },
-      {
-        name: "Server ID",
-        value: `\`${server.id}\``,
-        inline: true
-      },
-      {
-        name: " ",
-        value: " ",
-        inline: true
-      },
-      {
-        name: "Branch",
-        value:
-          console_output[5].substring(console_output[5].indexOf(':') + 2)
-          .replace(
-            `<${BRANCH}>`,
-            `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
-          ),
-        inline: true
-      },
-      {
-        name: "Commit",
-        value:
-          console_output[6].substring(console_output[6].indexOf(':') + 2)
-          .replace(
-            `[${COMMIT}]`,
-            `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
-          ),
-        inline: true
-      },
-      {
-        name: " ",
-        value: " ",
-        inline: true
-      },
-      {
-        name: "Launched",
-        value: `<t:${launched}:f> (\`${launched}\`)`
-      },
-      {
-        name: "Status",
-        value:
-          user ?
-            console_output[7]
+      [
+        {
+          name: "Name",
+          value:
+            console_output[3].substring(console_output[3].indexOf(':') + 2)
+              .replace(
+                this.profile.name,
+                this.profile?.discord?.user?.id ?
+                `<@${this.profile.discord.user.id}>` :
+                this.profile.name
+              )
+        },
+        {
+          name: "Profile",
+          value:
+            console_output[4].substring(console_output[4].indexOf(':') + 2)
+              .replace(
+                `'${this.profile.profileName}'`,
+                `\`${this.profile.profileName}\``
+              )
+        }
+      ],
+      [
+        {
+          name: "Server Name",
+          value: server?.name || "?"
+        },
+        {
+          name: "Server ID",
+          value: `\`${server.id}\``
+        }
+      ],
+      [
+        {
+          name: "Branch",
+          value:
+            console_output[5].substring(console_output[5].indexOf(':') + 2)
             .replace(
-              "Bot",
-              `<@${user.id}>`
-            ) :
-            console_output[7]
-      }
+              `<${BRANCH}>`,
+              `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
+            )
+        },
+        {
+          name: "Commit",
+          value:
+            console_output[6].substring(console_output[6].indexOf(':') + 2)
+              .replace(
+                `[${COMMIT}]`,
+                `[\`${COMMIT}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMIT})`
+              )
+        }
+      ],
+      [
+        {
+          name: "Launched",
+          value: `<t:${launched}:f> (\`${launched}\`)`
+        }
+      ],
+      [
+        {
+          name: "Status",
+          value:
+            user ?
+              console_output[7]
+              .replace(
+                "Bot",
+                `<@${user.id}>`
+              ) :
+              console_output[7]
+        }
+      ]
     ]
 
     return !this.error

@@ -56,7 +56,7 @@ module.exports = class HolyImageCommand extends RookCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     let gameID = options['game-id'] ?? "z3r"
     let slugID = options['slug-id'] ?? "verify"
     // console.log(gameID,slugID)
@@ -125,18 +125,22 @@ module.exports = class HolyImageCommand extends RookCommand {
 
       this.props.fields = []
       this.props.fields.push(
-        {
-          name: "Game",
-          value: gameName
-        }
+        [
+          {
+            name: "Game",
+            value: gameName
+          }
+        ]
       )
 
       if(image.credit) {
         this.props.fields.push(
-          {
-            name: "Credit",
-            value: `*${image.credit}*`
-          }
+          [
+            {
+              name: "Credit",
+              value: `*${image.credit}*`
+            }
+          ]
         )
       }
       if(image["see-also"]) {
@@ -152,19 +156,23 @@ module.exports = class HolyImageCommand extends RookCommand {
           alsos = alsos.substring(0,alsos.length - 2)
         }
         this.props.fields.push(
-          {
-            name: "See Also",
-            value: alsos
-          }
+          [
+            {
+              name: "See Also",
+              value: alsos
+            }
+          ]
         )
       }
 
       let source = image.mode == "redirect" ? "Redirect" : "Source"
       this.props.fields.push(
-        {
-          name: "Links",
-          value: `[Index Listing](http://alttp.mymm1.com/holyimage/debug.php?game=${gameID}), [${source}](${page_url})`
-        }
+        [
+          {
+            name: "Links",
+            value: `[Index Listing](http://alttp.mymm1.com/holyimage/debug.php?game=${gameID}), [${source}](${page_url})`
+          }
+        ]
       )
     } else {
       this.error = true

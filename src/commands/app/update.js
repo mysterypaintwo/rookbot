@@ -23,31 +23,7 @@ module.exports = class UpdateCommand extends BotDevCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
-    let GLOBALS = null
-    const defaults = JSON.parse(fs.readFileSync("./src/dbs/defaults.json", "utf8"))
-    let profileName = "default"
-    try {
-      if (fs.existsSync("./src/PROFILE.json")) {
-        GLOBALS = JSON.parse(fs.readFileSync("./src/PROFILE.json", "utf8"))
-      } else {
-        console.log("🟡Install Script: PROFILE manifest not found! Using defaults!")
-      }
-      if (
-        GLOBALS?.selectedprofile &&
-        GLOBALS?.profiles &&
-        GLOBALS.selectedprofile in GLOBALS.profiles
-      ) {
-        profileName = GLOBALS.selectedprofile
-        GLOBALS = GLOBALS.profiles[GLOBALS.selectedprofile]
-      } else {
-        GLOBALS = defaults
-      }
-    } catch(err) {
-      console.log("🔴Install Script: PROFILE manifest not found!")
-      process.exit(1)
-    }
-
+  async action(client) {
     let node_update = null
     try {
       node_update = shell.exec("npm run-script update")
@@ -65,7 +41,7 @@ module.exports = class UpdateCommand extends BotDevCommand {
     console_output.push(
       "Updating " +
       (user ? user.username : "") +
-      ` v${this.PACKAGE.version}!`
+      ` v${this.profile.PACKAGE.version}!`
     )
     this.props.title = {
       text: "💿 " + console_output[1],

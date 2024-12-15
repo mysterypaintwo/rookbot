@@ -9,7 +9,7 @@ const colors = require('../../dbs/colors.json')
  * @param {RookClient} client
  * @param {GuildMember} oldMember
  */
-module.exports = async (client, profileName, oldMember) => {
+module.exports = async (client, oldMember) => {
   try {
     // Fetch the log channel using the oldMember's guild ID
     const guildID = oldMember.guild.id

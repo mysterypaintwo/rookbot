@@ -38,14 +38,15 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
+    console.log(`/${this.name}: Action`)
     const localCommands = getLocalCommands(client)
     let commandName = options["command-name"]
 
     try {
       // Find the command
       const commandObject = localCommands.find(
-        (cmd) => cmd.name === commandName
+        cmd => cmd.name === commandName
       )
 
       // Return if couldn't find it
@@ -126,7 +127,7 @@ module.exports = class TestSuiteCommand extends BotDevCommand {
 
       // Run the test function
       console.log(`/${this.name}/${commandObject.name}`)
-      await commandObject.test(client, interaction, cmd);
+      await commandObject.test(client, interaction);
     } catch (error) {
       console.log(`There was an error running this command: ${error.stack}`);
     }

@@ -1,5 +1,6 @@
-const { Client, Interaction, ApplicationCommandOptionType } = require('discord.js')
+const { Interaction, ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const { RookClient } = require('../../classes/objects/rclient.class.js')
 
 module.exports = class UserInfoCommand extends RookCommand {
   constructor(client) {
@@ -35,7 +36,7 @@ module.exports = class UserInfoCommand extends RookCommand {
    * @param {RookClient} client
    * @param {Interaction} interaction
    */
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     const targetUserInput = options['target-id']
 
     // Extract user ID from mention (if it's a mention)
@@ -52,31 +53,32 @@ module.exports = class UserInfoCommand extends RookCommand {
     // Get the user's avatar URL
     const avatarURL = targetMember.displayAvatarURL({ size: 1024 })
 
-    let fields = []
-    // Username
-    fields.push(
-      {
-        name: "Username",
-        value: `\`${targetMember.user.tag}\`` +
-        "(ID: " + `\`${targetMember.id}\`` + ")"
-      }
-    )
+    let fields = [
+      // Username
+      [
+        {
+          name: "Username",
+          value: `\`${targetMember.user.tag}\`` +
+          "(ID: " + `\`${targetMember.id}\`` + ")"
+        }
+      ],
 
-    // Created
-    fields.push(
-      {
-        name: "Created",
-        value: `<t:${Math.round(targetMember.user.createdTimestamp / 1000)}:f>`
-      }
-    )
+      // Created
+      [
+        {
+          name: "Created",
+          value: `<t:${Math.round(targetMember.user.createdTimestamp / 1000)}:f>`
+        }
+      ],
 
-    // Joined
-    fields.push(
-      {
-        name: "Joined",
-        value: `<t:${Math.round(targetMember.joinedTimestamp / 1000)}:f>`
-      }
-    )
+      // Joined
+      [
+        {
+          name: "Joined",
+          value: `<t:${Math.round(targetMember.joinedTimestamp / 1000)}:f>`
+        }
+      ]
+    ]
 
     let botActions = {
       "🤖": targetMember.user.bot,
@@ -92,13 +94,14 @@ module.exports = class UserInfoCommand extends RookCommand {
         botCant += botAction[0]
       }
     }
-
     fields.push(
-      {
-        name: "Bot Actions",
-        value: "🟩" + botCan + "\n" +
-          "🟥" + botCant
-      }
+      [
+        {
+          name: "Bot Actions",
+          value: "🟩" + botCan + "\n" +
+            "🟥" + botCant
+        }
+      ]
     )
 
     this.props = {
@@ -108,7 +111,7 @@ module.exports = class UserInfoCommand extends RookCommand {
       },
       color: targetMember.user.hexAccentColor,
       fields: fields,
-      image: avatarURL
+      image: { image: avatarURL }
     }
 
     return !this.error

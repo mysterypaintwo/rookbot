@@ -9,7 +9,7 @@ const colors = require('../../dbs/colors.json')
  * @param {RookClient} client
  * @param {Message} deletedMessage
  */
-module.exports = async (client, profileName, deletedMessage) => {
+module.exports = async (client, deletedMessage) => {
   try {
     // If the message is partial, fetch the full message (if possible)
     if (deletedMessage.partial) {
@@ -46,12 +46,13 @@ module.exports = async (client, profileName, deletedMessage) => {
       // console.log("Logs Fetched!")
     }
 
-    const auditEntry = await fetchedLogs.entries.find(a =>
-      // Small filter function to make use of the little discord provides to narrow down the correct audit entry.
-      a.target.id === deletedMessage.author.id &&
-      a.extra.channel.id === deletedMessage.channel.id &&
-      // Ignore entries that are older than 20 seconds to reduce false positives.
-      Date.now() - a.createdTimestamp < 20000
+    const auditEntry = await fetchedLogs.entries.find(
+      a =>
+        // Small filter function to make use of the little discord provides to narrow down the correct audit entry.
+        a.target.id === deletedMessage.author.id &&
+        a.extra.channel.id === deletedMessage.channel.id &&
+        // Ignore entries that are older than 20 seconds to reduce false positives.
+        Date.now() - a.createdTimestamp < 20000
     )
 
     if (auditEntry) {

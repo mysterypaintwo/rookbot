@@ -9,7 +9,7 @@ const colors = require('../../dbs/colors.json')
  * @param {RookClient} client
  * @param {GuildMember} newMember
  */
-module.exports = async (client, profileName, newMember) => {
+module.exports = async (client, newMember) => {
   try {
     // Ensure the member's data is fully fetched
     const fetchedMember = await newMember.guild.members.fetch(newMember.user.id)

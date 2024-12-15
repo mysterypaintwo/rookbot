@@ -28,7 +28,7 @@ module.exports = class BotNicknameCommand extends BotDevCommand {
     )
   }
 
-  async action(client, interaction, cmd, options) {
+  async action(client, interaction, options) {
     let new_nickname = options["bot-nickname"]
     let old_nickname = ""
 
