@@ -166,7 +166,7 @@ module.exports = async (client, interaction) => {
         name: "Launched",
         value: `<t:${launched}:f> (\`${launched}\`)`
       }
-    ]
+    ],
     [
       {
         name: "Exited",

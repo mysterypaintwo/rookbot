@@ -7,7 +7,7 @@
       "stripe": "#FFFFFF",
       "footer": {
         "image": "https://github.com/mysterypaintwo/rookbot/blob/main/src/res/media/rookbotIcon_dev.png?raw=true",
-        "msg": "This bot is being Tested by rook"
+        "text": "This bot is being Tested by rook"
       }
     },
     "gitrook": {
@@ -16,7 +16,7 @@
       "stripe": "#000000",
       "footer": {
         "image": "https://cdn.discordapp.com/avatars/1313777189187223603/4bc7c1dc2b41b0bd7f77945bcc55feef.webp?size=128",
-        "msg": "This bot is being Tested by gitrook"
+        "text": "This bot is being Tested by gitrook"
       }
     }
   }
