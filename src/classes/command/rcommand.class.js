@@ -310,7 +310,12 @@ class RookCommand {
     if (interaction) {
       let isDeferred = interaction?.deferred && interaction.deferred
       let hasReply = interaction?.replied && interaction.replied
-      if (!isDeferred && !hasReply) {
+      if (
+        !isDeferred &&
+        !hasReply &&
+        interaction.hasOwn("deferReply") &&
+        typeof interaction.deferReply === "function"
+      ) {
         console.log(`/${this.name}: Deferring Reply`)
         await interaction.deferReply()
       }
@@ -355,7 +360,12 @@ class RookCommand {
     if (interaction) {
       let isDeferred = interaction?.deferred && interaction.deferred
       let hasReply = interaction?.replied && interaction.replied
-      if (!isDeferred && !hasReply) {
+      if (
+        !isDeferred &&
+        !hasReply &&
+        interaction.hasOwn("deferReply") &&
+        typeof interaction.deferReply === "function"
+      ) {
         await interaction.deferReply()
       }
 
