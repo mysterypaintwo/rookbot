@@ -319,10 +319,10 @@ class RookCommand {
         console.log(`/${this.name}: Deferring Reply`)
         await interaction.deferReply()
       }
-      if (hasReply) {
+      if (hasReply && Object.hasOwn(interaction, "followUp")) {
         console.log(`/${this.name}: Posting Follow-up`)
         return await interaction.followUp(this_package)
-      } else {
+      } else if(Object.hasOwn(interaction, "editReply")) {
         console.log(`/${this.name}: Editing Reply`)
         return await interaction.editReply(this_package)
       }
