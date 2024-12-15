@@ -81,7 +81,14 @@ const client = new RookClient(
                   }
                 },
                 editReply: async (props) => {
-                  await this.reply(props)
+                  let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
+                  let channelID = channelIDs["bot-console"]
+                  if (client.guild) {
+                    let channel = await client.guild.channels.cache.find(
+                      c => c.id === channelID
+                    )
+                    await channel.send(props)
+                  }
                 }
               }
             );
