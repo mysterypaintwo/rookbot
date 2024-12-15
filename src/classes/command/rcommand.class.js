@@ -369,7 +369,7 @@ class RookCommand {
         await interaction.deferReply()
       }
 
-      let caller = await interaction?.guild.members.cache.find(
+      let caller = await interaction?.guild?.members.cache.find(
         u => u.id === interaction.user.id
       )
       if (caller) {
