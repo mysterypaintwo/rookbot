@@ -382,10 +382,12 @@ class RookCommand {
           tag:            caller.user.tag
         }
       }
-      this.entities.guild = {
-        id:     interaction.guild.id,
-        name:   interaction.guild.name,
-        avatar: interaction.guild.iconURL()
+      if (interaction?.guild) {
+        this.entities.guild = {
+          id:     interaction.guild.id,
+          name:   interaction.guild.name,
+          avatar: interaction.guild.iconURL()
+        }
       }
     }
 
