@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType } = require('discord.js');
 const { RookCommand } = require('../../classes/command/rcommand.class');
+const timeFormat = require('../../utils/timeFormat.js')
 
 function isValidURLFromDomain(input, domain) {
   try {
@@ -103,7 +104,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
 
       const prepTime = prepTimeMinutes * 60 * 1000; // Convert minutes to milliseconds
       const adjustedTime = new Date(now.getTime() + prepTime);
-      const timestamp = `<t:${Math.floor(adjustedTime.getTime() / 1000)}:F>`;
+      const timestamp = timeFormat(adjustedTime.getTime())
 
       // Define the Major Items
       const majorItems = [

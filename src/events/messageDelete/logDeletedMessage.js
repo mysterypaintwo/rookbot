@@ -66,41 +66,53 @@ module.exports = async (client, deletedMessage) => {
 
     let fields = []
     fields.push(
-      {
-        name: 'Author',
-        value: `<@${deletedMessage.author.id}>` + " " +
-          `(ID: \`${deletedMessage.author.id}\`)`
-      }
+      [
+        {
+          name: 'Author',
+          value: `<@${deletedMessage.author.id}>` + " " +
+            `(ID: \`${deletedMessage.author.id}\`)`
+        }
+      ]
     )
     if (deleter && deleter?.id) {
       fields.push(
-        {
-          name: 'Deleter',
-          value: `<@${deleter.id}>` + " " +
-            `(ID: \`${deleter.id}\`)`
-        }
+        [
+          {
+            name: 'Deleter',
+            value: `<@${deleter.id}>` + " " +
+              `(ID: \`${deleter.id}\`)`
+          }
+        ]
       )
     } else {
       fields.push(
-        {
-          name: 'Deleter',
-          value: `Probably self or a bot`
-        }
+        [
+          {
+            name: 'Deleter',
+            value: `Probably self or a bot`
+          }
+        ]
       )
     }
     fields.push(
-      {
-        name: 'Message',
-        value: `${deletedMessage.url} (ID: \`${deletedMessage.id}\`)`
-      },
-      {
-        name: 'Channel',
-        value: `<#${deletedMessage.channel.id}>`
-      },
-      {
-        name: 'Content',
-        value: deletedMessage.content || '*No content*'
-      }
+      [
+        {
+          name: 'Message',
+          value: `${deletedMessage.url} (ID: \`${deletedMessage.id}\`)`
+        }
+      ],
+      [
+        {
+          name: 'Channel',
+          value: `<#${deletedMessage.channel.id}>`
+        }
+      ],
+      [
+        {
+          name: 'Content',
+          value: deletedMessage.content || '*No content*'
+        }
+      ]
     )
 
     // Prepare the log embed

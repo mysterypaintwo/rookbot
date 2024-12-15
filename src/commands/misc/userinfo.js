@@ -1,6 +1,7 @@
 const { Interaction, ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const { RookClient } = require('../../classes/objects/rclient.class.js')
+const timeFormat = require('../../utils/timeFormat.js')
 
 module.exports = class UserInfoCommand extends RookCommand {
   constructor(client) {
@@ -67,7 +68,7 @@ module.exports = class UserInfoCommand extends RookCommand {
       [
         {
           name: "Created",
-          value: `<t:${Math.round(targetMember.user.createdTimestamp / 1000)}:f>`
+          value: timeFormat(targetMember.user.createdTimestamp)
         }
       ],
 
@@ -75,7 +76,7 @@ module.exports = class UserInfoCommand extends RookCommand {
       [
         {
           name: "Joined",
-          value: `<t:${Math.round(targetMember.joinedTimestamp / 1000)}:f>`
+          value: timeFormat(targetMember.joinedTimestamp)
         }
       ]
     ]

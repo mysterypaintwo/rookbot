@@ -82,27 +82,37 @@ module.exports = async (client, oldMessage, newMessage) => {
         }
       },
       fields: [
-        {
-          name: 'Author',
-          value: `<@${newMessage.author.id}>` + " " +
-            `(ID: \`${newMessage.author.id}\`)`
-        },
-        {
-          name: 'Message',
-          value: `${newMessage.url} (ID: \`${newMessage.id}\`)`
-        },
-        {
-          name: 'Channel',
-          value: `<#${newMessage.channel.id}>`
-        },
-        {
-          name: 'Old Content',
-          value: oldContent || '*No old content*' // Ensure there's always a default value
-        },
-        {
-          name: 'New Content',
-          value: newContent || '*No new content*' // Ensure there's always a default value
-        },
+        [
+          {
+            name: 'Author',
+            value: `<@${newMessage.author.id}>` + " " +
+              `(ID: \`${newMessage.author.id}\`)`
+          }
+        ],
+        [
+          {
+            name: 'Message',
+            value: `${newMessage.url} (ID: \`${newMessage.id}\`)`
+          }
+        ],
+        [
+          {
+            name: 'Channel',
+            value: `<#${newMessage.channel.id}>`
+          }
+        ],
+        [
+          {
+            name: 'Old Content',
+            value: oldContent || '*No old content*' // Ensure there's always a default value
+          }
+        ],
+        [
+          {
+            name: 'New Content',
+            value: newContent || '*No new content*' // Ensure there's always a default value
+          }
+        ]
       ]
     });
 

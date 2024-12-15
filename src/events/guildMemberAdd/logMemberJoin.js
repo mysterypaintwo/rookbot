@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const colors = require('../../dbs/colors.json')
+const timeFormat = require('../../utils/timeFormat.js')
 
 /**
  * Logs when a new member joins the server and saves it to a log file.
@@ -46,27 +47,35 @@ module.exports = async (client, newMember) => {
         }
       },
       fields: [
-        {
-          name: 'Member Joined',
-          value: `[${fetchedMember.user.tag}]` +
-            `(https://discord.com/users/${fetchedMember.user.id})` + " " +
-            `(ID: \`${fetchedMember.user.id}\`)`
-        },
-        {
-          name: "Member Link",
-          value: `<@${fetchedMember.user.id}>`
-        },
-        {
-          name: 'Joined At',
-          value: fetchedMember.joinedTimestamp
-            ? (`<t:${Math.floor(new Date(fetchedMember.joinedTimestamp ) / 1000)}:f> (\`${fetchedMember.joinedTimestamp}\`)`)
-            : 'Unknown' // Handle cases where joinedAt is null
-        },
-        {
-          name: 'Guild',
-          value: fetchedMember.guild.name + " " +
-            `(ID: \`${fetchedMember.guild.id}\`)`
-        }
+        [
+          {
+            name: 'Member Joined',
+            value: `[${fetchedMember.user.tag}]` +
+              `(https://discord.com/users/${fetchedMember.user.id})` + " " +
+              `(ID: \`${fetchedMember.user.id}\`)`
+          }
+        ],
+        [
+          {
+            name: "Member Link",
+            value: `<@${fetchedMember.user.id}>`
+          }
+        ],
+        [
+          {
+            name: 'Joined At',
+            value: fetchedMember.joinedTimestamp
+              ? timeFormat(new Date(fetchedMember.joinedTimestamp))
+              : 'Unknown' // Handle cases where joinedAt is null
+          }
+        ],
+        [
+          {
+            name: 'Guild',
+            value: fetchedMember.guild.name + " " +
+              `(ID: \`${fetchedMember.guild.id}\`)`
+          }
+        ]
       ]
     });
 

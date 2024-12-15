@@ -1,4 +1,5 @@
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const timeFormat = require('../../utils/timeFormat.js')
 
 module.exports = class GuildStatusCommand extends RookCommand {
   constructor(client) {
@@ -70,7 +71,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
       )
     }
 
-    let created = Math.floor(interaction.guild.createdTimestamp / 1000)
+    let created = interaction.guild.createdTimestamp
     this.props.fields.push(
       [
         {
@@ -97,7 +98,7 @@ module.exports = class GuildStatusCommand extends RookCommand {
       [
         {
           name: "Created",
-          value: `<t:${created}:f> (\`${created}\`)`,
+          value: timeFormat(created)
         }
       ]
     )

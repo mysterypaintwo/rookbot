@@ -1,4 +1,5 @@
 const { RookCommand } = require('../../classes/command/rcommand.class')
+const timeFormat = require('../../utils/timeFormat.js')
 const colors = require('../../dbs/colors.json')
 const shell = require('shelljs')
 const fs = require('fs')
@@ -130,7 +131,7 @@ module.exports = class HelloCommand extends RookCommand {
       id: client.guild.id || this?.channel?.guild.id
     }
     let uptime = client.uptime
-    let launched = Math.floor((new Date() - uptime) / 1000)
+    let launchedAt = new Date() - uptime
     this.props.fields = [
       [
         {
@@ -187,7 +188,7 @@ module.exports = class HelloCommand extends RookCommand {
       [
         {
           name: "Launched",
-          value: `<t:${launched}:f> (\`${launched}\`)`
+          value: timeFormat(launchedAt)
         }
       ],
       [

@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const { RookEmbed } = require('../../classes/embed/rembed.class')
 const colors = require('../../dbs/colors.json')
+const timeFormat = require('../../utils/timeFormat.js')
 
 /**
  * Logs when a member leaves the server and saves it to a log file.
@@ -45,27 +46,35 @@ module.exports = async (client, oldMember) => {
         }
       },
       fields: [
-        {
-          name: 'Member Left',
-          value: `[${oldMember.user.tag}]` +
-            `(https://discord.com/users/${oldMember.user.id})` + " " +
-            `(ID: \`${oldMember.user.id}\`)`
-        },
-        {
-          name: "Member Link",
-          value: `<@${oldMember.user.id}>`
-        },
-        {
-          name: 'Left At',
-          value: leftAt
-            ? (`<t:${Math.floor(leftAt / 1000)}:f> (\`${leftAt.getTime()}\`)`)
-            : 'Unknown' // Handle cases where leftAt is null
-        },
-        {
-          name: 'Guild',
-          value: oldMember.guild.name + " " +
-            `(ID: \`${oldMember.guild.id}\`)`
-        }
+        [
+          {
+            name: 'Member Left',
+            value: `[${oldMember.user.tag}]` +
+              `(https://discord.com/users/${oldMember.user.id})` + " " +
+              `(ID: \`${oldMember.user.id}\`)`
+          }
+        ],
+        [
+          {
+            name: "Member Link",
+            value: `<@${oldMember.user.id}>`
+          }
+        ],
+        [
+          {
+            name: 'Left At',
+            value: leftAt
+              ? (timeFormat(letfAt) + ` (\`${leftAt.getTime()}\`)`)
+              : 'Unknown' // Handle cases where leftAt is null
+          }
+        ],
+        [
+          {
+            name: 'Guild',
+            value: oldMember.guild.name + " " +
+              `(ID: \`${oldMember.guild.id}\`)`
+          }
+        ]
       ]
     })
 

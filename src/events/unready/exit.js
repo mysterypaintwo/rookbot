@@ -1,4 +1,5 @@
 const { RookEmbed } = require('../../classes/embed/rembed.class.js')
+const timeFormat = require('../../utils/timeFormat.js')
 const shell = require('shelljs')
 const fs = require('fs')
 
@@ -164,13 +165,13 @@ module.exports = async (client, interaction) => {
     [
       {
         name: "Launched",
-        value: `<t:${launched}:f> (\`${launched}\`)`
+        value: timeFormat(launched)
       }
     ],
     [
       {
         name: "Exited",
-        value: `<t:${offline}:f> (\`${offline}\`)`
+        value: timeFormat(offline)
       }
     ],
     [

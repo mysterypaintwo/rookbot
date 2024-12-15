@@ -1,6 +1,7 @@
 const { ApplicationCommandOptionType } = require('discord.js')
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
 const AsciiTable = require('ascii-table')
+const timeFormat = require('../../utils/timeFormat.js')
 
 function ksort(obj){
   let keys = Object.keys(obj).sort(), sortedObj = {}
@@ -60,6 +61,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
         owner = owner.user
       }
       let bot = await guildData.members.cache.get(client.user.id)
+      let botJoined = await new Date(bot.joinedTimestamp)
       sorted[bot.joinedTimestamp] = {
         guild: {
           name: guildData.name,
@@ -70,9 +72,9 @@ module.exports = class BotGuildsCommand extends RookCommand {
           discriminator: owner.discriminator,
           id: owner.id
         },
-        added: new Date(bot.joinedTimestamp).toLocaleString(),
-        addedTimestamp: Math.floor(new Date(bot.joinedTimestamp) / 1000),
-        addedHammertime: `<t:${Math.floor(new Date(bot.joinedTimestamp) / 1000)}:f>`
+        added: botJoined.toLocaleString(),
+        addedTimestamp: Math.floor(bot.joinedTimestamp / 1000),
+        addedHammertime: timeFormat(bot.joinedTimestamp)
       }
     }
     console.log("")
@@ -93,7 +95,7 @@ module.exports = class BotGuildsCommand extends RookCommand {
         this.props.description.push(
           `**Guild:** ${guildData.guild.name} (ID:\`${guildData.guild.id}\`)`,
           `**Owner:** \`${guildData.owner.username}#${guildData.owner.discriminator}\` (ID:\`${guildData.owner.id}\`, <@${guildData.owner.id}>)`,
-          `**Added:** ${guildData.addedHammertime} (\`${guildData.addedTimestamp}\`)`,
+          `**Added:** ${guildData.addedHammertime}`,
           `**Tier:** ${tier}`,
           ""
         )

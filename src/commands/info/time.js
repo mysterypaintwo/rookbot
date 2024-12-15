@@ -1,4 +1,5 @@
 const { RookCommand } = require('../../classes/command/rcommand.class.js')
+const timeFormat = require('../../utils/timeFormat.js')
 const tz = require('timezone')
 
 module.exports = class TimeCommand extends RookCommand {
@@ -48,7 +49,7 @@ module.exports = class TimeCommand extends RookCommand {
     }
     this.props.description += "```" + "\n"
 
-    let tmp = `Local: <t:${Math.floor(now / 1000)}:f>`
+    let tmp = `Local: ` + timeFormat(now)
     this.props.description += tmp
     console.log(tmp)
 
