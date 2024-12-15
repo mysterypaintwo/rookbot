@@ -369,16 +369,18 @@ class RookCommand {
         await interaction.deferReply()
       }
 
-      let caller = await interaction.guild.members.cache.find(
+      let caller = await interaction?.guild.members.cache.find(
         u => u.id === interaction.user.id
       )
-      this.entities.caller = {
-        id:             caller.id,
-        name:           caller.nickname || caller.displayName || caller.id,
-        avatar:         caller.displayAvatarURL(),
-        username:       caller.user.username,
-        discriminator:  caller.user.discriminator,
-        tag:            caller.user.tag
+      if (caller) {
+        this.entities.caller = {
+          id:             caller.id,
+          name:           caller.nickname || caller.displayName || caller.id,
+          avatar:         caller.displayAvatarURL(),
+          username:       caller.user.username,
+          discriminator:  caller.user.discriminator,
+          tag:            caller.user.tag
+        }
       }
       this.entities.guild = {
         id:     interaction.guild.id,
