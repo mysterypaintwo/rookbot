@@ -119,7 +119,7 @@ module.exports = class PullCommand extends BotDevCommand {
     console_output.push(
       "Updating " +
       (user ? user.username : "") +
-      ` v${this.PACKAGE.version}!`
+      ` v${this.profile.PACKAGE.version}!`
     )
     this.props = {
       title: {
