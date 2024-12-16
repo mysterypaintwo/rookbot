@@ -56,7 +56,7 @@ let dotenvx = shell.exec("which dotenvx", { silent: true })
 let uname = shell.exec("uname", { silent: true })
 
 let bin = dotenvx.stdout.trim()
-// console.log(bin)
+console.log(bin)
 if (bin.indexOf("WinGet") > -1 || uname.stdout.trim().indexOf("MINGW") > -1) {
   bin = "dotenvx"
 }
