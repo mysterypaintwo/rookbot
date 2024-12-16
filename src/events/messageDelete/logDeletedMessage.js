@@ -119,7 +119,8 @@ module.exports = async (client, deletedMessage) => {
     const logEmbed = new RookEmbed(client, {
       color: colors["bad"], // Orange for message updates
       title: {
-        text: '🚮 [Log] Message Deleted'
+        text: '[Log] Message Deleted',
+        emoji: "🚮"
       },
       players: {
         user: {
@@ -144,7 +145,7 @@ module.exports = async (client, deletedMessage) => {
       '..',
       '..',
       'botlogs',
-      'deletedMessages.log'
+      `${this.DEV ? 'DEV' : ''}deletedMessages.log`
     )
     let logEntry = [
       `[${new Date().toISOString()}]`,

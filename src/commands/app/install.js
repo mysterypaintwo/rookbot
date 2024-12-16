@@ -51,7 +51,7 @@ module.exports = class InstallCommand extends BotDevCommand {
     console_output.push(
       "Installing " +
       (user ? user.username : "") +
-      ` v${this.PACKAGE.version}!`
+      ` v${this.profile.PACKAGE.version}!`
     )
     this.props.title = {
       text: "💿 " + console_output[1],

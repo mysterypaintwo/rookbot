@@ -654,6 +654,23 @@
       "access": "unset",
       "segment": "local"
     },
+    "seedmeta": {
+      "name": "seedmeta",
+      "category": "rando",
+      "description": "Gets metadata for a seed",
+      "options": [
+        {
+          "name": "game-id",
+          "description": "Game ID to call from"
+        },
+        {
+          "name": "hash-id",
+          "description": "Seed Hash ID to call"
+        }
+      ],
+      "access": "unset",
+      "segment": "local"
+    },
     "smz3": {
       "name": "smz3",
       "category": "rando",

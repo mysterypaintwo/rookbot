@@ -72,17 +72,19 @@ module.exports = class PullCommand extends BotDevCommand {
       console.log(err.stack)
     }
 
-    // Checkout
-    try {
-      shell.exec("git checkout main")
-    } catch(err) {
-      console.log(err.stack)
-    }
-    // Pull
-    try {
-      shell.exec("git pull origin")
-    } catch(err) {
-      console.log(err.stack)
+    if (!this.DEV) {
+      // Checkout
+      try {
+        shell.exec("git checkout main")
+      } catch(err) {
+        console.log(err.stack)
+      }
+      // Pull
+      try {
+        shell.exec("git pull origin")
+      } catch(err) {
+        console.log(err.stack)
+      }
     }
 
     // Get Fresh commit ID

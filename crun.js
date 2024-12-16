@@ -1,9 +1,11 @@
 const { program } = require('commander')
+const AsciiTable = require('ascii-table')
 const PACKAGE = require('./package.json')
 const shell = require('shelljs')
 
 console.log("")
-console.log("dotenvx Runner:")
+console.log("---")
+console.log("dotenvx Entrypoint:")
 console.log(PACKAGE.name, "v" + PACKAGE.version)
 
 program
@@ -43,8 +45,8 @@ program
 
 const options = program.opts()
 
-console.log("Options:")
-console.log(JSON.stringify(options, null, "  "))
+// console.log("Options:")
+// console.log(JSON.stringify(options, null, "  "))
 
 // FIXME:
 // Use ./node_modules/.bin/* if linux
@@ -54,7 +56,7 @@ let dotenvx = shell.exec("which dotenvx", { silent: true })
 let uname = shell.exec("uname", { silent: true })
 
 let bin = dotenvx.stdout.trim()
-console.log(bin)
+// console.log(bin)
 if (bin.indexOf("WinGet") > -1 || uname.stdout.trim().indexOf("MINGW") > -1) {
   bin = "dotenvx"
 }
@@ -66,36 +68,59 @@ let haveUser    = options.user
 let haveClient  = options.client
 let haveServer  = options.server
 
+let user = ""
+let client = ""
+let server = ""
+let env = ""
+let long = ""
+let profile = ""
+
 // CUser
 if (haveCUser && !haveUser && !haveClient) {
   envs += `-f ./env/devs/.env.token.${options.cu} `
   envs += `-f ./env/devs/.env.client.${options.cu} `
+  user = options.cu
+  client = options.cu
 } else {
   if (haveUser && !haveServer) {
     envs += `-f ./env/devs/.env.token.${options.user} `
+    user = options.user
   }
   if (!haveUser && haveServer) {
     envs += `-f ./env/servers/.env.token.${options.server} `
+    server = options.server
   }
   if (haveClient) {
     envs += `-f ./env/devs/.env.client.${options.client} `
+    client = options.client
   }
 }
 
 // Dev | Prod
 if (options.environment) {
-  let env = options.environment.startsWith("prod") ? "prod" : "dev"
+  env = options.environment.startsWith("prod") ? "prod" : "dev"
   envs += `-f ./env/envs/.env.${env} `
 }
 
 if (options.long) {
   args.push("-l")
+  long = true
 }
 if (options.profile) {
   args.push(
     `-p ${options.profile}`
   )
+  profile = options.profile
 }
+
+const Table = new AsciiTable("Selected Options:", {})
+Table.addRow("Dev Token", user)
+Table.addRow("Server Token", server)
+Table.addRow("Dev Client ID", client)
+Table.addRow("Development/Production", env)
+Table.addRow("Selected Profile", profile)
+Table.addRow("Long Load", long ? "Yes" : "No")
+console.log(Table.toString())
 
 let command = []
 command.push(bin.trim())

@@ -70,7 +70,8 @@ module.exports = async (client, oldMessage, newMessage) => {
     const embed = new RookEmbed(client, {
       color: colors["info"], // Orange for message updates
       title: {
-        text: '✏️ [Log] Message Edited'
+        text: '[Log] Message Edited',
+        emoji: "✏️"
       },
       players: {
         user: {
@@ -129,7 +130,7 @@ module.exports = async (client, oldMessage, newMessage) => {
       '..',
       '..',
       'botlogs',
-      'editedMessages.log'
+      `${this.DEV ? 'DEV' : ''}editedMessages.log`
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,

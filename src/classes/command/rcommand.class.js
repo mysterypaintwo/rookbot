@@ -107,13 +107,14 @@ class RookCommand {
    * @param {EmbedProps}    props     Embed Properties
    */
   constructor(client, comprops={}, props={}) {
-    this.name         = setValue(comprops.name, "unknown")
-    this.description  = setValue(comprops.description, (this.name.charAt(0).toUpperCase() + this.name.slice(1)))
-    this.options      = setValue(comprops.options, [])
-    this.category     = setValue(comprops.category, "unknown")
-    this.testOptions  = setValue(comprops.testOptions, [])
-    this.channelName  = "bot-console"
-    this.access       = setValue(comprops.access, "unset")
+    this.name             = setValue(comprops.name, "unknown")
+    this.description      = setValue(comprops.description, (this.name.charAt(0).toUpperCase() + this.name.slice(1)))
+    this.options          = setValue(comprops.options, [])
+    this.category         = setValue(comprops.category, "unknown")
+    this.testOptions      = setValue(comprops.testOptions, [])
+    this.testIndependent  = setValue(comprops.testIndependent, false)
+    this.channelName      = "bot-console"
+    this.access           = setValue(comprops.access, "unset")
 
     this.profile = client.profile
     this.pages = []
@@ -149,6 +150,7 @@ class RookCommand {
     if (!this.props?.full) {
       this.props.full = true
     }
+    this.props.players = this.players
 
     this.error = false
     this.ephemeral = false
@@ -297,11 +299,12 @@ class RookCommand {
           console.log(`/${this.name}: Preparing Ephemeral Response`)
           await interaction.editReply(this_package)
         }
-        handle_result = true
+        // handle_result = true
       } catch(e) {
         // console.log(e)
-        handle_result = false
+        // handle_result = false
       }
+        handle_result = true
     } else if (!hasReply && canReply) {
       // reply if edited "thinking"
       console.log(`/${this.name}: Posting Reply`)
@@ -353,13 +356,21 @@ class RookCommand {
           // console.log(`/${this.name}: Page ${i} is Ephemeral`)
           this.ephemeral = true
         }
+        let msg = `/${this.name}: Printing `
         if (page?.full && !page.full) {
-          console.log(`/${this.name}: Printing slimbed ${i+1}/${pages.length}...`)
+          msg += "slimbed "
           this.pages[i] = await new SlimEmbed(client, page)
         } else {
-          console.log(`/${this.name}: Printing embed   ${i+1}/${pages.length}...`)
+          msg += "embed   "
           this.pages[i] = await new RookEmbed(client, page)
         }
+        msg += ((i+1)+"").padStart(2,'0')
+        msg += '/'
+        msg += ((pages.length)+"").padStart(2,'0')
+        msg += "..."
+        let title = page?.caption?.text || page?.title?.text || ""
+        msg += `[${title}]`
+        console.log(msg)
         i += 1
       }
 
@@ -373,12 +384,13 @@ class RookCommand {
    * Ship the thing!
    * @param {RookClient} client Client Object
    */
-  async ship_it(client, interaction, hasDeferred) {
+  async ship_it(client, interaction, independent=false, hasDeferred=false) {
     console.log(`/${this.name}: ...and Ship it!`)
 
     let this_package = { embeds: this.pages }
 
     if (this.pages.length > 1) {
+      console.log(`/${this.name}: Binding a Book with ${this.pages.length} Pages`)
       let these_pagination = await new Pagination(interaction)
       these_pagination.setEmbeds(
         this.pages,
@@ -406,7 +418,7 @@ class RookCommand {
     }
 
     let interaction_result = false
-    if (interaction) {
+    if (interaction && !independent) {
       interaction_result = await this.handle_interaction(
         interaction,
         this_package,
@@ -417,6 +429,7 @@ class RookCommand {
     let send_result = false
     if (!interaction_result) {
       try {
+        console.log(`/${this.name}: Posting Independent`)
         await this.channel.send(this_package)
         send_result = true
       } catch(e) {
@@ -432,14 +445,20 @@ class RookCommand {
    * Send the thing!
    * @param {RookClient} client Client Object
    */
-  async send(client, interaction, pages, hasDeferred) {
+  async send(client, interaction, pages, independent=false, hasDeferred=false) {
     console.log(`/${this.name}: Full Send it!`)
 
     let printResult = await this.print_it(client, pages)
     // if (printResult) { console.log(`/${this.name}: Printed!`) }
 
-    let shipResult = await this.ship_it(client, interaction, hasDeferred)
+    let shipResult = await this.ship_it(
+      client,
+      interaction,
+      independent,
+      hasDeferred
+    )
     // if (shipResult) { console.log(`/${this.name}: Shipped!`) }
+    console.log("")
 
     return printResult && shipResult
   }
@@ -451,8 +470,11 @@ class RookCommand {
    * @param {Object.<string, any>} options Input Options
    * @returns
    */
-  async execute(client, interaction, coptions) {
-    this.channel = await this.getChannel(client)
+  async execute(client, interaction, coptions, independent=false) {
+    if (!this.channel) {
+      this.channel = await this.getChannel(client)
+    }
+
     let hasDeferred = await this.handle_deferrment(interaction)
 
     if (interaction) {
@@ -486,7 +508,13 @@ class RookCommand {
     let sendResult = false
 
     if (doSend) {
-      sendResult = await this.send(client, interaction, this.pages, hasDeferred)
+      sendResult = await this.send(
+        client,
+        interaction,
+        this.pages,
+        independent,
+        hasDeferred
+      )
     }
 
     return buildResult && sendResult && !this.error
@@ -498,39 +526,68 @@ class RookCommand {
    * @returns
    */
   async test(client, interaction) {
+    if (!this.channel) {
+      this.channel = await this.getChannel(client)
+    }
+
     console.log(`/${this.name}: Test`)
     let execResult = false
 
     if (this.testOptions.length > 0) {
       let pages = []
       let i = 0
+      let testBook  = !this.testIndependent
+      let testBooks = this.testIndependent
+
+      if (testBook) {
+        console.log(`/${this.name}: Test One Book with ${this.testOptions.length} Pages`)
+      } else if (testBooks) {
+        console.log(`/${this.name}: Test ${this.testOptions.length} Books`)
+      }
       for (let thisTest of this.testOptions) {
-        let buildResult = await this.build(
-          client,
-          interaction,
-          thisTest
-        )
-        if (this.testOptions.hasOwnProperty("assert")) {
-          if (buildResult != this.testOptions.assert) {
-            this.props.error = true
+        if (testBook) {
+          let buildResult = await this.build(
+            client,
+            interaction,
+            thisTest
+          )
+          if (this.testOptions.hasOwnProperty("assert")) {
+            if (buildResult != this.testOptions.assert) {
+              this.props.error = true
+            }
           }
+
+          let a_page = {...this.props}
+          pages.push(a_page)
+          i += 1
         }
 
-        let a_page = {...this.props}
-        pages.push(a_page)
-        i += 1
+        if (testBooks) {
+          try {
+            execResult = await this.execute(
+              client,
+              interaction,
+              thisTest,
+              testBooks
+            )
+          } catch(e) {
+            // do nothing
+          }
+        }
       }
-      console.log(
-        `/${this.name}: ` +
-        "Pages being sent: ",
-        pages.length
-      )
 
-      try {
-        execResult = await this.send(client, interaction, pages)
-      } catch(e) {
-        // do nothing
+      if (testBook) {
+        try {
+          execResult = await this.send(
+            client,
+            interaction,
+            pages
+          )
+        } catch(e) {
+          console.log(e)
+        }
       }
+
       this.null = true
     } else {
       execResult = await this.execute(client, interaction)

@@ -33,7 +33,8 @@ module.exports = async (client, oldMember) => {
     const logEmbed = new RookEmbed(client, {
       color: colors["bad"], // Red for member leaving
       title: {
-        text: '🚶‍♂️🚪 [Log] Member Left'
+        text: '[Log] Member Left',
+        emoji: "🚶‍♂️🚪"
       },
       players: {
         user: {
@@ -87,7 +88,7 @@ module.exports = async (client, oldMember) => {
       '..',
       '..',
       'botlogs',
-      'memberChanges.log'
+      `${this.DEV ? 'DEV' : ''}memberChanges.log`
     )
     const logEntry = [
       `[${new Date().toISOString()}]`,

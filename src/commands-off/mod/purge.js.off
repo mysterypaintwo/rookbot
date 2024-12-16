@@ -37,7 +37,8 @@ module.exports = {
           let props = {
             color: "#FF8C00",
             title: {
-              text: "🧹 [Log] Messages Purged"
+              text: "[Log] Messages Purged",
+              emoji: "🧹"
             },
             fields: [
               { name: 'Channel', value: `${interaction.channel}`, inline: true },

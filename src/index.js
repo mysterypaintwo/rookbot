@@ -3,9 +3,11 @@ const { IntentsBitField } = require('discord.js')
 const { RookClient } = require('./classes/objects/rclient.class')
 const eventHandler = require('./handlers/eventHandler')
 const { program } = require('commander')
+const AsciiTable = require('ascii-table')
 const PACKAGE = require("../package.json")
 
 console.log("")
+console.log("---")
 console.log("Bot Main:")
 console.log(PACKAGE.name, "v" + PACKAGE.version)
 
@@ -16,8 +18,13 @@ program
   .parse(process.argv)
 
 const options = program.opts()
-console.log("Options:")
-console.log(JSON.stringify(options, null, "  "))
+// console.log("Options:")
+// console.log(JSON.stringify(options, null, "  "))
+
+let profile = options.profile
+const Table = new AsciiTable("Selected Options:", {})
+Table.addRow("Selected Profile", profile)
+console.log(Table.toString())
 
 const client = new RookClient(
   {

@@ -15,16 +15,16 @@ function scheduleNicknameChange(client, member, guildID) {
 
       // Check the result and log accordingly
       if (result.success) {
-        console.log(`Changed nickname of ${member.user.tag}: ${result.message}`)
+        console.log(`  Changed nickname of ${member.user.tag}: ${result.message}`)
       } else {
-        console.error(`Error changing nickname for ${member.user.tag}: ${result.message}`)
+        console.error(`  Error changing nickname for ${member.user.tag}: ${result.message}`)
       }
     } catch (err) {
-      console.error("Error changing nickname:", err)
+      console.error("  Error changing nickname:", err)
     }
   })
 
-  console.log("Scheduled nickname changes for user:", member.user.tag)
+  console.log("  Scheduled nickname changes for user:", member.user.tag)
 }
 
 module.exports = scheduleNicknameChange

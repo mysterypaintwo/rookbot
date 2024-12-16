@@ -46,7 +46,8 @@ module.exports = class HelpCommand extends RookCommand {
         { "command-name": "diceroll" },
         { "section-name": "moo", "assert": false },
         { "command-name": "moo", "assert": false }
-      ]
+      ],
+      testIndependent: true
     }
     let props = {
       caption: { text: "Help", emoji: "?" }

@@ -1,9 +1,11 @@
 const { program } = require('commander')
+const AsciiTable = require('ascii-table')
 const PACKAGE = require('./package.json')
 const shell = require('shelljs')
 
 console.log("")
-console.log("Bot Runner:")
+console.log("---")
+console.log("Bot Entrypoint:")
 console.log(PACKAGE.name, "v" + PACKAGE.version)
 
 program
@@ -21,8 +23,16 @@ program
   .parse(process.argv)
 
 const options = program.opts()
-console.log("Options:")
-console.log(JSON.stringify(options, null, "  "))
+// console.log("Options:")
+// console.log(JSON.stringify(options, null, "  "))
+
+let profile = options.profile
+let long = options.long
+
+const Table = new AsciiTable("Selected Options:", {})
+Table.addRow("Selected Profile", profile)
+Table.addRow("Long Load", long ? "Yes" : "No")
+console.log(Table.toString())
 
 let QUICK = !options.long
 if (!QUICK) {

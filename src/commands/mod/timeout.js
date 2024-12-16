@@ -101,7 +101,8 @@ module.exports = class TimeoutCommand extends ModCommand {
           let props = {
             color: colors["info"],
             title: {
-              text: "⏰ [Log] User Timeout"
+              text: "[Log] User Timeout",
+              emoji: "⏰"
             },
             fields: [
               [

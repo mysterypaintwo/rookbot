@@ -386,6 +386,8 @@ class ModCommand extends AdminCommand {
             // await interaction.guild.members.warn(targetUserId)
             break
         }
+      } else {
+        success = true
       }
 
       // Determine the name to display (use nickname if available, otherwise default to tag or username)
@@ -547,7 +549,7 @@ class ModCommand extends AdminCommand {
           "..",
           "..",
           "botlogs",
-          "member" + pretty_name.replace(" ", "") + "s.log"
+          ((this.DEV ? "DEV" : "") + "member" + pretty_name.replace(" ", "") + "s.log")
         )
         let logEntry = [
           `[${new Date().toISOString()}]`,
@@ -557,9 +559,7 @@ class ModCommand extends AdminCommand {
           `Reason:  ${reason}`,
           '--------------------------------'
         ].join("\n") + "\n"
-        if (!this.DEV) {
-          fs.appendFileSync(logFilePath, logEntry, "utf8")
-        }
+        fs.appendFileSync(logFilePath, logEntry, "utf8")
         console.log(`/${this.name}: LogFile`)
       }
     } catch (error) {

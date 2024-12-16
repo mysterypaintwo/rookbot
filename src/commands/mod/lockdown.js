@@ -100,7 +100,8 @@ module.exports = class LockdownCommand extends ModCommand {
         const embed = new RookEmbed(client, {
           color: action === 'lock' ? '#FF0000' : '#00FF00',
           title: {
-            text: `🔒🔒 [Log] Lockdown \(${capitalizedAction}\)`
+            text: `[Log] Lockdown \(${capitalizedAction}\)`,
+            emoji: "🔒🔒"
           },
           fields: [
             [
