@@ -151,47 +151,55 @@ module.exports = class PullCommand extends BotDevCommand {
 
     */
     this.props.fields = [
-      {
-        name: "Branch",
-        value:
-          console_output[2].substring(console_output[2].indexOf(':') + 2)
-          .replace(
-            `<${BRANCH}>`,
-            `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
-          ),
-      }
+      [
+        {
+          name: "Branch",
+          value:
+            console_output[2].substring(console_output[2].indexOf(':') + 2)
+            .replace(
+              `<${BRANCH}>`,
+              `[\`${BRANCH}\`](https://github.com/mysterypaintwo/rookbot/tree/${BRANCH})`
+            )
+        }
+      ]
     ]
 
     this.props.fields.push(
-      {
-        name: "Old Commit",
-        value: `[\`${COMMITS.current}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.current})`,
-        inline: true
-      }
+      [
+        {
+          name: "Old Commit",
+          value: `[\`${COMMITS.current}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.current})`
+        }
+      ]
     )
 
     // If fresh isn't the same as the old current
     if (COMMITS.fresh != COMMITS.current) {
       this.props.fields.push(
-        {
-          name: "New Commit",
-          value: `[\`${COMMITS.fresh}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.fresh})`,
-          inline: true
-        }
+        [
+          {
+            name: "New Commit",
+            value: `[\`${COMMITS.fresh}\`](https://github.com/mysterypaintwo/rookbot/tree/${COMMITS.fresh})`
+          }
+        ]
       )
       this.props.fields.push(
-        {
-          name: "Updated?",
-          value: "Yes"
-        }
+        [
+          {
+            name: "Updated?",
+            value: "Yes"
+          }
+        ]
       )
     } else {
-      this.props.fields[1].name = "Same Commit"
+      this.props.fields[1][0].name = "Same Commit"
       this.props.fields.push(
-        {
-          name: "Updated?",
-          value: "No"
-        }
+        [
+          {
+            name: "Updated?",
+            value: "No"
+          }
+        ]
       )
     }
 
