@@ -1,6 +1,5 @@
-module.exports = async (client) => {
-  let cmd_defn = require('../../commands/app/hello')
-  let cmd_obj = new cmd_defn(client)
-  await cmd_obj.execute(client)
-  return
+const salutation = require('../maybeReady/salutation')
+
+module.exports = async (client, interaction) => {
+  await salutation(client, interaction, "hello")
 }

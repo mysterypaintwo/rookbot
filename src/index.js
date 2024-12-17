@@ -76,7 +76,7 @@ const client = new RookClient(
                 },
                 reply: async (props) => {
                   let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
-                  let channelID = channelIDs["bot-console"]
+                  let channelID = channelIDs["bot-salutations"]
                   if (client.guild) {
                     let channel = await client.guild.channels.cache.find(
                       c => c.id === channelID
@@ -86,7 +86,7 @@ const client = new RookClient(
                 },
                 editReply: async (props) => {
                   let channelIDs = require(`./dbs/${process.env.GUILD_ID}/channels.json`)
-                  let channelID = channelIDs["bot-console"]
+                  let channelID = channelIDs["bot-salutations"]
                   if (client.guild) {
                     let channel = await client.guild.channels.cache.find(
                       c => c.id === channelID

@@ -8,14 +8,6 @@
       "access": "BotDev",
       "segment": "local"
     },
-    "hello": {
-      "name": "hello",
-      "category": "app",
-      "description": "Hello",
-      "options": [],
-      "access": "unset",
-      "segment": "local"
-    },
     "help": {
       "name": "help",
       "category": "app",
@@ -69,6 +61,24 @@
       "name": "uptime",
       "category": "app",
       "description": "Uptime",
+      "options": [],
+      "access": "unset",
+      "segment": "local"
+    }
+  },
+  "unknown": {
+    "goodbye": {
+      "name": "goodbye",
+      "category": "unknown",
+      "description": "Goodbye",
+      "options": [],
+      "access": "unset",
+      "segment": "local"
+    },
+    "hello": {
+      "name": "hello",
+      "category": "unknown",
+      "description": "Hello",
       "options": [],
       "access": "unset",
       "segment": "local"
@@ -527,6 +537,10 @@
           "name": "target-id",
           "description": "User ID to search for",
           "required": true
+        },
+        {
+          "name": "region",
+          "description": "Development or Production Logs?"
         }
       ],
       "access": "Mod",

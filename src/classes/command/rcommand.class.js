@@ -345,7 +345,7 @@ class RookCommand {
   async print_it(client, pages) {
     console.log(`/${this.name}: Print it...`)
 
-    if (pages.length == 0) {
+    if (!pages || (pages.length == 0)) {
       pages = [ this.props ]
     }
 

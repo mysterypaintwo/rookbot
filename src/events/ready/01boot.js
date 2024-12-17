@@ -1,5 +1,4 @@
 const manageCommands = require('../../utils/manageCommands.js')
-const getProfile = require('../../utils/getProfile.js')
 
 module.exports = async (client) => {
   let GLOBALS = client.profile

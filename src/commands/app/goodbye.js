@@ -1,17 +1,18 @@
 const { SalutationCommand } = require('../../classes/command/salutation.class.js')
+const { UptimeCommand } = require('../../commands/app/uptime.js')
 
 /**
  * @class
  * @classdesc Instance Exit
- * @this {HelloCommand}
+ * @this {GoodbyeCommand}
  * @extends {SalutationCommand}
  * @public
  */
-module.exports = class HelloCommand extends SalutationCommand {
+module.exports = class GoodbyeCommand extends SalutationCommand {
   constructor(client) {
     let comprops = {
-      name: "hello",
-      description: "Hello"
+      name: "goodbye",
+      description: "Goodbye"
     }
     super(
       client,
@@ -24,7 +25,7 @@ module.exports = class HelloCommand extends SalutationCommand {
     await super.execute(
       client,
       interaction,
-      { mode: "boot" }
+      { mode: "exit" }
     )
   }
 }

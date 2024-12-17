@@ -1,12 +1,20 @@
-const schedule = require('node-schedule')
 const { changeNickname } = require('../utils/changeNickname')  // Import the changeNickname function
+const schedule = require('node-schedule')
 
-function scheduleNicknameChange(client, member, guildID) {
+// Schedule nickname change
+function scheduleNicknameChange(client, member) {
+  // If we don't have a member, bail
   if (!member || !member.user)
     return
-  const midnightPacific = { hour: 0, minute: 0, tz: "America/Los_Angeles" }
 
-  // Schedule the task at midnight Pacific Time
+  // Set it for midnight Pacific Time,
+  //  which is superior to Eastern Palace Time
+  const midnightPacific = {
+    hour: 0,
+    minute: 0,
+    tz: "America/Los_Angeles"
+  }
+
   schedule.scheduleJob(midnightPacific, async () => {
     try {
 

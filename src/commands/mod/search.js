@@ -34,6 +34,15 @@ module.exports = class SearchCommand extends ModCommand {
           description: "User ID to search for",
           type: ApplicationCommandOptionType.String,
           required: true
+        },
+        {
+          name: "region",
+          description: "Development or Production Logs?",
+          type: ApplicationCommandOptionType.String,
+          choices: [
+            { name: "Production", value: "" },
+            { name: "Development", value: "DEV" }
+          ]
         }
       ],
       testOptions: [
@@ -77,6 +86,7 @@ module.exports = class SearchCommand extends ModCommand {
   async action(client, interaction, options) {
     let searchType = options["search-type"]
     let targetUserInput = options["target-id"]
+    let region = options["region"] || ""
     let targetUserId = targetUserInput.replace(/[<@!>]/g, '');  // Remove <@>, <@!>, and >
     let targetUser;
     try {
@@ -96,7 +106,7 @@ module.exports = class SearchCommand extends ModCommand {
       "..",
       "..",
       "botlogs",
-      "member" + searchType + "s.log"
+      region + "member" + searchType + "s.log"
     )
     let logFile = fs.readFileSync(logFilePath, "utf8")
     let logLines = logFile.split("\n")
