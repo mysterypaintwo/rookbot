@@ -39,8 +39,14 @@ module.exports = class ExitCommand extends BotDevCommand {
   }
 
   async execute(client, interaction) {
-    await interaction.deferReply()
+    if (
+      interaction &&
+      typeof interaction.deferReply === "function"
+    ) {
+      await interaction.deferReply()
+    }
     // await interaction.deleteReply()
+
     console.log(`!!! Bot Exit by: ${interaction.member.user.tag} !!!`)
     this.props.description = `Exiting <@${client.user.id}>`
 
