@@ -377,6 +377,10 @@ class SalutationCommand extends RookCommand {
           )
           if (
             interaction &&
+            interaction?.guild &&
+            interaction?.guild?.id &&
+            channel?.guild &&
+            channel?.guild?.id &&
             interaction.guild.id === channel.guild.id &&
             typeof interaction.editReply === "function"
           ) {
