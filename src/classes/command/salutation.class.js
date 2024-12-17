@@ -121,13 +121,13 @@ class SalutationCommand extends RookCommand {
       // DEV
       console_output.push(
         mode_msg,
-        `Footer Tag: "${this.profile.name}"`
+        `Footer Tag:  "${this.profile.name}"`
       )
     } else {
       // PROD
       console_output.push(
         mode_msg,
-        'Footer Tag: "' + (user ? user.username : "") + '"'
+        'Footer Tag:  "' + (user ? user.username : "") + '"'
       )
     }
 

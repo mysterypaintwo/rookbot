@@ -91,6 +91,8 @@ web_modules/
 !.env.example
 !.env.dev.ci
 !.env.prod.ci
+!/env/envs/.env.dev
+!/env/envs/.env.prod
 
 ## parcel-bundler cache (https://parceljs.org/)
 .cache
