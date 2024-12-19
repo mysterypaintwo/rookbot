@@ -7,6 +7,7 @@ Includes many commands
 - Kick
 - Unban
 - Smz3
+- Smmr
 - Warn
 - Ping
 - Hex Color Viewer
