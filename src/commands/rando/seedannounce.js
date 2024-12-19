@@ -16,13 +16,22 @@ function isValidURLFromDomain(input, domain) {
   }
 }
 
-module.exports = class Z3M3AnnounceCommand extends RookCommand {
+module.exports = class SeedAnnounceCommand extends RookCommand {
   constructor(client) {
     let comprops = {
-      name: "smz3",
+      name: "seedannounce",
       category: "rando",
-      description: "Starts an SMZ3 game with all necessary details",
+      description: "Starts a specified Randonizer Game with all necessary details",
       options: [
+        {
+          name: "randomizer",
+          description: "Randomizer to choose",
+          type: ApplicationCommandOptionType.String,
+          choices: [
+            { name: "Super Metroid + A Link to the Past Combination Randomizer", value: "smz3" },
+            { name: "Super Metroid Map Randomizer", value: "m3maprando" }
+          ]
+        },
         {
           name: "ping-multiplayer-role",
           description: "Whether or not to ping the Multiplayer Ping role",
@@ -43,11 +52,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
         }
       ]
     }
-    let props = {
-      title: {
-        text: "SMZ3 Game Details"
-      }
-    }
+    let props = {}
 
     super(
       client,
@@ -57,10 +62,12 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
   }
 
   async action(client, interaction, options) {
+    const randomizer = options.randomizer || "smz3"
     const guildID = interaction.guild.id;
     const userIDs = require("../../dbs/userids.json");
 
-    const pingMultiplayerRole = options['ping_multiplayer_role'] || false; // Default to false
+    const pingMultiplayerRole = options['ping-multiplayer-role'] || false; // Default to false
+    const randoID = options.randomizer
     const seedURL = options['seed_url'] || null;
     const prepTimeMinutes = options['prep_time'] ?? 5; // Default to 5 minutes
 
@@ -76,6 +83,10 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
     }*/
 
      // Defer reply silently
+
+    this.props.title = {
+      text: `${randomizer} Game Details`
+    }
 
     try {
       // Generate random group name
@@ -106,84 +117,10 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       const adjustedTime = new Date(now.getTime() + prepTime);
       const timestamp = timeFormat(adjustedTime.getTime())
 
-      // Define the Major Items
-      const majorItems = [
-        'Morph Ball',
-        'Pegasus Boots',
-        'Fire Rod',
-        'Hookshot',
-        'Moon Pearl',
-        'Flippers',
-        'Hammer',
-        'Flute',
-        'Magic Mirror',
-        'A Progressive Bow',
-        'A Progressive Sword',
-        'A Progressive Glove',
-        'Lamp',
-        'Half-Magic',
-        'Morph Ball',
-        'Morph Bombs',
-        'Charge Beam',
-        'Speed Booster',
-        'a Progressive Suit',
-        'Hi-Jump Boots',
-        'Varia Suit',
-        'Gravity Suit',
-        'Space Jump',
-        'Plasma Beam',
-        'Screw Attack',
-        'Ice Beam'
-      ]
-
-      const uselessItems = [
-        '3 Bombs',
-        'greg',
-        'Validation Arrow',
-        '20 Rupees',
-        '1 Rupee',
-        '5 Rupees',
-        'Blue-merang',
-        'Mushroom',
-        'Shovel',
-        'Cane of Byrna',
-        'Magic Cape',
-        'Spring Ball',
-        'Spazer Beam',
-        'Grapple Beam'
-      ]
-
-      // Random footer text
-      const footerTexts = [
-        'Good luck out there, adventurer!',
-        'May the RNG be ever in your favor!',
-        'I wonder who we\'ll be microwaving today~',
-        'Don\'t forget to grab [MAJOR_ITEM]!',
-        'Watch out for those pesky Lynels!',
-        'Hookshot, Bombs, Boots, Go!',
-        'Hoping [MAJOR_ITEM] won\'t be on Pedestal!',
-        'Hoping [MAJOR_ITEM] won\'t be at Library!',
-        'Hoping [MAJOR_ITEM] won\'t be at Lumberjack Cave!',
-        'Hoping [MAJOR_ITEM] won\'t be at Mimic Cave!',
-        'Hoping [MAJOR_ITEM] won\'t be at Graveyard Ledge!',
-        'Hoping we\'ll get a sword within the first hour!',
-        'Hoping we\'ll find [MAJOR_ITEM] within the first hour!',
-        'Hoping we\'ll find Morph Bombs before Power Bombs!',
-        'Hoping that Blind\'s pun will make us laugh today!',
-        'Hoping that [MAJOR_ITEM] will be in Blind\'s Hut!',
-        'Praying we won\'t have to do Suitless Maridia!',
-        'Hoping SM won\'t require Reverse Boss Order (RBO)!',
-        'Who wants to do a hookpush vs Ganon? <:',
-        'Let\'s have a beat-up party at Ganon\'s!',
-        'Hoping that Boots hovering won\'t be required this time!',
-        'Who\'s ready for some silverless Ganon action??',
-        'please no aga1 seed im allergic',
-        'No Charge Beam vs Mother Brain? No problem 👍',
-        'Discount [USELESS_ITEM] at King Zora! Only 500 Rupees!',
-        'Don\'t worry—There\'ll be at least one sword outside of Ganon\'s Tower!',
-        '[MAJOR_ITEM] on Pedestal? No problem—just hike over the mountain!',
-        'Why run when you can clip through instead? 😎'
-      ];
+      const randoData = require(`../../dbs/randos/${randomizer}.json`)
+      const majorItems = randoData["madlibs"]["major"]
+      const uselessItems = randoData["madlibs"]["useless"]
+      const footerTexts = randoData["madlibs"]["footers"]
 
       // Select a random footer text
       var randomFooterText = footerTexts[Math.floor(Math.random() * footerTexts.length)];
@@ -208,8 +145,8 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       // Create the embed
       let players = {}
       players["target"] = {
-        name: "SMZ3",
-        avatar: "http://alttp.mymm1.com/holyimage/images/alttpo/smz3.png"
+        name: randoData.rando.player.name,
+        avatar: randoData.rando.player.avatar
       }
       this.props.fields = [
         [
@@ -218,7 +155,7 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
         [
           {
             name: 'Scripts',
-            value: '[2022 (`alttpo-client-win64-stable-20220213.1`)](https://dev.azure.com/ALttPO/alttpo/_build/results?buildId=693&view=artifacts&pathAsName=false&type=publishedArtifacts)',
+            value: randoData.rando.scripts,
           }
         ],
         [
@@ -240,11 +177,11 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       }
 
       // Construct the content for the channel message
-      let messageContent = pingMultiplayerRole
-        ? `<@&1300904313081565236> A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`
-        : `A Super Metroid + ALTTP (SMZ3) Randomizer game has been generated!`;
+      let roleID = options["pingable-role-id"]
+      let messageContent = pingMultiplayerRole ? `<@&${roleID}>` : ""
+      messageContent += `A ${randomizer} game has been generated!`
 
-      if (isValidURLFromDomain(seedURL, 'https://samus.link/seed/')) {
+      if (isValidURLFromDomain(seedURL, randoData.rando.permalink.replace("<hash>",""))) {
         messageContent += `\nYou can download it from here: ${seedURL}`;
       }
 
@@ -253,11 +190,11 @@ module.exports = class Z3M3AnnounceCommand extends RookCommand {
       // Silent conclusion (no visible follow-up)
 
     } catch (error) {
-      console.error('Error handling /smz3 command:', error);
+      console.error(`Error handling /${this.name} command:`, error);
 
       this.error = true
       // Respond with an error message if something goes wrong
-      this.props.description = "An error occurred while setting up the SMZ3 game. Please try again later."
+      this.props.description = `An error occurred while setting up the ${randomizer} game. Please try again later.`
     }
 
     return !this.error

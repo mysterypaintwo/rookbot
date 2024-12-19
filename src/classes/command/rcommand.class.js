@@ -471,6 +471,9 @@ class RookCommand {
    * @returns
    */
   async execute(client, interaction, coptions, independent=false) {
+    console.log(`/${this.name}: ${new Date().toISOString()}`)
+    console.log(`/${this.name}: Execute`)
+
     if (!this.channel) {
       this.channel = await this.getChannel(client)
     }
@@ -499,8 +502,6 @@ class RookCommand {
         }
       }
     }
-
-    console.log(`/${this.name}: Execute`)
 
     let buildResult = await this.build(client, interaction, coptions)
 

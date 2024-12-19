@@ -668,28 +668,15 @@
       "access": "unset",
       "segment": "local"
     },
-    "seedmeta": {
-      "name": "seedmeta",
+    "seedannounce": {
+      "name": "seedannounce",
       "category": "rando",
-      "description": "Gets metadata for a seed",
+      "description": "Starts a specified Randonizer Game with all necessary details",
       "options": [
         {
-          "name": "game-id",
-          "description": "Game ID to call from"
+          "name": "randomizer",
+          "description": "Randomizer to choose"
         },
-        {
-          "name": "hash-id",
-          "description": "Seed Hash ID to call"
-        }
-      ],
-      "access": "unset",
-      "segment": "local"
-    },
-    "smz3": {
-      "name": "smz3",
-      "category": "rando",
-      "description": "Starts an SMZ3 game with all necessary details",
-      "options": [
         {
           "name": "ping-multiplayer-role",
           "description": "Whether or not to ping the Multiplayer Ping role",
@@ -704,6 +691,23 @@
           "name": "prep-time",
           "description": "The number of minutes to prepare before the game starts.",
           "required": false
+        }
+      ],
+      "access": "unset",
+      "segment": "local"
+    },
+    "seedmeta": {
+      "name": "seedmeta",
+      "category": "rando",
+      "description": "Gets metadata for a seed",
+      "options": [
+        {
+          "name": "game-id",
+          "description": "Game ID to call from"
+        },
+        {
+          "name": "hash-id",
+          "description": "Seed Hash ID to call"
         }
       ],
       "access": "unset",

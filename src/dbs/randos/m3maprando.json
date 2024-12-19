@@ -1,0 +1,55 @@
+{
+  "madlibs": {
+    "major": [
+      "Morph Ball",
+      "Morph Bombs",
+      "Charge Beam",
+      "Speed Booster",
+      "A Progressive Suit",
+      "Hi-Jump Boots",
+      "Varia Suit",
+      "Gravity Suit",
+      "Space Jump",
+      "Plasma Beam",
+      "Screw Attack",
+      "Ice Beam"
+    ],
+    "useless": [
+      "5 Missiles",
+      "Spring Ball",
+      "Spazer Beam",
+      "Grapple Beam"
+    ],
+    "footers": [
+      "Good luck out there, galactic warrior!",
+      "May the RNG be ever in your favor!",
+      "I wonder who we'll be microwaving today~",
+      "Don't forget to grab [MAJOR_ITEM]!",
+      "Watch out for those pesky Lynels!",
+      "Hookshot, Bombs, Boots, Go!",
+      "Hoping [MAJOR_ITEM] won't be at Bowling Alley!",
+      "Hoping [MAJOR_ITEM] won't be at Mickey Mouse!",
+      "Hoping [MAJOR_ITEM] won't be at Waterway!",
+      "Hoping [MAJOR_ITEM] won't be at West Ocean!",
+      "Don't miss the Kraid Quick Kill this time!",
+      "Hoping we'll find [MAJOR_ITEM] quickly!",
+      "Hoping we'll find [MAJOR_ITEM] within the first hour!",
+      "Hoping we'll find Morph Bombs before Power Bombs!",
+      "Praying we won't have to be Suitless for too long!",
+      "Praying we won't have to do Hellruns for too long!",
+      "No Charge Beam vs Mother Brain? No problem 👍",
+      "Why run when you can clip through instead? 😎"
+    ]
+  },
+  "rando": {
+    "player": {
+      "name": "m3maprando",
+      "avatar": "https://maprando.com/static/map_station_transparent.png"
+    },
+    "scripts": [
+      "[2024 (`alttpo-client-win64-c09aed16`)](https://github.com/alttpo/alttpo/releases/tag/esync-v20240601-smz3) and [SMMR `ROMMapping.as`](https://drive.google.com/file/d/1vlltxwFO5kjOiCUvMD1abIuMNFOJFbO6/view?usp=sharing)"
+    ],
+    "pingable-role-id": "1300904313081565236",
+    "permalink": "https://maprando.com/seed/<hash>"
+  }
+}
