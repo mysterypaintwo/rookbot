@@ -53,7 +53,6 @@ module.exports = class SeedAnnounceCommand extends RookCommand {
       ]
     }
     let props = {}
-
     super(
       client,
       {...comprops},

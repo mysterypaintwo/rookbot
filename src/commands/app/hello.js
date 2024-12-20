@@ -2,7 +2,7 @@ const { SalutationCommand } = require('../../classes/command/salutation.class.js
 
 /**
  * @class
- * @classdesc Instance Exit
+ * @classdesc Instance Start
  * @this {HelloCommand}
  * @extends {SalutationCommand}
  * @public
