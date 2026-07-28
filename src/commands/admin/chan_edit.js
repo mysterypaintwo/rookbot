@@ -26,6 +26,7 @@ module.exports = class ChannelEditCommand extends RookCommand {
           required: true,
           choices: [
             { name: "Rename", value: "rename" },
+            { name: "Sync",   value: "sync" },
             { name: "Delete", value: "delete" }
           ]
         },
@@ -114,6 +115,14 @@ module.exports = class ChannelEditCommand extends RookCommand {
               { name: "Channel Mention", value: mentionFuncs.channelMention(targetId) }
             ]
           )
+        }
+      } else if (mode == "sync") {
+        this.props.description.push("---")
+        if (!channel.permissionsLocked) {
+          await channel.lockPermissions()
+          this.props.description.push(`${mentionFuncs.channelMention(channel.id)} synced to ${mentionFuncs.channelMention(channel.parent.id)}`)
+        } else {
+          this.props.description.push(`${mentionFuncs.channelMention(channel.id)} already synced to ${mentionFuncs.channelMention(channel.parent.id)}`)
         }
       }
     }

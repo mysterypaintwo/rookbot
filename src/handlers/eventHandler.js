@@ -96,9 +96,18 @@ module.exports = (client) => {
               let result = false
               let messages = []
               if (args) {
-                [result, messages] = await eventObject(client, ...args) // Pass all arguments to the event function
+                try {
+                  [result, messages] = await eventObject(client, ...args) // Pass all arguments to the event function
+                } catch (error) {
+                  messages.push(`Args: ${JSON.stringify(args)}`)
+                  messages.push(`${client.profile.emojis.bad}${error.stack}`)
+                }
               } else {
-                [result, messages] = await eventObject(client) // Pass all arguments to the event function
+                try {
+                  [result, messages] = await eventObject(client) // Pass all arguments to the event function
+                } catch (error) {
+                  messages.push(`${client.profile.emojis.bad}${error.stack}`)
+                }
               }
 
               if (messages.length) {
