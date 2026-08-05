@@ -274,6 +274,10 @@ module.exports = class ServerProfileCommand extends AdminCommand {
           chanType = ".o)"
           newChanType = ChannelType.GuildVoice
           break
+        case "forum":
+          chanType = "##"
+          newChanType = ChannelType.GuildForum
+          break
       }
 
       if (!catChildNames.contains(chanName)) {

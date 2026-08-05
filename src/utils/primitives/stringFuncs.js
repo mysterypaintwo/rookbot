@@ -10,6 +10,20 @@ String.prototype.contains = function(searchString="", position=0) {
   return this.includes(searchString, position)
 }
 
+// Add chop() to String
+String.prototype.chop = function(length=1) {
+  if (length > 0) {
+    return this.substring(0, this.length + (-1 * length))
+  } else {
+    return this
+  }
+}
+
+// Add slicechop() to String
+String.prototype.slicechop = function(sl=0, ch=0) {
+  return this.slice(sl).chop(ch)
+}
+
 // Add ucfirst() to String
 String.prototype.ucfirst = function() {
   return this.charAt(0).toUpperCase() + this.slice(1)

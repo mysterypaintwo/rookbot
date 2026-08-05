@@ -20,7 +20,7 @@ function createClient() {
   }
 }
 
-async function getDB(cName, dName, platform="discord", source="mongodb") {
+async function getDB(cName, dName, platform="discord", source="mongodb", silent=false) {
   let messages = []
   if (source == "fs") {
     let path = [ "src", "dbs" ]
@@ -29,7 +29,9 @@ async function getDB(cName, dName, platform="discord", source="mongodb") {
     }
     if (dName) {
       let gName = ""
-      messages.push(`💾 FS: '${gName}' [${cName}]: ${dName}`)
+      if (!silent) {
+        messages.push(`💾 FS: '${gName}' [${cName}]: ${dName}`)
+      }
       return [fileFuncs.getAFile(path, `${dName}.json`), messages]
     } else {
       let fileList = []
@@ -38,7 +40,9 @@ async function getDB(cName, dName, platform="discord", source="mongodb") {
           f=>f.endsWith(".json")
         )
       } else {
-        messages.push(`${path} not found!`)
+        if (!silent) {
+          messages.push(`${path} not found!`)
+        }
       }
       return [fileList, messages]
     }
@@ -95,7 +99,9 @@ async function getDB(cName, dName, platform="discord", source="mongodb") {
                 }
               }
               if (rec) {
-                messages.push(`💿 MongoDB: '${gName}' [${cName}]: ${dName}`)
+                if (!silent) {
+                  messages.push(`💿 MongoDB: '${gName}' [${cName}]: ${dName}`)
+                }
                 success = true
               }
             }
@@ -109,7 +115,7 @@ async function getDB(cName, dName, platform="discord", source="mongodb") {
 
     if (source == "mongodb") {
       if (!success) {
-        return await getDB(cName, dName, platform, "fs")
+        return await getDB(cName, dName, platform, "fs", silent)
       } else {
         return [rec, messages]
       }
